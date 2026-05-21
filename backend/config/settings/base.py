@@ -23,7 +23,6 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -31,10 +30,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.postgres"
+    "django.contrib.postgres",
+
+    # Third Party Apps
+    "django_guid",
+    "django_cotton"
+
+    # Project Apps
+    "apps.core",
 ]
 
 MIDDLEWARE = [
+    'django_guid.middleware.guid_middleware',
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -109,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = env("LANGUAGE_CODE", default="pt-br")
+LANGUAGE_CODE = env("LANGUAGE_CODE", default="pt-BR")
 TIME_ZONE = env("TIME_ZONE", default="America/Sao_Paulo")
 USE_I18N = True
 USE_L10N = True

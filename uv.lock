@@ -221,6 +221,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-guid"
+version = "3.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/af/23/e3ebe9ed5e5f19c85688a1d3bc3770a75f8ee0567e8572c08802e69d9c01/django_guid-3.6.1.tar.gz", hash = "sha256:701274b253d8cd92aa1d72f383e9ac245f17dc94038dd8d04b5719d479e3baea", size = 13640, upload-time = "2026-05-05T04:50:16.978Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a1/dc/f3386e9b9fb927ca88b5abd11f1b3c6d62998708319bd8a9cfe561f80413/django_guid-3.6.1-py3-none-any.whl", hash = "sha256:9519b1359fdcd291bd4bf1d8a333372ce515335891da7110e0917082c48c905e", size = 17707, upload-time = "2026-05-05T04:50:18.197Z" },
+]
+
+[[package]]
 name = "django-health-check"
 version = "4.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -302,6 +315,7 @@ dependencies = [
     { name = "django-cotton" },
     { name = "django-debug-toolbar" },
     { name = "django-environ" },
+    { name = "django-guid" },
     { name = "django-health-check" },
     { name = "django-ninja" },
     { name = "django-storages" },
@@ -332,6 +346,7 @@ requires-dist = [
     { name = "django-cotton", specifier = ">=2.6" },
     { name = "django-debug-toolbar", specifier = ">=6.3" },
     { name = "django-environ", specifier = ">=0.13" },
+    { name = "django-guid", specifier = ">=3.6.1" },
     { name = "django-health-check", specifier = ">=4.4" },
     { name = "django-ninja", specifier = ">=1.6" },
     { name = "django-storages", specifier = ">=1.14" },

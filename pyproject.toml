@@ -11,6 +11,7 @@ dependencies = [
     "django-cotton>=2.6",
     "django-debug-toolbar>=6.3",
     "django-environ>=0.13",
+    "django-guid>=3.6.1",
     "django-health-check>=4.4",
     "django-ninja>=1.6",
     "django-storages>=1.14",
