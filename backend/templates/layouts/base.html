@@ -9,12 +9,13 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>{% block page_title %}{{ page_title }}{% endblock %}</title>
 
     <link rel="manifest" crossorigin="anonymous" href="{% static 'manifest.json' %}"/>
     <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
 
     <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>{% block page_title %}{{ page_title }}{% endblock %}</title>
 
     {% block head %}{% endblock %}
 
@@ -23,9 +24,7 @@
     {% endblock %}
 </head>
 <body>
-{% block body %}
-    <h1>Page Empty</h1>
-{% endblock %}
+{% block content %}{% endblock %}
 
 {% block js %}
     {% vite_css 'app' %}
