@@ -1,0 +1,2 @@
+COTTON_DIR = "components"
+COTTON_SNAKE_CASED_NAMES = True

@@ -4,6 +4,7 @@ from .parts.django import * # noqa: F403
 from .parts.i18n import * # noqa: F403
 from .parts.database import * # noqa: F403
 from .parts.templates import * # noqa: F403
+from .parts.cotton import * # noqa: F403
 from .parts.static import * # noqa: F403
 from .parts.static import * # noqa: F403
 from .parts.cache import * # noqa: F403
