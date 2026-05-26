@@ -1,6 +1,7 @@
 from .parts.paths import * # noqa: F403
 from .parts.env import env # noqa: F403
 from .parts.django import * # noqa: F403
+from .parts.auth import * # noqa: F403
 from .parts.i18n import * # noqa: F403
 from .parts.database import * # noqa: F403
 from .parts.templates import * # noqa: F403
