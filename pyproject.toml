@@ -3,7 +3,7 @@ name = "django-template"
 version = "0.1.0"
 description = "Base template for Django projects with Django"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "celery[redis]>=5.6.3",
     "django>=6.0,<6.1",
