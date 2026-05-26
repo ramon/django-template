@@ -132,7 +132,7 @@ class PhoneNumberMixin(models.Model):
     Attributes:
         phone_number (str): Stores the phone number in string format.
     """
-    phone_number: str = models.CharField(max_length=255)
+    phone_number: str = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         abstract = True
