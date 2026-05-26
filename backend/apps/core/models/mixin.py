@@ -1,6 +1,7 @@
 import uuid
 from functools import cached_property
 
+from apps.core.value_objects.phone_number import PhoneNumber
 from django.db import models
 
 from apps.core.value_objects.person_name import PersonName
@@ -118,3 +119,35 @@ class PersonNameMixin(models.Model):
         self.last_name = name.last
 
         self.__dict__.pop("_cached_name", None) # expira o cache
+
+
+class PhoneNumberMixin(models.Model):
+    """
+    Mixin class that provides functionality for handling phone numbers.
+
+    This abstract mixin is designed to be used with Django models to add phone
+    number support. It ensures consistent storing, retrieving, and formatting of
+    phone numbers within your application.
+
+    Attributes:
+        phone_number (str): Stores the phone number in string format.
+    """
+    phone_number: str = models.CharField(max_length=255)
+
+    class Meta:
+        abstract = True
+
+    @cached_property
+    def _cached_phone(self) -> PhoneNumber:
+        return PhoneNumber(self.phone_number)
+
+    @property
+    def phone(self) -> PhoneNumber:
+        return self._cached_phone
+
+    @phone.setter
+    def phone(self, phone_number: str) -> None:
+        phone_number = PhoneNumber(phone_number)
+        self.phone_number = phone_number.e164
+
+        self.__dict__.pop("_cached_phone", None)
