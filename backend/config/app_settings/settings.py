@@ -1,6 +1,7 @@
 from enum import StrEnum
 from functools import lru_cache
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -52,7 +53,7 @@ class AppSettings(BaseSettings):
     )
 
     environment: Environment = Environment.LOCAL
-    feature: FeatureConfig = FeatureConfig()
+    phone_number_region: str = Field(default="BR")
 
     @property
     def is_production(self) -> bool:
