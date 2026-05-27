@@ -1,4 +1,5 @@
 from apps.core.models.mixin import UUIDPrimaryKeyMixin, TimestampMixin
+from django.db import models
 
 
 class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
@@ -12,3 +13,11 @@ class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
     standardization across models in applications requiring these features.
     """
     pass
+
+
+class AbstractSortableModel(models.Model):
+    models.IntegerField(default=0, db_index=True)
+
+    class Meta:
+        abstract = True
+        ordering = ['sort_order',]
