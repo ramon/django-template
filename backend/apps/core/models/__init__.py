@@ -1,2 +1,2 @@
-from .base import AbstractBaseModel
-from .mixin import UUIDPrimaryKeyMixin, TimestampMixin, PersonNameMixin
+from .base import AbstractBaseModel, AbstractSortableModel
+from .mixins import UUIDPrimaryKeyMixin, TimestampMixin, PersonNameMixin, PhoneNumberMixin

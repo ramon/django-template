@@ -1,8 +1,8 @@
-from apps.core.models import PersonNameMixin
-from apps.core.models.mixin import PhoneNumberMixin
+from apps.core.models import PersonNameMixin, PhoneNumberMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.utils.translation import pgettext_lazy
 
 
 class UserManager(BaseUserManager):
@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin
         is_active (bool): Indicates whether the user's account is active.
         is_staff (bool): Indicates whether the user has administrative privileges.
     """
-    email: str = models.EmailField(unique=True)
+    email: str = models.EmailField()
     is_active: bool = models.BooleanField(default=True)
     is_staff: bool = models.BooleanField(default=False)
 
@@ -44,3 +44,10 @@ class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name", "phone_number"]
+
+    class Meta:
+        verbose_name = pgettext_lazy('model', 'user')
+        verbose_name_plural = pgettext_lazy('model', 'users')
+        indexes = [
+            models.UniqueConstraint(fields=['email']),
+        ]
