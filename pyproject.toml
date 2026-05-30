@@ -27,10 +27,10 @@ dependencies = [
     "pydantic-settings>=2.14.1",
     "redis[hiredis]>=6.4.0",
     "sentry-sdk>=2.60",
+    "servestatic[brotli,minify]>=4.3.0",
     "structlog>=25.5.0",
     "uvicorn-worker>=0.4.0",
     "uvicorn[standard]>=0.48.0",
-    "whitenoise[brotli]>=6.12",
 ]
 
 [dependency-groups]
