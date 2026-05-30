@@ -24,8 +24,10 @@ db.sqlite3
 db.sqlite3-journal
 
 ## Updated/generated local files
-backend/public/media/
 backend/public/static/
+!backend/public/static/.gitkeep
+backend/public/media/
+!backend/public/media/.gitkeep
 
 # Environment files / secrets
 .env
@@ -42,8 +44,8 @@ Thumbs.db
 node_modules/
 bun.lockb
 .vite
-backend/static/dist/
-!backend/static/dist/.gitkeep
+backend/public/dist/
+!backend/public/dist/.gitkeep
 
 # local notes and temporary files
 *.tmp
