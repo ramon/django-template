@@ -1,4 +1,4 @@
-from apps.core.models.mixin import UUIDPrimaryKeyMixin, TimestampMixin
+from apps.core.models.mixins import UUIDPrimaryKeyMixin, TimestampMixin
 from django.db import models
 
 
