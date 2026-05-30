@@ -8,5 +8,5 @@ CELERY_RESULT_BACKEND = "django-db"
 
 INSTALLED_APPS += [
     "django_celery_results",
-    "django-celery-beat"
+    "django_celery_beat"
 ]
