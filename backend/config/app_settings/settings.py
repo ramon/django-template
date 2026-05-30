@@ -5,7 +5,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Environment(str, StrEnum):
+class Environment(StrEnum):
     """
     Represents different environment types for deployment and configuration.
 
