@@ -49,5 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin
         verbose_name = pgettext_lazy('model', 'user')
         verbose_name_plural = pgettext_lazy('model', 'users')
         indexes = [
-            models.UniqueConstraint(fields=['email']),
+            models.UniqueConstraint(fields=['email'], name='unique_email'),
+            models.Index(fields=['phone_number']),
+            models.Index(fields=['first_name', 'last_name'], name='idx_full_name')
         ]
