@@ -15,4 +15,5 @@ from .parts.email import * # noqa: F403
 from .parts.celery import * # noqa: F403
 from .parts.security import * # noqa: F403
 from .parts.third_party import * # noqa: F403
+from .parts.debug import * # noqa: F403
 from .parts.project import * # noqa: F403
