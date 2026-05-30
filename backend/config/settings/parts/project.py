@@ -1,4 +1,4 @@
-from parts.django import INSTALLED_APPS
+from .django import INSTALLED_APPS
 
 INSTALLED_APPS += [
     "apps.core",

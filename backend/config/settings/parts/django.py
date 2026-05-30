@@ -1,4 +1,4 @@
-from parts.env import env
+from .env import env
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -14,8 +14,11 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
+
+    "health_check",
 ]
 
 MIDDLEWARE = [

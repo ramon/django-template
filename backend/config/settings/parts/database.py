@@ -1,5 +1,5 @@
-from parts.env import env
-from parts.paths import BASE_DIR
+from .env import env
+from .paths import BASE_DIR
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

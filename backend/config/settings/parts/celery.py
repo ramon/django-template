@@ -1,5 +1,5 @@
-from parts.django import INSTALLED_APPS
-from parts.env import env
+from .django import INSTALLED_APPS
+from .env import env
 
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TIME_LIMIT = 5 * 60

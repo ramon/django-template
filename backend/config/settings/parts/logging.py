@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django_guid.integrations import SentryIntegration, CeleryIntegration
-from parts.django import INSTALLED_APPS, MIDDLEWARE
+from .django import INSTALLED_APPS, MIDDLEWARE
 import structlog
 
 INSTALLED_APPS += [
@@ -101,6 +101,11 @@ LOGGING = {
         "django.server": {
             "handlers": ["console", "console_dev"],
             "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "handlers": ["console_dev"],
+            "level": "INFO",
             "propagate": False,
         },
         "app.events": {

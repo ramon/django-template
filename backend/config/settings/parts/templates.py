@@ -1,10 +1,10 @@
-from parts.paths import BASE_DIR
+from .paths import BASE_DIR
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
+        # "APP_DIRS": True,
         "OPTIONS": {
             "loaders": [[
                 "django.template.loaders.cached.Loader",

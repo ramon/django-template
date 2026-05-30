@@ -1,5 +1,5 @@
 import environ
-from config.settings.parts.paths import ENV_FILE
+from .paths import ENV_FILE
 
 env = environ.Env(
     DEBUG=(bool, False)
