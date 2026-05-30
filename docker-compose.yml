@@ -1,0 +1,26 @@
+services:
+  kv-database:
+    image: valkey/valkey:9-alpine
+    environment:
+      - VALKEY_EXTRA_FLAGS="--save 60 1 --loglevel warning"
+    ports:
+      - "6379:8001"
+    volumes:
+      - kv-data:/data
+  database:
+    image: postgres:18-alpine
+    shm_size: 256mb
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=app
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+
+volumes:
+  kv-data:
+    driver: local
+  db-data:
+    driver: local
