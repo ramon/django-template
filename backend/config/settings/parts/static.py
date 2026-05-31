@@ -2,11 +2,11 @@
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 from .env import env
-from .paths import BASE_DIR, PUBLIC_DIR
+from .paths import STATIC_DIR, PUBLIC_DIR
 
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATIC_ROOT = PUBLIC_DIR / "static"
-STATICFILES_DIRS = [PUBLIC_DIR / "static"]
+STATICFILES_DIRS = [STATIC_DIR]
 
 MEDIA_URL = env("MEDIA_URL", default="/media/")
 MEDIA_ROOT = PUBLIC_DIR / "media"
