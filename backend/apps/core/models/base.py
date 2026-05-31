@@ -12,7 +12,8 @@ class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
     logging functionality. It is suitable for ensuring consistency and
     standardization across models in applications requiring these features.
     """
-    pass
+    class Meta:
+        abstract = True
 
 
 class AbstractSortableModel(models.Model):
