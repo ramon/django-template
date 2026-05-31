@@ -61,6 +61,9 @@ class PersonName(BaseModel):
         first_name, last_name = full_name.strip().split(" ", 1)
         return cls(first=first_name, last=last_name)
 
+    def __str__(self) -> str:
+        return self.full
+
     @computed_field
     @property
     def full(self) -> str:
