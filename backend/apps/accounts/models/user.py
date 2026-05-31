@@ -12,6 +12,10 @@ class UserManager(BaseUserManager):
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save()
+
+        from apps.accounts.models import Profile
+        Profile.objects.create(user=user)
+
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -36,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin
         is_active (bool): Indicates whether the user's account is active.
         is_staff (bool): Indicates whether the user has administrative privileges.
     """
-    email: str = models.EmailField()
+    email: str = models.EmailField(unique=True)
     is_active: bool = models.BooleanField(default=True)
     is_staff: bool = models.BooleanField(default=False)
 
@@ -49,7 +53,9 @@ class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin
         verbose_name = pgettext_lazy('model', 'user')
         verbose_name_plural = pgettext_lazy('model', 'users')
         indexes = [
-            models.UniqueConstraint(fields=['email'], name='unique_email'),
-            models.Index(fields=['phone_number']),
-            models.Index(fields=['first_name', 'last_name'], name='idx_full_name')
+            models.Index(fields=['first_name', 'last_name'], name='idx_user_full_name'),
+            models.Index(fields=['phone_number'], name='idx_user_phone_number'),
         ]
+
+    def __str__(self):
+        return self.name.full

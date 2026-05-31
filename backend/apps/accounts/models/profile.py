@@ -1,37 +1,22 @@
 import datetime
 
+from PIL.SpiderImagePlugin import TYPE_CHECKING
 from apps.accounts.models.mixins import AvatarMixin
 from apps.core.models import AbstractBaseModel, AbstractSortableModel
-from apps.core.models.mixin import PhoneNumberMixin
+from apps.core.models.mixins import PhoneNumberMixin
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import pgettext_lazy
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from apps.accounts.models.user import User
+    from apps.accounts.models.gender import Gender
 
 
-class Gender(AbstractBaseModel, AbstractSortableModel):
-    """
-    Represents a gender model used for categorizing or identifying gender types.
 
-    This model provides a single attribute to store a gender name. It inherits from
-    `AbstractBaseModel` and `AbstractSortableModel`, allowing it to include base
-    functionality for sorting and modeling. The class ensures its database-level
-    representation has appropriate singular and plural verbose names.
-
-    Attributes:
-        name (str): The name of the gender, with a character limit of 20.
-    """
-    name = models.CharField(max_length=20)
-
-    class Meta:
-        verbose_name = pgettext_lazy('model', 'gender')
-        verbose_name_plural = pgettext_lazy('model', 'genders')
-
-
-class Profile(AbstractBaseModel,
+class Profile(AvatarMixin,
               PhoneNumberMixin,
-              AvatarMixin):
+              AbstractBaseModel):
     """
     Represents a user's profile, including personal details and associated data.
 
@@ -50,18 +35,19 @@ class Profile(AbstractBaseModel,
         gender (Gender): Foreign key linking the user's profile with a Gender
             instance, protected against deletion of associated Gender entries.
     """
-    user: User = models.OneToOneField(
-        User,
+    user: "User" = models.OneToOneField(
+        get_user_model(),
         related_name="profile",
         on_delete=models.CASCADE
     )
-    document: str = models.CharField(max_length=11)
-    birthday: datetime.date = models.DateField()
-    gender: Gender = models.ForeignKey(Gender, on_delete=models.PROTECT)
+    document: str = models.CharField(max_length=11, null=True, blank=True, unique=True)
+    birth_date: datetime.date = models.DateField(blank=True, null=True)
+    gender: "Gender" = models.ForeignKey('accounts.Gender', blank=True, null=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = pgettext_lazy('model', 'profile')
         verbose_name_plural = pgettext_lazy('model', 'profiles')
         indexes = [
-            models.Index(fields=['document']),
+            models.Index(fields=['document'], name='idx_profile_document'),
         ]
+
