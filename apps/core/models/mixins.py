@@ -1,8 +1,8 @@
 import uuid
 from functools import cached_property
 
-from apps.core.value_objects.person_name import PersonName
-from apps.core.value_objects.phone_number import PhoneNumber
+from apps.core.domain import PersonName
+from apps.core.domain import PhoneNumber
 from django.db import models
 
 
