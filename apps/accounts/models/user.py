@@ -1,4 +1,4 @@
-from apps.core.models import PersonNameMixin, PhoneNumberMixin
+from apps.core.models import AbstractBaseModel, PersonNameMixin, PhoneNumberMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin, PersonNameMixin, PhoneNumberMixin):
+class User(PermissionsMixin, PersonNameMixin, PhoneNumberMixin, AbstractBaseModel, AbstractBaseUser):
     """
     Represents a user within the system with authentication and contact details.
 

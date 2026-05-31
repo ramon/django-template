@@ -17,7 +17,7 @@ class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
 
 
 class AbstractSortableModel(models.Model):
-    models.IntegerField(default=0, db_index=True)
+    sort_order = models.IntegerField(default=0, db_index=True)
 
     class Meta:
         abstract = True
