@@ -5,6 +5,7 @@ description = "Base template for Django projects with Django"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "argon2-cffi>=25.1.0",
     "celery[redis]>=5.6.3",
     "django>=6.0,<6.1",
     "django-allauth[mfa]>=65.17",
