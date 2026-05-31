@@ -1,13 +1,13 @@
 from uuid import UUID
 
-from apps.accounts.models import Profile
 from ninja import Schema
-from pydantic import HttpUrl
+from pydantic import Field, HttpUrl
 
 
-class ProfileOut(Schema):
-    id: UUID
+class UserInfoOut(Schema):
+    sub: UUID = Field(alias='id')
     name: str
-    gender: str | None
-    age: int | None
-    avatar: HttpUrl | None
+    given_name: str = Field(alias='first_name')
+    family_name: str = Field(alias='last_name')
+    picture: HttpUrl | None = Field(alias='avatar', default=None)
+    email: str
