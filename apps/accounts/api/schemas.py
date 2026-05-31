@@ -8,5 +8,6 @@ from pydantic import HttpUrl
 class ProfileOut(Schema):
     id: UUID
     name: str
-    gender: str
+    gender: str | None
+    age: int | None
     avatar: HttpUrl | None

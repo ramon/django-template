@@ -15,5 +15,10 @@ class UserPresenter(BasePresenter[User]):
 
 
 class ProfilePresenter(BasePresenter["Profile"]):
+    @property
+    def name(self) -> str:
+        return self.user.name.full
+
+    @property
     def age(self) -> int | None:
         return calculate_age(self.birth_date) if self.birth_date else None

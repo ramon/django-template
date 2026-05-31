@@ -20,3 +20,6 @@ class Gender(AbstractSortableModel, AbstractBaseModel):
     class Meta:
         verbose_name = pgettext_lazy('model', 'gender')
         verbose_name_plural = pgettext_lazy('model', 'genders')
+
+    def __str__(self) -> str:
+        return self.name
