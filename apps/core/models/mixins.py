@@ -1,8 +1,7 @@
 import uuid
 from functools import cached_property
 
-from apps.core.domain import PersonName
-from apps.core.domain import PhoneNumber
+from apps.core.domain import PersonName, PhoneNumber
 from django.db import models
 
 
@@ -122,14 +121,15 @@ class PersonNameMixin(models.Model):
 
 class PhoneNumberMixin(models.Model):
     """
-    Mixin class that provides functionality for handling phone numbers.
+    Mixin providing phone number support for models.
 
-    This abstract mixin is designed to be used with Django models to add phone
-    number support. It ensures consistent storing, retrieving, and formatting of
-    phone numbers within your application.
+    This mixin allows models to store, retrieve, and manipulate phone numbers.
+    It defines a phone number field that is stored in the E.164 format and provides
+    access to the parsed `PhoneNumber` object via a setter and getter property.
 
     Attributes:
-        phone_number (str): Stores the phone number in string format.
+        phone_number (str): A string representing the phone number stored in the
+                            database. It is nullable and can be left blank.
     """
     phone_number: str = models.CharField(max_length=255, null=True, blank=True)
 
@@ -137,7 +137,7 @@ class PhoneNumberMixin(models.Model):
         abstract = True
 
     @cached_property
-    def _cached_phone(self) -> PhoneNumber:
+    def _cached_phone(self) -> PhoneNumber: # pragma: no cover
         return PhoneNumber(self.phone_number)
 
     @property

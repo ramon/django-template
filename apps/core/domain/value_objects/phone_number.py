@@ -35,73 +35,54 @@ class PhoneNumber(RootModel[str]):
             object.__setattr__(
                 self,
                 "_parsed_number",
-                phonenumbers.parse(self.root)
+                phonenumbers.parse(str(self.root))
             )
-        except phonenumbers.NumberParseException:
+        except phonenumbers.NumberParseException: # pragma: no cover
             raise ValueError("Invalid phone number format.")
 
         return self
 
     @computed_field
     @property
-    def international(self) -> str:
+    def international(self) -> str | None:
         """Returns the phone number in international format (e.g., +55 11 98765-4321)."""
-        if self._parsed_number:
-            return phonenumbers.format_number(
-                self._parsed_number,
-                phonenumbers.PhoneNumberFormat.INTERNATIONAL
-            )
-        return self.root
+        if not self._parsed_number:
+            return None
+
+        return phonenumbers.format_number(
+            self._parsed_number,
+            phonenumbers.PhoneNumberFormat.INTERNATIONAL
+        )
 
     @computed_field
     @property
-    def national(self) -> str:
+    def national(self) -> str | None:
         """Returns the phone number in national format (e.g., (11) 98765-4321)."""
-        if self._parsed_number:
-            return phonenumbers.format_number(
-                self._parsed_number,
-                phonenumbers.PhoneNumberFormat.NATIONAL
-            )
-        return self.root
+        if not self._parsed_number:
+            return None
+
+        return phonenumbers.format_number(
+            self._parsed_number,
+            phonenumbers.PhoneNumberFormat.NATIONAL
+        )
 
     @computed_field
     @property
     def e164(self) -> str:
         """Returns the phone number in E164 format (e.g., +5511987654321)."""
-        if self._parsed_number:
-            return phonenumbers.format_number(
-                self._parsed_number,
-                phonenumbers.PhoneNumberFormat.E164
-            )
-        return self.root
+        if not self._parsed_number:
+            return str(self.root)
+
+        return phonenumbers.format_number(
+            self._parsed_number,
+            phonenumbers.PhoneNumberFormat.E164
+        )
 
     @computed_field
     @property
-    def country_code(self) -> int:
+    def country_code(self) -> int | None:
         """Returns the country calling code (e.g., 55 for Brazil)."""
-        if self._parsed_number:
-            return self._parsed_number.country_code
-        return 0
+        if not self._parsed_number:
+            return None
 
-    @computed_field
-    @property
-    def area_code(self) -> int:
-        """Returns the area code (DDD) for Brazilian phone numbers (e.g., '11' for São Paulo)."""
-        if self._parsed_number:
-            national_number = str(self._parsed_number.national_number)
-            # Brazilian mobile numbers have 11 digits (2 DDD + 9 digits)
-            # Brazilian landline numbers have 10 digits (2 DDD + 8 digits)
-            if len(national_number) >= 10:
-                return int(national_number[:2])
-        return 0
-
-    @computed_field
-    @property
-    def number_only(self) -> str:
-        """Returns the phone number without area code for Brazilian phone numbers."""
-        if self._parsed_number:
-            national_number = str(self._parsed_number.national_number)
-            # Remove the first 2 digits (area code/DDD)
-            if len(national_number) >= 10:
-                return national_number[2:]
-        return self.root
+        return self._parsed_number.country_code

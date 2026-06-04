@@ -17,7 +17,7 @@ def _normalize_name(name: str) -> str:
 
     Returns:
         str: The normalized name with leading and trailing spaces removed and converted
-        to title case.
+        to the title case.
     """
     return name.strip().title()
 
@@ -74,7 +74,7 @@ class PersonName(BaseModel):
     @property
     def familiar(self) -> str:
         """Returns first + last initial, such as "Jason F."."""
-        return f"{self.first} {self.last[0]}"
+        return f"{self.first} {self.last[0]}."
 
     @computed_field
     @property
@@ -103,6 +103,6 @@ class PersonName(BaseModel):
         return self.familiar[:-1].replace(' ', '').lower()
 
     def possessive(self, method: Literal["full", "first", "last", "abbreviated", "sorted", "initials"] = "full") -> str:
-        """Returns full name with with trailing 's or ' if name ends in s."""
+        """Returns the full name with trailing 's or ' if name ends in s."""
         name = getattr(self, method)
         return f"{name}'" if name.endswith("s") else f"{name}'s"
