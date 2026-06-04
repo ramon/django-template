@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 import pytest
-from backend.apps.accounts.domain.services import calculate_age
+from apps.accounts.domain.services import calculate_age
 
 
 @pytest.mark.parametrize(
