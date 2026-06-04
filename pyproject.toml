@@ -2,6 +2,7 @@
 name = "django-template"
 version = "0.1.0"
 description = "Base template for Django projects with Django"
+authors = [{name="Ramon", email="dev@ramon.dev.br"}]
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -13,7 +14,6 @@ dependencies = [
     "django-celery-results>=2.6.0",
     "django-cors-headers>=4.9",
     "django-cotton>=2.6",
-    "django-debug-toolbar>=6.3",
     "django-environ>=0.13",
     "django-guid>=3.6.1",
     "django-health-check>=4.4",
@@ -29,7 +29,7 @@ dependencies = [
     "pydantic-extra-types>=2.11.1",
     "pydantic-settings>=2.14.1",
     "redis[hiredis]>=6.4.0",
-    "sentry-sdk>=2.60",
+    "sentry-sdk[django]>=2.60",
     "servestatic[brotli,minify]>=4.3.0",
     "structlog>=25.5.0",
     "uvicorn-worker>=0.4.0",
@@ -39,13 +39,18 @@ dependencies = [
 [dependency-groups]
 dev = [
     "celery-types>=0.26.0",
+    "django-debug-toolbar>=6.3.0",
+    "django-extensions>=4.1",
     "django-stubs[compatible-mypy]>=6.0.4",
     "factory-boy>=3.3",
+    "faker>=40.19.1",
     "ipython>=9.13.0",
     "mypy>=1.13,<2.1",
     "pre-commit>=4.6",
     "pytest>=9.0",
+    "pytest-cov>=7.1.0",
     "pytest-django>=4.12",
+    "pytest-mock>=3.15.1",
     "ruff>=0.15",
 ]
 
@@ -113,8 +118,7 @@ testpaths = [
 ]
 
 [tool.mypy]
-python_version = "3.13"
-plugins = ["mypy_django_plugin.main"]
+python_version = "3.14"
 strict = true
 warn_unused_configs = true
 warn_redundant_casts = true
@@ -124,6 +128,15 @@ disallow_subclassing_any = true
 no_implicit_reexport = true
 check_untyped_defs = true
 pretty = true
+exclude = [
+    "apps/.*/migrations/.*",
+    "config/.*",
+    "docs/.*",
+    "scripts/.*"
+]
+plugins = [
+    "mypy_django_plugin.main"
+]
 
 [[tool.mypy.overrides]]
 module = [
@@ -139,3 +152,8 @@ disallow_untyped_defs = false
 
 [tool.django-stubs]
 django_settings_module = "config.settings.development"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "--reuse-db --nomigrations"
