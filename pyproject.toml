@@ -102,19 +102,17 @@ skip-magic-trailing-comma = false
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings.development"
+DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = [
     "tests.py",
     "test_*.py",
     "*_tests.py",
 ]
 addopts = [
+    "--reuse-db",
+    "--nomigrations",
     "--strict-markers",
     "--strict-config",
-]
-testpaths = [
-    "tests",
-    "src",
 ]
 
 [tool.mypy]
@@ -152,8 +150,3 @@ disallow_untyped_defs = false
 
 [tool.django-stubs]
 django_settings_module = "config.settings.development"
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings.test"
-python_files = ["tests.py", "test_*.py", "*_tests.py"]
-addopts = "--reuse-db --nomigrations"

@@ -65,18 +65,28 @@ LOGGING = {
             "formatter": "simple",
             "filters": ["correlation_id"],
         },
+        "access": {
+            "()": "logging.StreamHandler",
+            "formatter": "access",
+            "filters": ["correlation_id"],
+        },
+        "events": {
+            "()": "logging.StreamHandler",
+            "formatter": "structlog",
+            "filters": ["correlation_id"],
+        }
     },
     "loggers": {
         "": {
             "handlers": ["console"],
             "level": "INFO",
         },
-        "uvicorn": {"handlers": ["console" ], "level": "INFO", "propagate": False},
+        "uvicorn": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "uvicorn.error": {"level": "INFO"},
         "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
         "django_guid": {
-            "handlers": ["console_dev"],
-            "level": "WARNING",
+            "handlers": ["console"],
+            "level": "INFO",
             "propagate": False,
         },
         "django": {

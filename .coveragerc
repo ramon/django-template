@@ -6,6 +6,7 @@ omit =
     /**/tests/*
     /**/migrations/*
     /**/__pycache__/*
+    config/*
     __init__.py
     /**/urls.py
     /**/wsgi.py
@@ -14,4 +15,3 @@ omit =
 exclude_lines =
     def __repr__
     def __str__
-    @extend_schema
