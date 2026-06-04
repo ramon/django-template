@@ -1,2 +1,4 @@
 COTTON_DIR = "components"
 COTTON_SNAKE_CASED_NAMES = True
+
+__all__ = ["COTTON_DIR", "COTTON_SNAKE_CASED_NAMES"]

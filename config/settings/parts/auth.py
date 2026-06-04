@@ -1,10 +1,18 @@
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+from config.settings.parts.env import env
 from config.settings.parts.django import INSTALLED_APPS, MIDDLEWARE
+
+AUTH_USER_MODEL = "accounts.User"
+
+MIN_PASSWORD_LENGTH = env.int("MIN_PASSWORD_LENGTH", default=8)
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 10}},
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': MIN_PASSWORD_LENGTH}
+    },
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
@@ -58,6 +66,9 @@ MFA_PASSKEY_LOGIN_ENABLED = True
 MFA_SUPPORTED_TYPES = ["totp", "webauthn", "recovery_codes"]
 MFA_TRUST_ENABLED = True
 
+## User Sessions
+USERSESSIONS_TRACK_ACTIVITY = True
+
+## Social Accounts
 SOCIALACCOUNT_PROVIDERS = {}
 
-USERSESSIONS_TRACK_ACTIVITY = True

@@ -6,3 +6,5 @@ from .paths import BASE_DIR
 DATABASES = {
     "default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
 }
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

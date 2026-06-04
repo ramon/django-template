@@ -1,6 +1,8 @@
 from .parts.paths import * # noqa: F403
 from .parts.env import env # noqa: F403
 from .parts.django import * # noqa: F403
+from .parts.security import * # noqa: F403
+from .parts.cors import * # noqa: F403
 from .parts.auth import * # noqa: F403
 from .parts.i18n import * # noqa: F403
 from .parts.database import * # noqa: F403
@@ -10,10 +12,9 @@ from .parts.storage import * # noqa: F403
 from .parts.logging import * # noqa: F403
 from .parts.templates import * # noqa: F403
 from .parts.cotton import * # noqa: F403
-from .parts.static import * # noqa: F403
 from .parts.email import * # noqa: F403
 from .parts.celery import * # noqa: F403
-from .parts.security import * # noqa: F403
-from .parts.third_party import * # noqa: F403
+from .parts.sentry import * # noqa: F403
 from .parts.debug import * # noqa: F403
+from .parts.third_party import * # noqa: F403
 from .parts.project import * # noqa: F403

@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django_guid.integrations import SentryIntegration, CeleryIntegration
-from .django import INSTALLED_APPS, MIDDLEWARE
+from .django import DEBUG, INSTALLED_APPS, MIDDLEWARE
 import structlog
 
 INSTALLED_APPS += [
@@ -34,7 +34,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "log": {
+        "simple": {
             "format": "{levelname} {asctime} {correlation_id} {module} {message}",
             "style": "{",
         },
@@ -60,37 +60,18 @@ LOGGING = {
         }
     },
     "handlers": {
-        "console_dev": {
-            "()": "logging.StreamHandler",
-            "formatter": "log",
-            "filters": ["correlation_id", "require_debug_true"],
-            "level": "DEBUG",
-        },
         "console": {
             "()": "logging.StreamHandler",
-            "formatter": "log",
-            "filters": ["correlation_id", "require_debug_false"],
-            "level": "INFO",
-        },
-        "access": {
-            "()": "logging.StreamHandler",
-            "formatter": "access",
-            "stream": "ext://sys.stdout",
+            "formatter": "simple",
             "filters": ["correlation_id"],
         },
-        "events": {
-            "()": "logging.StreamHandler",
-            "formatter": "structlog",
-            "filters": ["correlation_id"],
-            "level": "INFO",
-        }
     },
     "loggers": {
         "": {
-            "handlers": ["console", "console_dev"],
-            "level": "DEBUG",
+            "handlers": ["console"],
+            "level": "INFO",
         },
-        "uvicorn": {"handlers": ["console", "console_dev"], "level": "INFO", "propagate": False},
+        "uvicorn": {"handlers": ["console" ], "level": "INFO", "propagate": False},
         "uvicorn.error": {"level": "INFO"},
         "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
         "django_guid": {
@@ -98,14 +79,19 @@ LOGGING = {
             "level": "WARNING",
             "propagate": False,
         },
-        "django.server": {
-            "handlers": ["console", "console_dev"],
-            "level": "DEBUG",
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
             "propagate": False,
         },
         "django.db.backends": {
-            "handlers": ["console_dev"],
+            "handlers": ["console"],
             "level": "INFO",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
         },
         "app.events": {
@@ -133,5 +119,4 @@ structlog.configure(
     cache_logger_on_first_use=True,
 )
 
-log = structlog.get_logger("app.events")
-log.info("Logging configured", app="app.events", test=timezone.now())
+__all__ = ["DJANGO_GUID", "LOGGING"]

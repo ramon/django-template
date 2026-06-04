@@ -5,4 +5,3 @@ INSTALLED_APPS += [
     "apps.accounts",
 ]
 
-AUTH_USER_MODEL = "accounts.User"
