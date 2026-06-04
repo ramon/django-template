@@ -1,17 +1,26 @@
 [run]
 branch = True
+omit =
+    manage.py
+    __init__.py
+    config/**/*
+    ./apps/*/migrations/*
+    ./apps/*/urls.py
+    tests.py
+    test_*.py
+    *_tests.py
 
 [report]
-omit =
-    /**/tests/*
-    /**/migrations/*
-    /**/__pycache__/*
-    config/*
-    __init__.py
-    /**/urls.py
-    /**/wsgi.py
-    /**/asgi.py
-    manage.py
-exclude_lines =
+
+exclude_also =
+    ; Don't complain about missing debug-only code:
     def __repr__
-    def __str__
+    if self\.debug
+    def __repr__
+
+    ; Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    ; Don't complain about abstract methods, they aren't run:
+    @(abc\.)?abstractmethod
