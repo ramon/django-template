@@ -1,34 +1,3 @@
-# Python-generated files
-__pycache__/
-*.py[ocd]
-profile_default/
-ipython_config.py
-
-# Virtual environments
-.venv
-
-# Python tooling
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-.coverage
-.coverage.*
-htmlcov/
-
-
-# Django
-*.log
-*.pot
-*.mo
-db.sqlite3
-db.sqlite3-journal
-
-## Updated/generated local files
-backend/public/static/
-!backend/public/static/.gitkeep
-backend/public/media/
-!backend/public/media/.gitkeep
-
 # Environment files / secrets
 .env
 .env.*
@@ -39,6 +8,54 @@ backend/public/media/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Python-generated files
+__pycache__/
+*.py[ocd]
+*$py.class
+profile_default/
+ipython_config.py
+
+# Virtual environments
+.venv
+
+# Python tooling
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Django
+*.log
+*.pot
+*.mo
+db.sqlite3
+db.sqlite3-journal
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# Updated/generated local files
+backend/public/static/
+!backend/public/static/.gitkeep
+backend/public/media/
+!backend/public/media/.gitkeep
+
+
+
+
 
 # Node / Bun / Vite
 node_modules/
