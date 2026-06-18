@@ -2,7 +2,7 @@ import datetime
 
 from PIL.SpiderImagePlugin import TYPE_CHECKING
 from apps.accounts.models.mixins import AvatarMixin
-from apps.core.models import AbstractBaseModel, AbstractSortableModel
+from apps.core.models import BaseModel
 from apps.core.models.mixins import PhoneNumberMixin
 from django.conf import settings
 from django.db import models
@@ -20,7 +20,7 @@ class ProfileManager(models.Manager):
 
 class Profile(AvatarMixin,
               PhoneNumberMixin,
-              AbstractBaseModel):
+              BaseModel):
     """
     Represents a user's profile, including personal details and associated data.
 

@@ -1,9 +1,10 @@
-from apps.core.models import AbstractBaseModel, AbstractSortableModel
+from apps.core.models import BaseModel
+from apps.core.models.mixins import SortableMixin
 from django.db import models
 from django.utils.translation import pgettext_lazy
 
 
-class Gender(AbstractSortableModel, AbstractBaseModel):
+class Gender(SortableMixin, BaseModel):
     """
     Represents a gender model used for categorizing or identifying gender types.
 
