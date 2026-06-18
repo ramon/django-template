@@ -1,8 +1,7 @@
-from apps.core.models.mixins import UUIDPrimaryKeyMixin, TimestampMixin
-from django.db import models
+from apps.core.models.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 
-class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
+class BaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
     """
     Abstract base model providing foundational functionality for database models.
 
@@ -12,13 +11,6 @@ class AbstractBaseModel(UUIDPrimaryKeyMixin, TimestampMixin):
     logging functionality. It is suitable for ensuring consistency and
     standardization across models in applications requiring these features.
     """
-    class Meta:
-        abstract = True
-
-
-class AbstractSortableModel(models.Model):
-    sort_order = models.IntegerField(default=0, db_index=True)
 
     class Meta:
         abstract = True
-        ordering = ['sort_order',]
