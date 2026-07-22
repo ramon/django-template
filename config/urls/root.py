@@ -25,6 +25,11 @@ urlpatterns = [
     path('api/', api.urls),
 ]
 
+if settings.ENABLE_PROMETHEUS:
+    urlpatterns += [
+        path("monitoring/", include("django_prometheus.urls")),
+    ]
+
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls
     from django.conf.urls.static import static

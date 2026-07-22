@@ -16,6 +16,12 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql
+  prometheus:
+    image: prom/prometheus:v2.42.1
+    ports:
+      - "9090:9090"
+
+
 
 volumes:
   kv-data:

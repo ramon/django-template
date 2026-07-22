@@ -19,6 +19,7 @@ dependencies = [
     "django-guid>=3.6.1",
     "django-health-check>=4.4",
     "django-ninja>=1.6",
+    "django-prometheus>=2.5.0",
     "django-storages>=1.14",
     "django-structlog>=10.0.0",
     "gunicorn>=26.0.0",
