@@ -65,6 +65,7 @@ desenvolvimento e `manifest.json` em produção.
 │   └── controllers/            # controllers Stimulus, auto-registrados
 ├── templates/
 │   ├── layouts/                # base.html
+│   ├── pages/                  # páginas (a home de exemplo mora aqui)
 │   └── components/             # componentes django-cotton
 ├── static/                     # STATICFILES_DIRS; recebe dist/ do build do Vite
 ├── public/                     # SERVESTATIC_ROOT: static/, media/, manifest.json, favicon.svg
@@ -73,6 +74,7 @@ desenvolvimento e `manifest.json` em produção.
 ├── locale/
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
 ├── .github/workflows/          # CI
+├── conftest.py                 # fixtures compartilhadas por toda a suite
 ├── .env.example
 ├── pyproject.toml / uv.lock
 ├── package.json / bun.lock
@@ -213,6 +215,13 @@ bun run dev                    # Vite com HMR na porta 8001
 ```
 
 O Django serve HTML e endpoints; o Vite serve os assets com HMR.
+
+`http://localhost:8000/` responde com uma página de exemplo — "Seu app está no ar" —
+que exercita o layout `django-cotton`, os assets do Vite e os três frameworks de
+cliente (HTMX, Stimulus e Alpine). Com `DEBUG=True` ela ainda lista a configuração
+que está de fato em uso (banco, cache, idioma, estado do build). Ela vive em
+`apps/core/views.py` e `templates/pages/home.html`; apague os dois quando o projeto
+tiver conteúdo próprio.
 
 ## Build de produção
 
