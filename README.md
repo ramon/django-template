@@ -74,12 +74,17 @@ desenvolvimento e `manifest.json` em produção.
 │   └── e2e/                    # testes ponta a ponta (Playwright)
 ├── locale/                     # catálogo global (templates/, config/)
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
-├── .github/workflows/          # CI
+├── .github/
+│   ├── workflows/              # CI
+│   ├── dependabot.yml
+│   └── pull_request_template.md
 ├── conftest.py                 # fixtures compartilhadas por toda a suite
 ├── .env.example
 ├── Dockerfile                  # produção, multi-stage
 ├── Dockerfile.dev              # desenvolvimento, usada pelo compose
 ├── Procfile                    # release / web / worker / beat
+├── .editorconfig
+├── LICENSE                     # MIT
 ├── pyproject.toml / uv.lock
 ├── package.json / bun.lock
 ├── vite.config.mjs

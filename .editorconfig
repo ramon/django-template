@@ -1,0 +1,34 @@
+# Alinha o editor com os formatadores do projeto: Ruff no Python, Biome no
+# JS/CSS/JSON. Onde os dois discordam, quem manda e' o formatador -- este arquivo
+# existe para o editor nao brigar com ele enquanto voce digita.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+# ruff line-length = 100, biome lineWidth = 100
+max_line_length = 100
+
+# Biome: indentWidth = 2
+[*.{js,mjs,cjs,css,json,jsonc}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.toml]
+indent_size = 4
+
+# em Markdown, dois espacos no fim da linha sao uma quebra de linha
+[*.md]
+trim_trailing_whitespace = false
+
+# gerados: nenhuma ferramenta de editor deve reescrever
+[{uv.lock,bun.lock,*.min.js,*.min.css}]
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+max_line_length = unset

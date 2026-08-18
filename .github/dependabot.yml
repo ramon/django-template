@@ -1,0 +1,44 @@
+# Agrupa minor e patch num PR por ecossistema; major vem separado, porque e' o
+# unico que costuma exigir leitura de changelog.
+version: 2
+
+updates:
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      frontend:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # imagens base do Dockerfile e do Dockerfile.dev
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+
+  # servicos do docker-compose.yml: postgres, valkey, prometheus
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: monthly
