@@ -64,6 +64,10 @@ bun.lockb
 # saida do `vite build` (outDir), dentro de STATICFILES_DIRS
 static/dist/
 
+# Playwright
+test-results/
+playwright-report/
+
 # local notes and temporary files
 *.tmp
 *.swp

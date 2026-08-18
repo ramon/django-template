@@ -101,6 +101,59 @@ jobs:
       - name: manifest gerado onde o templatetag procura
         run: test -f static/dist/.vite/manifest.json
 
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      database:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U user -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      kv-database:
+        image: valkey/valkey:9-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://user:password@localhost:5432/app
+      CACHE_URL: redis://127.0.0.1:6379/0
+      SESSION_CACHE_URL: redis://127.0.0.1:6379/1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - uses: oven-sh/setup-bun@v2
+      - run: uv sync --frozen
+      - run: bun install --frozen-lockfile
+
+      - name: build do frontend
+        # os templates resolvem os assets pelo manifest do Vite fora de DEBUG
+        run: bun run build
+
+      - name: instalar o browser
+        run: uv run playwright install --with-deps chromium
+
+      - name: pytest -m e2e
+        run: uv run pytest -m e2e
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+
   typecheck:
     runs-on: ubuntu-latest
     steps:
@@ -109,4 +162,4 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --frozen
-      - run: uv run mypy apps
+      - run: uv run mypy apps tests

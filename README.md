@@ -26,7 +26,8 @@ desenvolvimento e `manifest.json` em produção.
 - `structlog` + `django-guid` para logs estruturados com correlation id.
 - Sentry e (opcionalmente) Prometheus para observabilidade.
 - PostgreSQL via `psycopg`.
-- pytest para testes; Ruff + MyPy + `django-stubs` para lint e tipagem.
+- pytest para testes de unidade e `pytest-playwright` para ponta a ponta.
+- Ruff + MyPy + `django-stubs` para lint e tipagem.
 
 ### Frontend
 
@@ -64,6 +65,8 @@ desenvolvimento e `manifest.json` em produção.
 │   └── components/             # componentes django-cotton
 ├── static/                     # STATICFILES_DIRS; recebe dist/ do build do Vite
 ├── public/                     # SERVESTATIC_ROOT: static/, media/, manifest.json, favicon.svg
+├── tests/
+│   └── e2e/                    # testes ponta a ponta (Playwright)
 ├── locale/
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
 ├── .github/workflows/          # CI
@@ -235,8 +238,28 @@ pytest --cov=apps --cov-report=term-missing
 
 ruff check . --fix
 ruff format .
-mypy apps
+mypy apps tests
 ```
+
+### Testes ponta a ponta
+
+Os e2e vivem em `tests/e2e/` e rodam num Chromium real, via `pytest-playwright` e a
+fixture `live_server` do pytest-django. Como são lentos e exigem browser, ficam **fora da
+execução padrão** (`addopts` traz `-m "not e2e"`):
+
+```bash
+uv run playwright install chromium   # uma vez
+bun run build                        # os templates leem o manifest do Vite fora de DEBUG
+pytest -m e2e                        # só os e2e
+pytest -m e2e --headed --slowmo 500  # acompanhando no browser
+```
+
+Estar em `tests/e2e/` já basta: um hook no `conftest.py` marca todo teste do pacote com
+`e2e` e `django_db`. Se o build do frontend não existir, a suíte é pulada com uma mensagem
+dizendo o que rodar, em vez de falhar com erro de arquivo não encontrado.
+
+Prefira seletores por `name`, `id` ou papel ARIA a texto visível — a interface é traduzida
+(`LANGUAGE_CODE = pt-BR`) e textos quebram os testes a cada mudança de idioma.
 
 Instale os hooks de pre-commit uma vez com `pre-commit install`; eles rodam `ruff check --fix`
 e `ruff format` a cada commit.
@@ -257,7 +280,8 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
 | `frontend` | `bun install --frozen-lockfile`, `vite build` e a presença do manifest |
-| `typecheck` | `mypy apps` em modo strict |
+| `e2e` | `pytest -m e2e` num Chromium real, com build do frontend; anexa `test-results/` se falhar |
+| `typecheck` | `mypy apps tests` em modo strict |
 
 ## Notas finais
 

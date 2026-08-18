@@ -8,7 +8,6 @@ requires-python = ">=3.14"
 dependencies = [
     "argon2-cffi>=25.1.0",
     "celery[redis]>=5.6.3",
-    "coverage>=7.14.1",
     "django>=6.0,<6.1",
     "django-allauth[mfa,socialaccount]>=65.17",
     "django-celery-beat>=2.9.0",
@@ -54,6 +53,7 @@ dev = [
     "pytest-cov>=7.1.0",
     "pytest-django>=4.12",
     "pytest-mock>=3.15.1",
+    "pytest-playwright>=0.9.0",
     "ruff>=0.15",
 ]
 
@@ -125,6 +125,12 @@ addopts = [
     "--reuse-db",
     "--strict-markers",
     "--strict-config",
+    # e2e exigem browser e build do frontend; rode com `pytest -m e2e`
+    "-m",
+    "not e2e",
+]
+markers = [
+    "e2e: teste ponta a ponta, roda num browser real via Playwright",
 ]
 
 [tool.mypy]
@@ -156,6 +162,7 @@ disable_error_code = ["prop-decorator"]
 # os testes vivem em apps.<app>.tests, nao num pacote tests/ na raiz
 module = [
     "apps.*.tests.*",
+    "tests.*",
 ]
 disallow_untyped_defs = false
 
