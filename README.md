@@ -31,11 +31,11 @@ desenvolvimento e `manifest.json` em produção.
 ### Frontend
 
 - Tailwind CSS 4 para estilização.
+- HTMX para requests parciais e troca de fragmentos HTML vindos do servidor.
+- Stimulus para comportamento cliente estruturado e reutilizável.
+- Alpine.js para microestado local, quando um controller Stimulus seria demais.
 - Vite para bundling e dev server.
 - Bun para instalar dependências e executar o pipeline frontend.
-
-O template **não** instala HTMX, Stimulus ou Alpine.js. A arquitetura server-rendered é
-compatível com eles — adicione o que o projeto precisar via `bun add`.
 
 ## Estrutura do projeto
 
@@ -58,7 +58,7 @@ compatível com eles — adicione o que o projeto precisar via `bun add`.
 ├── frontend/
 │   ├── entries/                # entrypoints do Vite
 │   ├── styles/
-│   └── controllers/
+│   └── controllers/            # controllers Stimulus, auto-registrados
 ├── templates/
 │   ├── layouts/                # base.html
 │   └── components/             # componentes django-cotton
@@ -121,6 +121,39 @@ usa, evitando um mapeamento paralelo entre dev e produção:
 
 Para adicionar um entrypoint, registre-o em `vite.config.mjs` (`build.rollupOptions.input`)
 e referencie o caminho do arquivo no template.
+
+## Comportamento no cliente
+
+A divisão de responsabilidades é intencional:
+
+| Biblioteca | Quando usar |
+|---|---|
+| HTMX | buscar ou trocar fragmentos HTML renderizados pelo servidor |
+| Stimulus | comportamento estruturado e reutilizável, ligado a um pedaço de DOM |
+| Alpine.js | microestado local — um dropdown, um toggle — sem criar um controller |
+
+Tudo é inicializado em `frontend/entries/app.js`.
+
+**Stimulus** registra sozinho qualquer `frontend/controllers/*_controller.js`; o nome vem do
+arquivo, então `hello_controller.js` responde a `data-controller="hello"`:
+
+```html
+<div data-controller="hello">
+  <input data-hello-target="name" type="text">
+  <button data-action="hello#greet">Cumprimentar</button>
+  <span data-hello-target="output"></span>
+</div>
+```
+
+**HTMX** já envia o CSRF token em toda request unsafe: um listener de `htmx:configRequest`
+copia o valor de `<meta name="csrf-token">` para o header `X-CSRFToken`, sem o qual o Django
+rejeitaria o POST.
+
+**Alpine** é reinicializado nos fragmentos que o HTMX injeta, via
+`htmx.onLoad(content => Alpine.initTree(content))` — sem isso, HTML trocado pelo HTMX viria
+com os `x-data` inertes. O Stimulus não precisa disso: ele observa o DOM sozinho.
+
+`window.htmx` e `window.Alpine` ficam expostos para uso em atributos inline dos templates.
 
 ## Instalação
 
