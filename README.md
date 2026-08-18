@@ -73,6 +73,7 @@ desenvolvimento e `manifest.json` em produção.
 ├── locale/
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
 ├── .github/workflows/          # CI
+├── .env.example
 ├── pyproject.toml / uv.lock
 ├── package.json / bun.lock
 ├── vite.config.mjs
@@ -187,16 +188,17 @@ docker compose up -d database kv-database
 
 ## Ambiente local
 
-Crie um `.env` na raiz. Exemplo mínimo:
+`.env.example` documenta todas as variáveis lidas pelo projeto, com os valores que
+casam com o `docker-compose.yml`:
 
-```env
-DEBUG=true
-SECRET_KEY=change-me
-ALLOWED_HOSTS=localhost,127.0.0.1
-DATABASE_URL=postgres://user:password@localhost:5432/app
-CACHE_URL=redis://127.0.0.1:6379/0
-SESSION_CACHE_URL=redis://127.0.0.1:6379/1
-ENABLE_PROMETHEUS=false
+```bash
+cp .env.example .env
+```
+
+`SECRET_KEY` é a única sem default — o boot falha sem ela. Gere uma com:
+
+```bash
+uv run python -c "from django.core.management.utils import get_random_secret_key as k; print(k())"
 ```
 
 Variáveis do framework não têm prefixo. As da aplicação seguem o prefixo do modelo
