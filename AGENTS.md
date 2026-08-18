@@ -75,7 +75,9 @@ sonda ou um mixin porque "não está sendo usado ainda" é remover base, não ex
 ## Comandos
 
 Dois caminhos, e eles não se misturam na mesma sessão: o `.venv` da máquina e o `/opt/venv`
-do container não são o mesmo ambiente. Serviços, portas, imagens, processos e sondas estão
+do container não são o mesmo ambiente. O `Makefile` (`make help`) embrulha os comandos
+abaixo dos dois caminhos, mas os comandos "crus" continuam a referência — é o que o CI roda.
+Serviços, portas, imagens, processos e sondas estão
 em [`docs/standards/infra.md`](docs/standards/infra.md).
 
 ### Com a stack em containers

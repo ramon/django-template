@@ -337,6 +337,14 @@ que está de fato em uso (banco, cache, idioma, estado do build). Ela vive em
 `apps/core/views.py` e `templates/pages/home.html`; apague os dois quando o projeto
 tiver conteúdo próprio.
 
+### Atalhos: `make`
+
+O `Makefile` embrulha os comandos acima e os de [Testes e qualidade](#testes-e-qualidade)
+nos dois caminhos — `make up`/`make services` para os containers, o resto (`make lint`,
+`make test`, `make migrate` etc.) rodando `uv run`/`bun run` na máquina, e os equivalentes
+`make dtest`/`make dlint`/... executando dentro do container `app`. `make help` lista tudo.
+Não é obrigatório: os comandos "crus" nesta página continuam válidos e são o que o CI roda.
+
 ## Build de produção
 
 ```bash
