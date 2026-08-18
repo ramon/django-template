@@ -149,9 +149,11 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
 
 ## Estilo
 
-- **Idioma**: todo código de produção — identificadores, docstrings, logs e mensagens de
-  exceção — em inglês. Comentários que explicam *por que* em português, sem acento (é o
-  padrão do código existente:
+- **Idioma**: todo código — produção e teste, sem exceção — em inglês: identificadores,
+  nomes de função de teste, docstrings, logs e mensagens de exceção. Teste não é uma
+  categoria à parte aqui; a única folga que `tests.*` tem é a tipagem (ver
+  [`backend.md`](docs/standards/backend.md#tipagem-e-docstrings)), não o idioma. Comentários
+  que explicam *por que* em português, sem acento (é o padrão do código existente:
   `# a NinjaAPI exige django_auth globalmente, entao o usuario nunca e' anonimo aqui`).
   Prosa em Markdown — README e `docs/` — em português com acento.
 - **Comentário só para o "por quê".** O "o quê" está no código. Comentário que repete a

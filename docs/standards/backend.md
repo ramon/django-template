@@ -123,10 +123,12 @@ arquivo. Task recebe dado serializável — id, não instância de model.
   `gravatar.py`, ainda repetem o tipo; não são o modelo a seguir). Toda classe pública tem
   uma; função trivial não precisa.
 - Comentário explica **por que**, nunca o quê.
-- **Idioma**: todo código de produção — identificadores, docstrings, mensagens de log e
-  de exceção — em inglês. Comentários de "por quê" em português sem acento. Alguns
-  módulos de infraestrutura herdados da base (o `makemessages` customizado, a task de
-  exemplo) têm identificadores em português — é herança, não o padrão para código novo.
+- **Idioma**: todo código — produção e teste, sem exceção — em inglês: identificadores
+  (incluindo nome de função de teste), docstrings, mensagens de log e de exceção. Teste só
+  ganha folga na tipagem (`disallow_untyped_defs = false` para `tests.*`), não no idioma.
+  Comentários de "por quê" em português sem acento. Algum módulo de infraestrutura
+  herdado da base (a task de exemplo, em `apps/core/tasks.py`) ainda tem identificador em
+  português — é herança, não o padrão para código novo.
 
 ## Logs
 

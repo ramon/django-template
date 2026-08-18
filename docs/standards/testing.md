@@ -16,6 +16,9 @@ pelo caminho.
 Um teste de unidade não deve pedir `django_db`. Se pediu, ou o teste é de integração ou a
 regra está na camada errada — ver [`backend.md`](backend.md).
 
+Nome de função de teste é código: em inglês, descrevendo o comportamento, sem exceção —
+ver [`AGENTS.md#estilo`](../../AGENTS.md#estilo).
+
 ## Fixtures e factories
 
 O `conftest.py` da raiz expõe, para qualquer teste:
