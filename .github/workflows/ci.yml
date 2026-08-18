@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # settings do Django exigem SECRET_KEY sem default; valor descartavel de CI
+  SECRET_KEY: ci-secret-key-not-used-in-production
+  DEBUG: "False"
+  ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: ruff check
+        run: uv run ruff check --output-format=github .
+      - name: ruff format
+        run: uv run ruff format --check .
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      # espelham docker-compose.yml
+      database:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U user -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      kv-database:
+        image: valkey/valkey:9-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://user:password@localhost:5432/app
+      CACHE_URL: redis://127.0.0.1:6379/0
+      SESSION_CACHE_URL: redis://127.0.0.1:6379/1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+
+      - name: django check (development)
+        run: uv run python manage.py check
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.development
+          DEBUG: "True"
+
+      - name: django check (production)
+        run: uv run python manage.py check
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.production
+
+      - name: django check (production + prometheus)
+        run: uv run python manage.py check
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.production
+          ENABLE_PROMETHEUS: "True"
+
+      - name: migrations em dia
+        run: uv run python manage.py makemigrations --check --dry-run
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.development
+          DEBUG: "True"
+
+      - name: pytest
+        run: uv run pytest --cov=apps --cov-report=term-missing
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: vite build
+        run: bun run vite build
+      - name: manifest gerado onde o templatetag procura
+        run: test -f static/dist/.vite/manifest.json
+
+  typecheck:
+    runs-on: ubuntu-latest
+    # informativo: o modo strict do mypy ainda acusa erros herdados
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run mypy apps
