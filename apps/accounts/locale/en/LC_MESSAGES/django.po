@@ -23,6 +23,9 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
+msgid "name"
+msgstr ""
+
 msgctxt "model"
 msgid "gender"
 msgstr ""
@@ -31,12 +34,36 @@ msgctxt "model"
 msgid "genders"
 msgstr ""
 
+msgid "avatar"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "document"
+msgstr ""
+
+msgid "birth date"
+msgstr ""
+
+msgid "gender"
+msgstr ""
+
 msgctxt "model"
 msgid "profile"
 msgstr ""
 
 msgctxt "model"
 msgid "profiles"
+msgstr ""
+
+msgid "email"
+msgstr ""
+
+msgid "is active"
+msgstr ""
+
+msgid "is staff"
 msgstr ""
 
 msgctxt "model"

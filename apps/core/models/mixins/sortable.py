@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 
 class SortableMixin(models.Model):
@@ -11,12 +12,11 @@ class SortableMixin(models.Model):
     Additionally, it sets a default ordering based on the `sort_order` field.
 
     Attributes:
-        sort_order (IntegerField): Defines the order in which instances of this
-            model should be sorted. Defaults to 0 and is indexed for efficient
-            queries.
+        sort_order: Defines the order in which instances of this model should be
+            sorted. Defaults to 0 and is indexed for efficient queries.
     """
 
-    sort_order = models.IntegerField(default=0, db_index=True)
+    sort_order = models.IntegerField(gettext_lazy("sort order"), default=0, db_index=True)
 
     class Meta:
         abstract = True

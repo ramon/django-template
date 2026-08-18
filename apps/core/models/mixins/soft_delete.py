@@ -2,6 +2,7 @@ from typing import Any, Self
 
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy
 
 
 class SoftDeleteQuerySet(models.QuerySet["SoftDeleteModel"]):
@@ -23,6 +24,7 @@ class SoftDeleteQuerySet(models.QuerySet["SoftDeleteModel"]):
             soft deleted (i.e., 'deleted_at' is not null).
     """
 
+    # retorna int (de update()) em vez do tuple[int, dict] da base, que nao se aplica aqui
     def delete(self) -> int:  # type: ignore[override]
         return self.update(deleted_at=timezone.now())
 
@@ -70,7 +72,9 @@ class SoftDeleteModel(models.Model):
             those that are soft-deleted.
     """
 
-    deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    deleted_at = models.DateTimeField(
+        gettext_lazy("deleted at"), null=True, blank=True, db_index=True
+    )
 
     objects = SoftDeleteManager()
     all_objects = models.Manager["SoftDeleteModel"]()
@@ -78,6 +82,7 @@ class SoftDeleteModel(models.Model):
     class Meta:
         abstract = True
 
+    # retorna None em vez do tuple[int, dict] da base: soft delete nao apaga nada para contar
     def delete(self, *args: Any, **kwargs: Any) -> None:  # type: ignore[override]
         """
         Marks the instance as deleted by setting the `deleted_at` field to the current

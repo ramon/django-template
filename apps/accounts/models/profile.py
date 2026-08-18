@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext_lazy, pgettext_lazy
 
 from apps.accounts.models.mixins import AvatarMixin
 from apps.core.models import BaseModel
@@ -23,21 +23,32 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
     functionality.
 
     Attributes:
-        user (User): Defines a one-to-one relationship with the User model,
-            ensuring each Profile is associated with a unique User instance.
-        document (str): Stores an 11-character string representing the user's
+        user: Defines a one-to-one relationship with the User model, ensuring
+            each Profile is associated with a unique User instance.
+        document: Stores an 11-character string representing the user's
             document ID.
-        birthday (datetime.date): Date of birth of the user.
-        gender (Gender): Foreign key linking the user's profile with a Gender
-            instance, protected against deletion of associated Gender entries.
+        birth_date: Date of birth of the user.
+        gender: Foreign key linking the user's profile with a Gender instance,
+            protected against deletion of associated Gender entries.
     """
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name="profile", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        verbose_name=gettext_lazy("user"),
+        related_name="profile",
+        on_delete=models.CASCADE,
     )
-    document = models.CharField(max_length=11, null=True, blank=True, unique=True)
-    birth_date = models.DateField(blank=True, null=True)
-    gender = models.ForeignKey("accounts.Gender", blank=True, null=True, on_delete=models.PROTECT)
+    document = models.CharField(
+        gettext_lazy("document"), max_length=11, null=True, blank=True, unique=True
+    )
+    birth_date = models.DateField(gettext_lazy("birth date"), blank=True, null=True)
+    gender = models.ForeignKey(
+        "accounts.Gender",
+        verbose_name=gettext_lazy("gender"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
 
     objects = ProfileManager()
 

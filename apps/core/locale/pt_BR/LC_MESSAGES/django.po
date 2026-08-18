@@ -14,6 +14,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "first name"
+msgstr "nome"
+
+msgid "last name"
+msgstr "sobrenome"
+
+msgid "phone number"
+msgstr "telefone"
+
+msgid "deleted at"
+msgstr "excluído em"
+
+msgid "sort order"
+msgstr "ordem"
+
+msgid "created at"
+msgstr "criado em"
+
+msgid "updated at"
+msgstr "atualizado em"
+
 #, python-format
 msgid "File size must be less than %sMB"
 msgstr "O arquivo deve ter menos de %sMB"

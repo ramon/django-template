@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy
 
 from apps.core.domain import PersonName
 
@@ -14,12 +15,12 @@ class PersonNameMixin(models.Model):
     state.
 
     Attributes:
-        first_name (str): The first name of the person.
-        last_name (str): The last name of the person.
+        first_name: The first name of the person.
+        last_name: The last name of the person.
     """
 
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(gettext_lazy("first name"), max_length=255)
+    last_name = models.CharField(gettext_lazy("last name"), max_length=255)
 
     class Meta:
         abstract = True

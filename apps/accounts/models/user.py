@@ -3,7 +3,7 @@ from typing import Any
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext_lazy, pgettext_lazy
 
 from apps.core.models import BaseModel, PersonNameMixin, PhoneNumberMixin
 
@@ -41,15 +41,15 @@ class User(PermissionsMixin, PersonNameMixin, PhoneNumberMixin, BaseModel, Abstr
     `first_name`, `last_name`, and `phone_number`.
 
     Attributes:
-        email (str): The unique email address of the user, used as the username
-            field for authentication.
-        is_active (bool): Indicates whether the user's account is active.
-        is_staff (bool): Indicates whether the user has administrative privileges.
+        email: The unique email address of the user, used as the username field
+            for authentication.
+        is_active: Indicates whether the user's account is active.
+        is_staff: Indicates whether the user has administrative privileges.
     """
 
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    email = models.EmailField(gettext_lazy("email"), unique=True)
+    is_active = models.BooleanField(gettext_lazy("is active"), default=True)
+    is_staff = models.BooleanField(gettext_lazy("is staff"), default=False)
 
     objects = UserManager()
 

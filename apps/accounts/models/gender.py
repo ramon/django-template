@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext_lazy, pgettext_lazy
 
 from apps.core.models import BaseModel
 from apps.core.models.mixins import SortableMixin
@@ -15,10 +15,10 @@ class Gender(SortableMixin, BaseModel):
     representation has appropriate singular and plural verbose names.
 
     Attributes:
-        name (str): The name of the gender, with a character limit of 20.
+        name: The name of the gender, with a character limit of 20.
     """
 
-    name = models.CharField(max_length=20)
+    name = models.CharField(gettext_lazy("name"), max_length=20)
 
     class Meta:
         verbose_name = pgettext_lazy("model", "gender")

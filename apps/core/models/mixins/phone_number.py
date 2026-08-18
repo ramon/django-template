@@ -1,6 +1,7 @@
 from functools import cached_property
 
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 from apps.core.domain import PhoneNumber
 
@@ -14,11 +15,13 @@ class PhoneNumberMixin(models.Model):
     access to the parsed `PhoneNumber` object via a setter and getter property.
 
     Attributes:
-        phone_number (str): A string representing the phone number stored in the
-                            database. It is nullable and can be left blank.
+        phone_number: A string representing the phone number stored in the
+            database. It is nullable and can be left blank.
     """
 
-    phone_number = models.CharField(max_length=255, null=True, blank=True)
+    phone_number = models.CharField(
+        gettext_lazy("phone number"), max_length=255, null=True, blank=True
+    )
 
     class Meta:
         abstract = True

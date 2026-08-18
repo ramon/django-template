@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 
 class TimestampMixin(models.Model):
@@ -12,12 +13,16 @@ class TimestampMixin(models.Model):
     modified.
 
     Attributes:
-        created_at (datetime): The timestamp indicating when the model instance was created.
-        updated_at (datetime): The timestamp indicating the last time the model instance was updated.
+        created_at: The timestamp indicating when the model instance was created.
+        updated_at: The timestamp indicating the last time the model instance was updated.
     """
 
-    created_at = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
-    updated_at = models.DateTimeField(auto_now=True, editable=False, db_index=True)
+    created_at = models.DateTimeField(
+        gettext_lazy("created at"), auto_now_add=True, editable=False, db_index=True
+    )
+    updated_at = models.DateTimeField(
+        gettext_lazy("updated at"), auto_now=True, editable=False, db_index=True
+    )
 
     class Meta:
         abstract = True

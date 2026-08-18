@@ -23,6 +23,9 @@ msgstr "Permissões"
 msgid "Important dates"
 msgstr "Datas importantes"
 
+msgid "name"
+msgstr "nome"
+
 msgctxt "model"
 msgid "gender"
 msgstr "gênero"
@@ -31,6 +34,21 @@ msgctxt "model"
 msgid "genders"
 msgstr "gêneros"
 
+msgid "avatar"
+msgstr "avatar"
+
+msgid "user"
+msgstr "usuário"
+
+msgid "document"
+msgstr "documento"
+
+msgid "birth date"
+msgstr "data de nascimento"
+
+msgid "gender"
+msgstr "gênero"
+
 msgctxt "model"
 msgid "profile"
 msgstr "perfil"
@@ -38,6 +56,15 @@ msgstr "perfil"
 msgctxt "model"
 msgid "profiles"
 msgstr "perfis"
+
+msgid "email"
+msgstr "e-mail"
+
+msgid "is active"
+msgstr "está ativo"
+
+msgid "is staff"
+msgstr "membro da equipe"
 
 msgctxt "model"
 msgid "user"

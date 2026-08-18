@@ -1,5 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 from apps.accounts.services import gravatar_url
 from apps.core.validators import FileSizeValidator
@@ -7,6 +8,7 @@ from apps.core.validators import FileSizeValidator
 
 class AvatarMixin(models.Model):
     avatar = models.ImageField(
+        gettext_lazy("avatar"),
         upload_to="avatars/",
         blank=True,
         null=True,
