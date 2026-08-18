@@ -1,20 +1,25 @@
-from .parts.paths import * # noqa: F403
-from .parts.env import env # noqa: F403
-from .parts.django import * # noqa: F403
-from .parts.security import * # noqa: F403
-from .parts.cors import * # noqa: F403
-from .parts.auth import * # noqa: F403
-from .parts.i18n import * # noqa: F403
-from .parts.database import * # noqa: F403
-from .parts.cache import * # noqa: F403
-from .parts.session import * # noqa: F403
-from .parts.storage import * # noqa: F403
-from .parts.logging import * # noqa: F403
-from .parts.templates import * # noqa: F403
-from .parts.cotton import * # noqa: F403
-from .parts.email import * # noqa: F403
-from .parts.celery import * # noqa: F403
-from .parts.sentry import * # noqa: F403
-from .parts.debug import * # noqa: F403
-from .parts.third_party import * # noqa: F403
-from .parts.project import * # noqa: F403
+# A ordem dos imports abaixo e' semantica: cada part muta INSTALLED_APPS/MIDDLEWARE
+# em sequencia, entao o isort nao pode reordenar este arquivo.
+# ruff: noqa: I001, F403
+from .parts.paths import *
+from .parts.django import *
+from .parts.security import *
+from .parts.cors import *
+from .parts.auth import *
+from .parts.i18n import *
+from .parts.database import *
+from .parts.cache import *
+from .parts.session import *
+from .parts.storage import *
+from .parts.logging import *
+from .parts.templates import *
+from .parts.cotton import *
+from .parts.email import *
+from .parts.celery import *
+from .parts.sentry import *
+from .parts.debug import *
+from .parts.third_party import *
+from .parts.project import *
+
+# observability por ultimo: PrometheusBefore/After precisam envolver toda a stack.
+from .parts.observability import *

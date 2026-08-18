@@ -8,8 +8,8 @@ if ENABLE_PROMETHEUS:
         "django_prometheus",
     ]
 
-    MIDDLEWARE += [
-        "django_prometheus.middleware.PrometheusBeforeMiddleware",
-        MIDDLEWARE,
-        "django_prometheus.middleware.PrometheusAfterMiddleware",
-    ]
+    # django_prometheus precisa envolver toda a stack: Before no topo, After no fim.
+    MIDDLEWARE.insert(0, "django_prometheus.middleware.PrometheusBeforeMiddleware")
+    MIDDLEWARE.append("django_prometheus.middleware.PrometheusAfterMiddleware")
+
+__all__ = ["ENABLE_PROMETHEUS"]

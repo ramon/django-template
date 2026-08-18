@@ -1,7 +1,8 @@
-from apps.accounts.models import Gender, Profile, User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.translation.trans_null import gettext_lazy
+from django.utils.translation import gettext_lazy
+
+from apps.accounts.models import Gender, Profile, User
 
 
 @admin.register(Gender)

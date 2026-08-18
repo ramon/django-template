@@ -20,14 +20,12 @@ INSTALLED_APPS = [
     "servestatic",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
-
     # 3rd party apps
     "corsheaders",
     "health_check",
 ]
 
 MIDDLEWARE = [
-    'django_guid.middleware.guid_middleware',
     "django.middleware.security.SecurityMiddleware",
     "servestatic.middleware.ServeStaticMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

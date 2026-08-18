@@ -1,33 +1,27 @@
-from django.utils import timezone
-from django_guid.integrations import SentryIntegration, CeleryIntegration
-from .django import DEBUG, INSTALLED_APPS, MIDDLEWARE
 import structlog
+from django_guid.integrations import CeleryIntegration, SentryIntegration
 
-INSTALLED_APPS += [
-    "django_guid",
-    "django_structlog"
-]
+from .django import DEBUG, INSTALLED_APPS, MIDDLEWARE
 
-MIDDLEWARE += [
-    "django_guid.middleware.guid_middleware",
-    "django_structlog.middlewares.RequestMiddleware",
-]
+INSTALLED_APPS += ["django_guid", "django_structlog"]
+
+# guid_middleware precisa ser o mais alto possivel para que o correlation id exista
+# antes de qualquer log; RequestMiddleware fica no fim, depois do AuthenticationMiddleware,
+# para conseguir vincular o usuario da request.
+MIDDLEWARE.insert(0, "django_guid.middleware.guid_middleware")
+MIDDLEWARE.append("django_structlog.middlewares.RequestMiddleware")
 
 DJANGO_GUID = {
     "GUID_HEADER_NAME": "X-Correlation-Id",
-    'VALIDATE_GUID': True,
-    'RETURN_HEADER': True,
-    'EXPOSE_HEADER': True,
-    'INTEGRATIONS': [
+    "VALIDATE_GUID": True,
+    "RETURN_HEADER": True,
+    "EXPOSE_HEADER": True,
+    "INTEGRATIONS": [
         SentryIntegration(),
-        CeleryIntegration(
-            use_django_logging=True,
-            log_parent=True,
-            sentry_integration=True
-        )
+        CeleryIntegration(use_django_logging=True, log_parent=True, sentry_integration=True),
     ],
-    'IGNORE_URLS': [],
-    'UUID_LENGTH': 32,
+    "IGNORE_URLS": [],
+    "UUID_LENGTH": 32,
 }
 
 LOGGING = {
@@ -46,7 +40,7 @@ LOGGING = {
             "()": "uvicorn.logging.AccessFormatter",
             "format": '{levelname} {client_addr} {correlation_id} - "{request_line}" {status_code}',
             "style": "{",
-        }
+        },
     },
     "filters": {
         "require_debug_true": {
@@ -55,9 +49,7 @@ LOGGING = {
         "require_debug_false": {
             "()": "django.utils.log.RequireDebugFalse",
         },
-        "correlation_id": {
-            "()": "django_guid.log_filters.CorrelationId"
-        }
+        "correlation_id": {"()": "django_guid.log_filters.CorrelationId"},
     },
     "handlers": {
         "console": {
@@ -74,7 +66,7 @@ LOGGING = {
             "()": "logging.StreamHandler",
             "formatter": "structlog",
             "filters": ["correlation_id"],
-        }
+        },
     },
     "loggers": {
         "": {
@@ -108,8 +100,8 @@ LOGGING = {
             "handlers": ["events"],
             "level": "INFO",
             "propagate": False,
-        }
-    }
+        },
+    },
 }
 
 structlog.configure(
