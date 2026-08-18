@@ -37,7 +37,8 @@ desenvolvimento e `manifest.json` em produção.
 - Alpine.js para microestado local, quando um controller Stimulus seria demais.
 - Vite para bundling e dev server.
 - Bun para instalar dependências e executar o pipeline frontend.
-- Biome para lint e formatação de JS/CSS; Vitest + happy-dom para testes.
+- Biome para lint e formatação de JS/CSS; Stylelint para a convenção BEM.
+- Vitest + happy-dom para testes.
 
 ## Estrutura do projeto
 
@@ -249,13 +250,36 @@ Biome cobre lint e formatação de JS e CSS num binário só, como o Ruff faz no
 testes rodam em Vitest com `happy-dom`, ao lado do código em `*.test.js`:
 
 ```bash
-bun run lint          # biome check
-bun run lint:fix      # biome check --write
+bun run lint          # biome + stylelint
+bun run lint:js       # só biome
+bun run lint:css      # só a convenção BEM
+bun run lint:fix      # corrige o que é automatizável nos dois
 bun run format        # só formatação
 bun run test          # vitest run
 bun run test:watch    # vitest em watch
 bun run test:coverage # cobertura v8
 ```
+
+#### Convenção BEM no CSS
+
+Classes CSS seguem BEM, validado pelo Stylelint (`.stylelintrc.json`):
+
+```
+bloco[__elemento][--modificador]     tudo em kebab-case
+
+.card                 .card__title              .card--featured
+.user-profile         .user-profile__avatar     .card__title--muted
+```
+
+Rejeita `PascalCase`, `camelCase`, `_underscore` simples, elemento aninhado
+(`.card__title__deep`) e modificador duplicado. A convenção é coberta por testes em
+`frontend/styles/bem.test.js`, que rodam contra o `.stylelintrc.json` real — mudar a regra
+sem atualizar o teste quebra o CI.
+
+Formatação e nomenclatura ficam em ferramentas distintas de propósito: um formatter reescreve
+espaçamento e não tem como julgar nomes; o Biome cuida do formato, o Stylelint da convenção.
+Como o Tailwind é utility-first, a regra vale para o CSS próprio do projeto — as utilitárias
+aplicadas no HTML não passam por aqui.
 
 O pre-commit roda o Biome nos arquivos JS/CSS/JSON alterados, junto do Ruff nos Python.
 
@@ -300,7 +324,7 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 |-----|--------------|
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
-| `frontend` | Biome (lint + format), Vitest, `vite build` e a presença do manifest |
+| `frontend` | Biome, Stylelint (BEM), Vitest, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` num Chromium real, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |
 

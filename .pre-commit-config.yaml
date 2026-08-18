@@ -16,3 +16,10 @@ repos:
         language: system
         types_or: [javascript, css, json]
         pass_filenames: true
+
+      - id: stylelint
+        name: stylelint (convencao BEM)
+        entry: bunx stylelint
+        language: system
+        types: [css]
+        pass_filenames: true

@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z][a-z0-9]*(-[a-z0-9]+)*)?(--[a-z][a-z0-9]*(-[a-z0-9]+)*)?$",
+      {
+        "message": "Classe \"%s\" fora do padrao BEM: bloco[__elemento][--modificador], tudo em kebab-case (ex.: card, card__title, card--featured, card__title--muted)",
+        "resolveNestedSelectors": true
+      }
+    ],
+    "keyframes-name-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      { "message": "Nome de keyframes \"%s\" deve ser kebab-case" }
+    ]
+  },
+  "ignoreFiles": ["node_modules/**", "static/dist/**", "public/**"]
+}
