@@ -1,13 +1,44 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
     hooks:
-      - id: ruff-check
-        args: [--fix]
-      - id: ruff-format
+      # o que o .editorconfig pede, aplicado de fato
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        # em Markdown, dois espacos no fim da linha sao uma quebra de linha
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
 
   - repo: local
     hooks:
+      # local, pelo mesmo motivo do biome logo abaixo: o rev do repo oficial
+      # estava em v0.14.0 enquanto o uv.lock trazia 0.15.20, e as duas versoes
+      # podem formatar diferente. Assim ha uma versao so, a do lock.
+      #
+      # --force-exclude e' obrigatorio aqui: o pre-commit passa os arquivos um a
+      # um, e sem a flag o ruff ignora o extend-exclude do pyproject e passa a
+      # lintar migrations/.
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --force-exclude --fix
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
       - id: biome
         name: biome (js/css)
         # hook local em vez do repo oficial: o bun e o biome ja sao dependencias

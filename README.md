@@ -464,8 +464,15 @@ dizendo o que rodar, em vez de falhar com erro de arquivo não encontrado.
 Prefira seletores por `name`, `id` ou papel ARIA a texto visível — a interface é traduzida
 (`LANGUAGE_CODE = pt-BR`) e textos quebram os testes a cada mudança de idioma.
 
-Instale os hooks de pre-commit uma vez com `pre-commit install`; eles rodam `ruff check --fix`
-e `ruff format` a cada commit.
+Instale os hooks de pre-commit uma vez com `pre-commit install`. Eles rodam, a cada commit:
+Ruff (`check --fix` e `format`), Biome, o Stylelint da convenção BEM e as verificações de
+higiene — newline final, espaço em branco à direita, fim de linha LF e sintaxe de YAML,
+TOML e JSON.
+
+Ruff e Biome são hooks `local`, apontando para o binário do projeto: a versão vem do
+`uv.lock` e do `bun.lock`, não de um `rev` que envelhece em paralelo. Os hooks do Ruff
+usam `--force-exclude` porque o pre-commit passa os arquivos um a um, e sem a flag o Ruff
+ignora o `extend-exclude` do `pyproject.toml` e passa a lintar `migrations/`.
 
 O MyPy roda em modo `strict` e o código está limpo — o CI falha se um erro de tipagem for
 introduzido. Alguns pontos são silenciados por configuração no `pyproject.toml`, cada um com
