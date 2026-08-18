@@ -1,5 +1,8 @@
 """Test Django settings."""
 
+import tempfile
+from pathlib import Path
+
 from .base import *  # noqa: F403
 
 DEBUG = False
@@ -27,6 +30,10 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     },
 }
+
+# o health check de storage grava e apaga um arquivo a cada sonda; sem isto os
+# testes sujariam public/media/ no repositorio.
+MEDIA_ROOT = Path(tempfile.mkdtemp(prefix="django-template-media-"))
 
 # o storage de producao exige collectstatic para resolver {% static %}; nos testes
 # (inclusive nos e2e, que sobem um live_server) serve o arquivo direto.

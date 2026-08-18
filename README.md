@@ -293,6 +293,20 @@ docker build --build-arg COMPILE_BYTECODE=0 -t app:prod .
 O `Procfile` também vai dentro da imagem, então plataformas que o leem em deploys por
 Dockerfile (Dokku, por exemplo) reconhecem os quatro tipos de processo.
 
+## Sondas de saúde
+
+| Rota | O que verifica | Para quem |
+| --- | --- | --- |
+| `/health/` | banco, os dois aliases de cache e o storage | balanceador / readiness |
+| `/health/workers/` | worker do Celery respondendo ao ping | monitoração |
+
+Estão separadas de propósito: o worker não é dependência do processo web. Derrubar a
+aplicação do balanceador porque uma fila caiu troca uma falha parcial por uma total.
+DNS e e-mail ficam fora das duas — fazem chamada externa e tornariam a sonda instável.
+
+O check de storage grava, lê e apaga um arquivo a cada requisição. É o único jeito de
+saber que o bucket responde, e com storage remoto significa uma ida à rede por sonda.
+
 ## Observabilidade
 
 - **Health check**: `GET /health/` verifica cache e banco. Aceita `?format=json`, `text`,
