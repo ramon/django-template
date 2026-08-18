@@ -56,7 +56,7 @@ desenvolvimento e `manifest.json` em produção.
 │   ├── app_settings/           # pydantic-settings: app, features, integrações
 │   └── urls/                   # root, admin, web, api
 ├── apps/
-│   ├── core/                   # utilidades transversais, templatetags, value objects
+│   ├── core/                   # utilidades transversais, templatetags, tasks, value objects
 │   └── accounts/               # usuários, perfis, API de perfil, factories
 ├── frontend/
 │   ├── entries/                # entrypoints do Vite
