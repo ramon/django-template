@@ -9,6 +9,12 @@ DEBUG = False
 # que faca HTTP de verdade (o test client e os e2e).
 SECURE_SSL_REDIRECT = False
 
+# parts/debug.py instala o toolbar olhando a variavel de ambiente DEBUG, entao a
+# suite herdaria o .env de cada maquina: com DEBUG=True local e False no CI, os
+# mesmos testes rodam com middlewares diferentes. Em teste o toolbar nunca entra.
+INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]  # noqa: F405
+MIDDLEWARE = [m for m in MIDDLEWARE if not m.startswith("debug_toolbar")]  # noqa: F405
+
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
