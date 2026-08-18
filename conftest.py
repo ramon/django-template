@@ -1,9 +1,13 @@
 """Fixtures compartilhadas por toda a suite."""
 
 from collections.abc import Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
+from django.test import Client
+
+if TYPE_CHECKING:
+    from apps.accounts.models import User
 
 # manifest minimo, com a mesma forma que o Vite gera: chave = input relativo a' raiz.
 STUB_MANIFEST: dict[str, Any] = {
@@ -36,3 +40,29 @@ def vite_manifest_stub() -> Iterator[None]:
         yield
     finally:
         vite._load_manifest = original
+
+
+# As factories importam models, que exigem o Django ja configurado. Este conftest
+# e' carregado antes disso, entao o import mora dentro de cada fixture.
+
+
+@pytest.fixture
+def user(db: None) -> User:  # noqa: ARG001 -- `db` da acesso ao banco por efeito colateral
+    """Usuario comum, ja com Profile (o create_user cuida disso)."""
+    from apps.accounts.tests.factories import UserFactory
+
+    return UserFactory.create()
+
+
+@pytest.fixture
+def superuser(db: None) -> User:  # noqa: ARG001
+    from apps.accounts.tests.factories import SuperUserFactory
+
+    return SuperUserFactory.create()
+
+
+@pytest.fixture
+def auth_client(client: Client, user: User) -> Client:
+    """Test client autenticado como `user`."""
+    client.force_login(user)
+    return client

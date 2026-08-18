@@ -37,6 +37,11 @@ dependencies = [
     "uvicorn[standard]>=0.48.0",
 ]
 
+[project.optional-dependencies]
+# boto3 + botocore custam 31 MB; so entram em quem usa storage remoto de fato.
+#   uv sync --extra s3
+s3 = ["django-storages[s3]>=1.14"]
+
 [dependency-groups]
 dev = [
     "celery-types>=0.26.0",
@@ -101,6 +106,8 @@ ignore = [
 # assinaturas impostas por override (Model.delete, ninja BaseRenderer.render)
 "apps/core/models/mixins/soft_delete.py" = ["ARG002"]
 "config/urls/api.py" = ["ARG002"]
+# factory_boy chama _create(model_class, *args, **kwargs); o *args faz parte do contrato
+"apps/*/tests/factories.py" = ["ARG003"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
@@ -163,6 +170,7 @@ disable_error_code = ["prop-decorator"]
 module = [
     "apps.*.tests.*",
     "tests.*",
+    "conftest",
 ]
 disallow_untyped_defs = false
 
@@ -173,6 +181,22 @@ module = [
     "apps.*.admin",
 ]
 disallow_any_generics = false
+
+[[tool.mypy.overrides]]
+# as declaracoes do factory_boy (Faker, Sequence, SubFactory, Iterator) tem
+# __init__ sem anotacao; so as factories chamam essas classes
+module = [
+    "apps.*.tests.factories",
+]
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+# o factory_boy tem py.typed, mas o __init__ reexporta sem __all__
+module = [
+    "factory",
+    "factory.*",
+]
+no_implicit_reexport = false
 
 [[tool.mypy.overrides]]
 # dependencias sem stubs nem marcador py.typed

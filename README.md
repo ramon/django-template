@@ -57,7 +57,7 @@ desenvolvimento e `manifest.json` em produção.
 │   └── urls/                   # root, admin, web, api
 ├── apps/
 │   ├── core/                   # utilidades transversais, templatetags, value objects
-│   └── accounts/               # usuários, perfis, API de perfil
+│   └── accounts/               # usuários, perfis, API de perfil, factories
 ├── frontend/
 │   ├── entries/                # entrypoints do Vite
 │   ├── styles/
@@ -305,6 +305,11 @@ Dockerfile (Dokku, por exemplo) reconhecem os quatro tipos de processo.
   `tools/prometheus.yml` para raspar a aplicação rodando no host.
 
 ## Testes e qualidade
+
+As factories ficam em `apps/<app>/tests/factories.py` e o `conftest.py` da raiz expõe
+`user`, `superuser` e `auth_client` para qualquer teste. `UserFactory` passa pelo
+`create_user` do manager, não pelo `objects.create` padrão do factory_boy — só ele
+faz o hash da senha e cria o `Profile` associado.
 
 ```bash
 pytest                                  # usa config.settings.test
