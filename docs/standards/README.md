@@ -11,6 +11,7 @@ resolvida — não ignorada.
 | [`testing.md`](testing.md) | layout da suíte, fixtures, factories, e2e, o que testar |
 | [`i18n.md`](i18n.md) | catálogo por app, `makemessages`, precedência |
 | [`infra.md`](infra.md) | compose e os dois caminhos de dev, imagens, `Procfile`, variáveis, sondas |
+| [`auth.md`](auth.md) | allauth, MFA, sessões, contas sociais, CORS da API |
 | [`git.md`](git.md) | commits, PR, pre-commit, o que o CI verifica |
 | [`quality-gates.md`](quality-gates.md) | qual gate se aplica a qual mudança, ordem de execução, por que cada um existe |
 

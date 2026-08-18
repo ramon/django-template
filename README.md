@@ -19,7 +19,8 @@ desenvolvimento e `manifest.json` em produção.
 
 - Django 6.x.
 - Django Ninja para APIs HTTP tipadas, com renderer `orjson`.
-- `django-allauth` (com `mfa` e `socialaccount`) para autenticação.
+- `django-allauth` (com `mfa` e `socialaccount`) para autenticação — ver
+  [`docs/standards/auth.md`](docs/standards/auth.md).
 - `django-environ` para settings do framework: `DEBUG`, `SECRET_KEY`, `DATABASE_URL`, cache.
 - `pydantic-settings` para configuração da aplicação e de integrações.
 - Celery + Redis/Valkey para tarefas assíncronas.
