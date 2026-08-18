@@ -31,7 +31,10 @@ if settings.ENABLE_PROMETHEUS:
         path("monitoring/", include("django_prometheus.urls")),
     ]
 
-if settings.DEBUG:
+# Pergunta se o app foi instalado, em vez de reavaliar DEBUG: parts/debug.py decide
+# pela variavel de ambiente, e os modulos de ambiente sobrescrevem DEBUG depois --
+# quando os dois divergem, importar debug_toolbar aqui estoura.
+if "debug_toolbar" in settings.INSTALLED_APPS:
     from debug_toolbar.toolbar import debug_toolbar_urls
     from django.conf.urls.static import static
 

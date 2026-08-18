@@ -3,6 +3,12 @@
 from .base import *  # noqa: F403
 
 DEBUG = False
+
+# parts/security.py liga o redirect de HTTPS fora de DEBUG, olhando a variavel de
+# ambiente. Em teste isso transforma toda request em 301 e quebra qualquer teste
+# que faca HTTP de verdade (o test client e os e2e).
+SECURE_SSL_REDIRECT = False
+
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
