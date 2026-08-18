@@ -35,6 +35,10 @@ FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS deps
 # para trocar tamanho por latencia inicial.
 ARG COMPILE_BYTECODE=1
 
+# Extra opcional do projeto, para nao pagar 31 MB de boto3 sem usar S3:
+#   docker build --build-arg UV_EXTRA=s3 .
+ARG UV_EXTRA=
+
 ENV UV_COMPILE_BYTECODE=${COMPILE_BYTECODE} \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never
@@ -45,7 +49,7 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
-    uv sync --frozen --no-dev
+    uv sync --frozen --no-dev ${UV_EXTRA:+--extra "$UV_EXTRA"}
 
 # ==============================================================================
 # 3. assets -- collectstatic com os assets do Vite ja construidos

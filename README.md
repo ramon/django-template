@@ -114,6 +114,20 @@ dsn = get_integration_settings().SENTRY_DSN         # INTEGRATION_SENTRY_DSN
 Módulos de settings disponíveis: `config.settings.development` (padrão do `manage.py`),
 `config.settings.test` (usado pelo pytest) e `config.settings.production`.
 
+### Storage de uploads
+
+Por padrão os uploads vão para disco (`public/media/`). Dentro de um container isso
+é efêmero — todo deploy perde os arquivos — então qualquer ambiente com upload de
+usuário precisa de storage remoto:
+
+```bash
+uv sync --extra s3      # boto3 + botocore, 31 MB, fora da instalação padrão
+```
+
+e no `.env`, `USE_S3=True` mais `AWS_STORAGE_BUCKET_NAME`. `AWS_S3_ENDPOINT_URL`
+atende S3 compatível (MinIO, R2, Spaces). As credenciais seguem a cadeia padrão do
+boto3, então em cluster o certo é não definir nenhuma e usar IAM role.
+
 ## Frontend: Vite + Bun
 
 O build sai em `static/dist/`, que está dentro de `STATICFILES_DIRS` — assim o
@@ -288,6 +302,12 @@ request de cada worker. Para trocar tamanho por latência inicial:
 
 ```bash
 docker build --build-arg COMPILE_BYTECODE=0 -t app:prod .
+```
+
+O extra `s3` também é opcional na imagem, pelo mesmo motivo:
+
+```bash
+docker build --build-arg UV_EXTRA=s3 -t app:prod .
 ```
 
 O `Procfile` também vai dentro da imagem, então plataformas que o leem em deploys por
