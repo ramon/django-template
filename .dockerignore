@@ -35,6 +35,8 @@ db.sqlite3-journal
 
 # Nao vao a producao
 tests
+apps/*/tests
+conftest.py
 test-results
 playwright-report
 docker-compose.yml

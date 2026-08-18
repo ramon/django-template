@@ -1,0 +1,48 @@
+# Catalogo de traducoes do projeto.
+# Gerado por `manage.py makemessages` (sem location, sem obsoletas).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-template\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Personal info"
+msgstr "Dados pessoais"
+
+msgid "Permissions"
+msgstr "Permissões"
+
+msgid "Important dates"
+msgstr "Datas importantes"
+
+msgctxt "model"
+msgid "gender"
+msgstr "gênero"
+
+msgctxt "model"
+msgid "genders"
+msgstr "gêneros"
+
+msgctxt "model"
+msgid "profile"
+msgstr "perfil"
+
+msgctxt "model"
+msgid "profiles"
+msgstr "perfis"
+
+msgctxt "model"
+msgid "user"
+msgstr "usuário"
+
+msgctxt "model"
+msgid "users"
+msgstr "usuários"

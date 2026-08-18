@@ -64,6 +64,15 @@ COPY --from=frontend /build/static/dist ./static/dist
 RUN SECRET_KEY=build-only DJANGO_SETTINGS_MODULE=config.settings.production \
     .venv/bin/python manage.py collectstatic --noinput --clear
 
+# Os .po sao versionados, os .mo nao (.gitignore): a compilacao e' passo de build.
+# --ignore=.venv porque o comando varre a partir do diretorio atual, e recompilar
+# os ~700 catalogos do Django e das bibliotecas seria puro desperdicio.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gettext \
+    && rm -rf /var/lib/apt/lists/* \
+    && SECRET_KEY=build-only DJANGO_SETTINGS_MODULE=config.settings.production \
+       .venv/bin/python manage.py compilemessages --ignore=.venv
+
 # ==============================================================================
 # 4. runtime -- so o que a aplicacao precisa para responder
 # ==============================================================================
@@ -79,15 +88,17 @@ RUN groupadd --system --gid 1000 app \
 
 WORKDIR /app
 
-COPY --from=deps  --chown=app:app /app/.venv       ./.venv
-COPY --from=assets --chown=app:app /app/public     ./public
+COPY --from=deps   --chown=app:app /app/.venv   ./.venv
+COPY --from=assets --chown=app:app /app/public ./public
 
-# Copia dirigida em vez de `COPY . .`: mantem tests, configs de lint e toolchain
-# de fora da imagem final.
-COPY --chown=app:app manage.py Procfile ./
-COPY --chown=app:app config/    ./config/
-COPY --chown=app:app apps/      ./apps/
-COPY --chown=app:app templates/ ./templates/
+# Copia dirigida em vez de `COPY . .`: mantem configs de lint e toolchain de fora
+# da imagem final. Vem do estagio assets, e nao do contexto, para trazer junto os
+# catalogos ja compilados (os .mo ficam ao lado dos .po, dentro de cada app).
+COPY --from=assets --chown=app:app /app/manage.py /app/Procfile ./
+COPY --from=assets --chown=app:app /app/config    ./config/
+COPY --from=assets --chown=app:app /app/apps      ./apps/
+COPY --from=assets --chown=app:app /app/templates ./templates/
+COPY --from=assets --chown=app:app /app/locale    ./locale/
 
 # O unico pedaco do build do Vite que e' lido em runtime: {% vite_js %} resolve a
 # entrada por aqui. Os bundles em si ja foram publicados em public/static/ pelo

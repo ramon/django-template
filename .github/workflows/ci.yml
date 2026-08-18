@@ -87,6 +87,25 @@ jobs:
           DJANGO_SETTINGS_MODULE: config.settings.development
           DEBUG: "True"
 
+      - name: gettext
+        run: command -v msgfmt >/dev/null || (sudo apt-get update && sudo apt-get install -y gettext)
+
+      - name: catalogos em dia
+        # makemessages e' idempotente aqui (sem location, sem obsoletas e sem
+        # POT-Creation-Date), entao qualquer diff significa catalogo desatualizado
+        run: |
+          uv run python manage.py makemessages
+          git diff --exit-code -- '*.po' || {
+            echo "::error::rode 'manage.py makemessages' e comite os catalogos"
+            exit 1
+          }
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.development
+          DEBUG: "True"
+
+      - name: compilar catalogos
+        run: uv run python manage.py compilemessages --ignore=.venv
+
       - name: pytest
         run: uv run pytest --cov=apps --cov-report=term-missing
 

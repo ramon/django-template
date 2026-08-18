@@ -58,6 +58,7 @@ desenvolvimento e `manifest.json` em produção.
 ├── apps/
 │   ├── core/                   # utilidades transversais, templatetags, tasks, value objects
 │   └── accounts/               # usuários, perfis, API de perfil, factories
+│       └── locale/             # catálogo do app (cada app tem o seu)
 ├── frontend/
 │   ├── entries/                # entrypoints do Vite
 │   ├── styles/
@@ -71,7 +72,7 @@ desenvolvimento e `manifest.json` em produção.
 ├── public/                     # SERVESTATIC_ROOT: static/, media/, manifest.json, favicon.svg
 ├── tests/
 │   └── e2e/                    # testes ponta a ponta (Playwright)
-├── locale/
+├── locale/                     # catálogo global (templates/, config/)
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
 ├── .github/workflows/          # CI
 ├── conftest.py                 # fixtures compartilhadas por toda a suite
@@ -127,6 +128,48 @@ uv sync --extra s3      # boto3 + botocore, 31 MB, fora da instalação padrão
 e no `.env`, `USE_S3=True` mais `AWS_STORAGE_BUCKET_NAME`. `AWS_S3_ENDPOINT_URL`
 atende S3 compatível (MinIO, R2, Spaces). As credenciais seguem a cadeia padrão do
 boto3, então em cluster o certo é não definir nenhuma e usar IAM role.
+
+## Traduções
+
+Cada app tem o seu catálogo em `apps/<app>/locale/`. O `locale/` da raiz — o único em
+`LOCALE_PATHS` — guarda apenas o que não pertence a app nenhum: `templates/` e `config/`.
+
+Um comando só cuida dos dois:
+
+```bash
+python manage.py makemessages          # todos os idiomas de settings.LANGUAGES
+python manage.py compilemessages --ignore=.venv
+```
+
+Não é preciso entrar em cada app: o Django decide o destino durante a varredura — ao
+encontrar um diretório `locale/`, passa a mandar para lá tudo que estiver abaixo do
+diretório pai. Como cada app tem o seu, as strings do app ficam no app.
+
+O `makemessages` deste projeto (`apps/core/management/commands/`) muda três padrões:
+
+- **`--no-location`**: sem o par `arquivo:linha`, que muda a cada refatoração e enche o
+  diff de ruído. Para investigar uma string, `--add-location=file` volta atrás.
+- **`--no-obsolete`**: mensagens que saíram do código somem, em vez de acumularem
+  comentadas com `#~`.
+- **sem `POT-Creation-Date`**: o `msgmerge` a reescreve a cada execução, o que faria todo
+  `makemessages` sujar os seis catálogos sem mudar tradução nenhuma.
+
+Os três juntos deixam o comando idempotente, e é isso que permite o CI falhar quando
+alguém adiciona uma string traduzível sem atualizar o catálogo.
+
+Sem `-l/-x/-a`, os idiomas vêm de `settings.LANGUAGES`. `node_modules`, `static/dist` e
+`tests` ficam fora da varredura — um teste que afirme algo sobre uma string traduzida
+injetaria essa string no catálogo. Para excluir outros caminhos, use `--ignore=<path>`.
+
+### Precedência
+
+Vale a ordem do Django, verificada neste projeto: `LOCALE_PATHS` (o `locale/` da raiz)
+ganha de tudo; entre apps, quem vem **antes** em `INSTALLED_APPS` ganha. Na prática,
+`django.contrib.auth` sobrepõe uma tradução de mesmo `msgid` em `apps/accounts` — se
+precisar cravar um texto, o lugar é o catálogo da raiz.
+
+Os `.po` são versionados; os `.mo`, não (`.gitignore`). A compilação é passo de build —
+o `Dockerfile` a executa no estágio `assets`, e o job `test` do CI antes do pytest.
 
 ## Frontend: Vite + Bun
 
