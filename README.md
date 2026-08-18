@@ -166,7 +166,7 @@ Um comando só cuida dos dois:
 
 ```bash
 python manage.py makemessages          # todos os idiomas de settings.LANGUAGES
-python manage.py compilemessages --ignore=.venv
+python manage.py compilemessages
 ```
 
 Não é preciso entrar em cada app: o Django decide o destino durante a varredura — ao
@@ -188,6 +188,10 @@ alguém adiciona uma string traduzível sem atualizar o catálogo.
 Sem `-l/-x/-a`, os idiomas vêm de `settings.LANGUAGES`. `node_modules`, `static/dist` e
 `tests` ficam fora da varredura — um teste que afirme algo sobre uma string traduzida
 injetaria essa string no catálogo. Para excluir outros caminhos, use `--ignore=<path>`.
+
+O `compilemessages` nativo do Django não ignora nada por padrão: sem override, ele
+recompilaria os `.mo` de todo pacote em `.venv`. O override deste projeto já aplica
+`--ignore=.venv --ignore=node_modules`.
 
 ### Precedência
 

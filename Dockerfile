@@ -65,13 +65,14 @@ RUN SECRET_KEY=build-only DJANGO_SETTINGS_MODULE=config.settings.production \
     .venv/bin/python manage.py collectstatic --noinput --clear
 
 # Os .po sao versionados, os .mo nao (.gitignore): a compilacao e' passo de build.
-# --ignore=.venv porque o comando varre a partir do diretorio atual, e recompilar
-# os ~700 catalogos do Django e das bibliotecas seria puro desperdicio.
+# O comando e' o customizado em apps/core/management/commands/compilemessages.py,
+# que ja ignora .venv e node_modules -- o nativo varre a arvore inteira a partir
+# do diretorio atual e nao tem ignore nenhum por padrao.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gettext \
     && rm -rf /var/lib/apt/lists/* \
     && SECRET_KEY=build-only DJANGO_SETTINGS_MODULE=config.settings.production \
-       .venv/bin/python manage.py compilemessages --ignore=.venv
+       .venv/bin/python manage.py compilemessages
 
 # ==============================================================================
 # 4. runtime -- so o que a aplicacao precisa para responder

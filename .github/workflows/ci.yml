@@ -104,7 +104,7 @@ jobs:
           DEBUG: "True"
 
       - name: compilar catalogos
-        run: uv run python manage.py compilemessages --ignore=.venv
+        run: uv run python manage.py compilemessages
 
       - name: pytest
         run: uv run pytest --cov=apps --cov-report=term-missing
