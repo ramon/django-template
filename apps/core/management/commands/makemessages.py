@@ -1,4 +1,4 @@
-"""makemessages com os padroes do projeto."""
+"""makemessages with the project's defaults."""
 
 from collections.abc import Iterator
 from pathlib import Path
@@ -10,35 +10,36 @@ from django.core.management.base import CommandParser
 from django.core.management.commands.makemessages import Command as MakeMessagesCommand
 from django.utils.translation import to_locale
 
-# O padrao do Django ignora "CVS", ".*", "*~" e "*.pyc" -- o que ja cobre .venv,
-# mas nao a toolchain de JS nem a saida do Vite.
+# Django's default ignores "CVS", ".*", "*~" and "*.pyc" -- which already covers
+# .venv, but not the JS toolchain nor Vite's output.
 EXTRA_IGNORE_PATTERNS = [
     "node_modules",
     "static/dist",
-    # um teste que afirme algo sobre uma string traduzida injetaria essa string
-    # no catalogo; o padrao casa com tests/ na raiz e com apps/<app>/tests/
+    # a test asserting on a translated string would inject that string into the
+    # catalog; the pattern matches tests/ at the root and apps/<app>/tests/
     "tests",
 ]
 
 
 class Command(MakeMessagesCommand):
     """
-    Gera os .po sem referencias de linha e sem entradas obsoletas.
+    Generates .po files without line references and without obsolete entries.
 
-    - `--no-location`: sem o par arquivo:linha, que muda a cada refatoracao e
-      enche o diff de ruido sem conteudo traduzivel. Para depurar uma string,
-      `--add-location=file` volta atras pontualmente.
-    - `--no-obsolete`: mensagens que sairam do codigo desaparecem, em vez de
-      acumularem comentadas com `#~` ate ninguem saber mais o que e' vivo.
-    - sem `-l/-x/-a`, usa os idiomas de `settings.LANGUAGES`;
-    - remove `POT-Creation-Date`, que o msgmerge reescreve a cada execucao e
-      faria todo `makemessages` sujar os seis catalogos sem mudar traducao
-      nenhuma -- e impediria checar no CI se os catalogos estao em dia.
+    - `--no-location`: no file:line pair, which changes on every refactor and
+      fills the diff with noise that carries no translatable content. To debug
+      a string, `--add-location=file` opts back in for a moment.
+    - `--no-obsolete`: messages removed from the code disappear instead of
+      piling up commented out with `#~` until no one knows what's still alive.
+    - no `-l/-x/-a`, uses the languages from `settings.LANGUAGES`;
+    - strips `POT-Creation-Date`, which msgmerge rewrites on every run and would
+      make every `makemessages` dirty the six catalogs without changing a single
+      translation -- and would make it impossible for CI to check whether the
+      catalogs are up to date.
 
-    Onde cada catalogo cai e' decisao do proprio Django: ao encontrar um diretorio
-    `locale/` na varredura, ele passa a mandar para la tudo que estiver abaixo do
-    diretorio pai. Como cada app tem o seu, as strings do app ficam no app, e o
-    `locale/` da raiz recebe apenas o que sobra -- templates/ e config/.
+    Where each catalog lands is Django's own decision: once it finds a `locale/`
+    directory during the scan, it routes everything below that directory's
+    parent there. Since every app has its own, app strings stay in the app, and
+    the root `locale/` only receives what's left over -- templates/ and config/.
     """
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -56,37 +57,37 @@ class Command(MakeMessagesCommand):
 
         result: str | None = super().handle(*args, **options)
 
-        for catalogo in self.catalogos_do_projeto():
-            self.remove_data_de_criacao(catalogo)
+        for catalog in self.project_catalogs():
+            self.strip_creation_date(catalog)
 
         return result
 
     @staticmethod
-    def catalogos_do_projeto() -> Iterator[Path]:
+    def project_catalogs() -> Iterator[Path]:
         """
-        Os .po deste repositorio: LOCALE_PATHS e o locale/ de cada app local.
+        The .po files of this repository: LOCALE_PATHS and every local app's locale/.
 
-        O corte e' por APPS_DIR, nao por BASE_DIR: get_app_configs() devolve
-        tambem os apps de terceiros, e o .venv fica *dentro* do BASE_DIR -- filtrar
-        por ele deixaria passar 700 catalogos em site-packages, que nao sao nossos
-        para reescrever.
+        The cutoff is by APPS_DIR, not BASE_DIR: get_app_configs() also returns
+        third-party apps, and .venv sits *inside* BASE_DIR -- filtering by that
+        would let through 700 catalogs in site-packages, which are not ours to
+        rewrite.
         """
         apps_dir = Path(settings.BASE_DIR) / "apps"
 
-        raizes = [Path(p) for p in settings.LOCALE_PATHS]
-        raizes += [
+        roots = [Path(p) for p in settings.LOCALE_PATHS]
+        roots += [
             Path(app.path) / "locale"
             for app in apps.get_app_configs()
             if Path(app.path).is_relative_to(apps_dir)
         ]
 
-        for raiz in raizes:
-            yield from raiz.glob("*/LC_MESSAGES/*.po")
+        for root in roots:
+            yield from root.glob("*/LC_MESSAGES/*.po")
 
     @staticmethod
-    def remove_data_de_criacao(catalogo: Path) -> None:
-        linhas = catalogo.read_text(encoding="utf-8").splitlines(keepends=True)
-        sem_data = [linha for linha in linhas if not linha.startswith('"POT-Creation-Date:')]
+    def strip_creation_date(catalog: Path) -> None:
+        lines = catalog.read_text(encoding="utf-8").splitlines(keepends=True)
+        without_date = [line for line in lines if not line.startswith('"POT-Creation-Date:')]
 
-        if len(sem_data) != len(linhas):
-            catalogo.write_text("".join(sem_data), encoding="utf-8")
+        if len(without_date) != len(lines):
+            catalog.write_text("".join(without_date), encoding="utf-8")
