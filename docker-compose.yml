@@ -17,9 +17,16 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
   prometheus:
-    image: prom/prometheus:v2.42.1
+    # linha LTS do Prometheus 3.x
+    image: prom/prometheus:v3.5.5
     ports:
       - "9090:9090"
+    volumes:
+      - ./tools/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    extra_hosts:
+      # permite raspar a app Django rodando no host, fora do compose
+      - "host.docker.internal:host-gateway"
 
 
 
@@ -27,4 +34,6 @@ volumes:
   kv-data:
     driver: local
   db-data:
+    driver: local
+  prometheus-data:
     driver: local

@@ -1,0 +1,17 @@
+# Configuracao minima de desenvolvimento.
+# A app Django roda no host (nao ha servico `app` no compose), entao o scrape
+# aponta para host.docker.internal, resolvido via `extra_hosts` no docker-compose.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: django
+    # exposto por django_prometheus quando ENABLE_PROMETHEUS=true
+    metrics_path: /monitoring/metrics
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
