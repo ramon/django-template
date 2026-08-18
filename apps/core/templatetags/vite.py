@@ -6,7 +6,7 @@ from typing import Any
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
-from django.utils.safestring import mark_safe, SafeString
+from django.utils.safestring import SafeString, mark_safe
 
 register = template.Library()
 
@@ -50,8 +50,23 @@ def _load_manifest() -> dict[str, Any]:
 
 
 def _get_chunk(entry: str) -> dict[str, Any]:
+    """
+    Resolve a entrada no manifest do Vite.
+
+    `entry` e' a chave do manifest, que o Vite gera a partir do path do input
+    relativo a' raiz do projeto (ex.: "frontend/entries/app.js"). A mesma string
+    serve para o dev server, evitando um mapeamento paralelo entre dev e producao.
+    """
     manifest = _load_manifest()
-    return manifest[entry]
+
+    try:
+        return manifest[entry]
+    except KeyError:
+        available = ", ".join(sorted(manifest)) or "<manifest vazio>"
+        raise KeyError(
+            f"Entry '{entry}' nao existe no manifest do Vite. Disponiveis: {available}. "
+            f"Rode `bun run vite build`."
+        ) from None
 
 
 def _render_dev_css() -> str:
@@ -107,8 +122,7 @@ def _render_prod_css(entry: str) -> str:
     css_files: list[str] = chunk.get("css", [])
 
     return "".join(
-        f'<link rel="stylesheet" href="{static(f"dist/{css_file}")}" />'
-        for css_file in css_files
+        f'<link rel="stylesheet" href="{static(f"dist/{css_file}")}" />' for css_file in css_files
     )
 
 
@@ -127,7 +141,8 @@ def _render_prod_js(entry: str) -> str:
         A string containing the HTML script tag for the specified JavaScript entry.
     """
     chunk = _get_chunk(entry)
-    return f'<script type="module" src="{static(f"dist/{chunk["file"]}")}" />'
+    src = static(f"dist/{chunk['file']}")
+    return f'<script type="module" src="{src}"></script>'
 
 
 @register.simple_tag

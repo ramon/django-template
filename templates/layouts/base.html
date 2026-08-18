@@ -1,8 +1,9 @@
 {% load static %}
 {% load vite %}
+{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-<html lang="{% get_current_language %}">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -10,8 +11,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <link rel="manifest" crossorigin="anonymous" href="{% static 'manifest.json' %}"/>
-    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    {# servidos pelo ServeStatic a partir de SERVESTATIC_ROOT (public/), na raiz do site #}
+    <link rel="manifest" crossorigin="anonymous" href="/manifest.json"/>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
     <meta name="csrf-token" content="{{ csrf_token }}">
 
@@ -20,14 +22,14 @@
     {% block head %}{% endblock %}
 
     {% block css %}
-        {% vite_css 'app' %}
+        {% vite_css 'frontend/entries/app.js' %}
     {% endblock %}
 </head>
 <body>
 {% block content %}{% endblock %}
 
 {% block js %}
-    {% vite_css 'app' %}
+    {% vite_js 'frontend/entries/app.js' %}
 {% endblock %}
 </body>
 </html>

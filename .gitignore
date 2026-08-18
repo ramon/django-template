@@ -48,10 +48,10 @@ celerybeat-schedule
 celerybeat.pid
 
 # Updated/generated local files
-backend/public/static/
-!backend/public/static/.gitkeep
-backend/public/media/
-!backend/public/media/.gitkeep
+public/static/
+!public/static/.gitkeep
+public/media/
+!public/media/.gitkeep
 
 
 
@@ -61,8 +61,8 @@ backend/public/media/
 node_modules/
 bun.lockb
 .vite
-backend/public/dist/
-!backend/public/dist/.gitkeep
+# saida do `vite build` (outDir), dentro de STATICFILES_DIRS
+static/dist/
 
 # local notes and temporary files
 *.tmp
