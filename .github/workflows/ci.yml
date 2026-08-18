@@ -119,8 +119,8 @@ jobs:
       - name: lint (biome em js/css, stylelint para BEM)
         run: bun run lint
 
-      - name: vitest
-        run: bun run test
+      - name: vitest com cobertura
+        run: bun run test:coverage
 
       - name: vite build
         run: bun run build

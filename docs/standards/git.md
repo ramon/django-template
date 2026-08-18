@@ -65,7 +65,7 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 | --- | --- |
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia, catálogos em dia, `pytest` com cobertura contra Postgres e Valkey |
-| `frontend` | Biome, Stylelint (BEM), Vitest, `vite build` e a presença do manifest |
+| `frontend` | Biome, Stylelint (BEM), Vitest com o piso de cobertura, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` num Chromium real; anexa `test-results/` se falhar |
 | `docker` | build da imagem de produção, ausência de ferramenta de build e de dependência de dev, e a imagem subindo e respondendo `/health/` |
 | `typecheck` | `mypy apps tests` em modo strict |
@@ -76,7 +76,7 @@ Rodar localmente o equivalente, antes de abrir o PR:
 uv run ruff check . && uv run ruff format --check .
 uv run mypy apps tests
 uv run pytest
-bun run lint && bun run test
+bun run lint && bun run test:coverage
 python manage.py makemessages && git diff --exit-code -- '*.po'
 python manage.py makemigrations --check --dry-run
 ```

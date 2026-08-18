@@ -1,5 +1,7 @@
 import { Application } from "@hotwired/stimulus";
 
+import { controllerIdentifier } from "../lib/stimulus-identifier.js";
+
 const application = Application.start();
 
 // Registra automaticamente todo *_controller.js deste diretorio.
@@ -7,12 +9,7 @@ const application = Application.start();
 const modules = import.meta.glob("./*_controller.js", { eager: true });
 
 for (const [path, module] of Object.entries(modules)) {
-  const identifier = path
-    .replace(/^\.\//, "")
-    .replace(/_controller\.js$/, "")
-    .replaceAll("_", "-");
-
-  application.register(identifier, module.default);
+  application.register(controllerIdentifier(path), module.default);
 }
 
 export { application };

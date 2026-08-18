@@ -180,7 +180,7 @@ Na máquina, com `uv run`; via Docker, com `docker compose exec app` e sem o `uv
 - [ ] `uv run ruff check . && uv run ruff format --check .`
 - [ ] `uv run mypy apps tests`
 - [ ] `uv run pytest` (e `-m e2e` se a mudança chega ao browser)
-- [ ] `bun run lint && bun run test`, se mexeu em JS ou CSS
+- [ ] `bun run lint && bun run test:coverage`, se mexeu em JS ou CSS
 - [ ] `makemessages` / `makemigrations`, se o caso pede
 - [ ] `docs/` atualizada: ADR para decisão nova, padrão revisado se a convenção mudou
 - [ ] relate o que rodou e o que viu, não o que deveria funcionar

@@ -8,7 +8,15 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["frontend/**/*.js"],
-      exclude: ["frontend/**/*.test.js", "frontend/entries/**"],
+      // entries/ e controllers/index.js so ligam (import.meta.glob, Application.start);
+      // regra testavel vira modulo em lib/, ver frontend.md.
+      exclude: ["frontend/**/*.test.js", "frontend/entries/**", "frontend/controllers/index.js"],
+      thresholds: {
+        lines: 90,
+        statements: 90,
+        functions: 90,
+        branches: 90,
+      },
     },
   },
 });

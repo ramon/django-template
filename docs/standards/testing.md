@@ -73,11 +73,30 @@ traduzida (`LANGUAGE_CODE = pt-BR`) e texto quebra o teste na próxima mudança 
 ```bash
 bun run test            # vitest run
 bun run test:watch
-bun run test:coverage   # v8
+bun run test:coverage   # v8, com o piso do vitest.config.mjs
 ```
 
 Teste ao lado do código, em `*.test.js`, com `happy-dom`. Módulo em `frontend/lib/` é
 testado direto; controller Stimulus é testado montando o DOM mínimo que ele espera.
+
+### Cobertura de JS
+
+`vitest.config.mjs` define `coverage.thresholds` em 90% (linhas, statements, funções e
+branches) sobre `frontend/**/*.js`. `bun run test:coverage` falha se cair abaixo — é o
+mesmo comando que o job `frontend` do CI roda.
+
+Ficam fora do `include`/`exclude` do relatório os arquivos que só ligam e não decidem:
+`frontend/entries/**` e `frontend/controllers/index.js` (o `Application.start()` e o
+`import.meta.glob` de registro automático). Regra testável que aparecer nesses arquivos
+vira módulo em `frontend/lib/` com teste ao lado — é o mesmo padrão de
+`stimulus-identifier.js`, que existe só para tirar a derivação do identificador do
+Stimulus (`hello_controller.js` → `hello`) de dentro do loop de `controllers/index.js` e
+deixá-la testável.
+
+Se um módulo novo empurrar a cobertura abaixo do piso, o gate é o sinal de que falta
+teste — não motivo para abaixar o número. Se o piso virar atrito real em um projeto
+gerado a partir do template, ajuste-o em `vitest.config.mjs` e registre o porquê em
+[`docs/adr/`](../adr/README.md), como qualquer divergência da base.
 
 ## O que vale a pena testar
 

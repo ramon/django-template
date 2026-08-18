@@ -16,7 +16,7 @@ exato de cada gate, nos dois caminhos de desenvolvimento (máquina/container), e
 | Qualquer `.py` de produção | lint (`ruff`), typecheck (`mypy apps tests`), testes (`pytest`) — sempre, é a base |
 | `models.py` ou algo que gera migration | + `makemigrations --check --dry-run` limpo |
 | String traduzível nova ou alterada (`_()`, `gettext_lazy`, `{% trans %}`) | + `makemessages` rodado e `.po` versionado no commit |
-| JS, CSS ou template com classe nova | + `bun run lint && bun run test`; classe CSS em BEM |
+| JS, CSS ou template com classe nova | + `bun run lint && bun run test:coverage`; classe CSS em BEM; piso de cobertura de 90% em `frontend/**/*.js` |
 | View, template, fluxo ou controller que chega ao browser | + `pytest -m e2e` (precisa de `bun run build` antes, fora de `DEBUG`) |
 | Decisão estrutural (lib nova, camada nova, convenção nova) | + ADR em `docs/adr/` ou padrão revisado, no mesmo commit |
 | `pyproject.toml`/`uv.lock` em dependência de produção | + confirmar que ela não vaza para a imagem final (job `docker` do CI, ver [`infra.md`](infra.md)) |
@@ -32,7 +32,7 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
 1. `ruff check` / `ruff format --check`
 2. `mypy apps tests`
 3. `pytest` (unit primeiro se estiver depurando; a suíte completa antes de reportar)
-4. `bun run lint && bun run test`, se mexeu em JS/CSS
+4. `bun run lint && bun run test:coverage`, se mexeu em JS/CSS
 5. `makemessages`/`makemigrations`, se o caso pede — são baratos, mas ficam por último
    porque só fazem sentido depois que o código estabilizou
 6. `pytest -m e2e`, por último — é o gate mais lento e o único que builda o frontend
@@ -46,6 +46,11 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
   (`# type: ignore[...]  # motivo`).
 - **testes**: cobrem regra de negócio, contrato de API e regressão. Ver
   [`testing.md`](testing.md#o-que-vale-a-pena-testar) para o que vale a pena cobrir.
+- **cobertura de JS**: `vitest.config.mjs` exige 90% (linhas, statements, funções,
+  branches) em `frontend/**/*.js`, exceto o que só orquestra
+  (`entries/**`, `controllers/index.js`). `bun run test:coverage` falha abaixo do piso —
+  é o mesmo comando que o job `frontend` roda no CI. Ver
+  [`testing.md#cobertura-de-js`](testing.md#cobertura-de-js).
 - **i18n**: o CI compara o diff dos `.po`; string nova sem `makemessages` no mesmo commit
   quebra o job mesmo com o texto certo no código, porque o catálogo não bate com a fonte.
 - **migrations**: `makemigrations --check --dry-run` falha se o model mudou sem gerar
