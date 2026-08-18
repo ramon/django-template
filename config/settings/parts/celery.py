@@ -3,11 +3,16 @@ from .env import env
 
 INSTALLED_APPS += ["django_celery_results", "django_celery_beat"]
 
-CELERY_BROKER_URL = env.cache_url("CELERY_BROKER_URL", default="redis://127.0.0.1:6379/1")
+# env.cache_url devolve um dict de CACHES; o Celery espera a URL crua.
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", default="redis://127.0.0.1:6379/2")
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "orjson"
-CELERY_RESULT_SERIALIZER = "orjson"
+# "orjson" nao existe no registro do kombu -- com ele o worker morre no boot com
+# KeyError. E nao adianta registrar: o kombu envelopa Decimal, datetime e bytes em
+# {"__type__", "__value__"} e desfaz isso com um object_hook, que o orjson nao
+# suporta. O orjson fica onde rende de fato, no renderer da API (config/urls/api.py).
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_RESULT_EXTENDED = True
 CELERY_TIMEZONE = "UTC"
