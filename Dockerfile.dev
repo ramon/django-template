@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1
+#
+# Imagem de desenvolvimento: um estagio so, com as dependencias de dev, feita
+# para rodar com o codigo montado como volume. O `docker-compose.yml` a usa nos
+# servicos app, worker e beat.
+#
+# O servidor do Vite nao mora aqui: e' o servico `frontend`, que usa a imagem do
+# bun direto. Assim a imagem de Python nao carrega a toolchain de JS.
+
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never \
+    # fora de /app: o bind mount do codigo-fonte cobriria um .venv na raiz do
+    # projeto, e o .venv da maquina do dev aponta para paths que nao existem aqui.
+    UV_PROJECT_ENVIRONMENT=/opt/venv \
+    PATH="/opt/venv/bin:${PATH}" \
+    DJANGO_SETTINGS_MODULE=config.settings.development
+
+WORKDIR /app
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    uv sync --frozen
+
+EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

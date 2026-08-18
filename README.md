@@ -76,6 +76,9 @@ desenvolvimento e `manifest.json` em produção.
 ├── .github/workflows/          # CI
 ├── conftest.py                 # fixtures compartilhadas por toda a suite
 ├── .env.example
+├── Dockerfile                  # produção, multi-stage
+├── Dockerfile.dev              # desenvolvimento, usada pelo compose
+├── Procfile                    # release / web / worker / beat
 ├── pyproject.toml / uv.lock
 ├── package.json / bun.lock
 ├── vite.config.mjs
@@ -188,6 +191,9 @@ bun install      # frontend
 docker compose up -d database kv-database
 ```
 
+Para subir tudo dentro de containers, incluindo a aplicação, veja
+[Executando o projeto](#executando-o-projeto).
+
 ## Ambiente local
 
 `.env.example` documenta todas as variáveis lidas pelo projeto, com os valores que
@@ -208,7 +214,25 @@ correspondente em `app_settings` — por exemplo `INTEGRATION_SENTRY_DSN` para o
 
 ## Executando o projeto
 
+### Com Docker (um comando)
+
 ```bash
+cp .env.example .env
+docker compose up
+```
+
+Sobe banco, cache, aplicação (já migrada), worker do Celery, beat e o dev server do
+Vite. O código é montado como volume, então o autoreload continua funcionando. O
+Prometheus fica atrás de um profile para não entrar no `up` padrão:
+
+```bash
+docker compose --profile observability up
+```
+
+### Sem Docker
+
+```bash
+docker compose up -d database kv-database
 python manage.py migrate
 python manage.py runserver     # usa config.settings.development
 bun run dev                    # Vite com HMR na porta 8001
@@ -232,6 +256,42 @@ DJANGO_SETTINGS_MODULE=config.settings.production python manage.py collectstatic
 
 O Vite gera os assets e o `manifest.json` em `static/dist/`; o `collectstatic` publica em
 `public/static/`, de onde o ServeStatic os entrega.
+
+## Imagens Docker
+
+| Arquivo | Uso |
+| --- | --- |
+| `Dockerfile` | produção, em quatro estágios |
+| `Dockerfile.dev` | desenvolvimento, usada pelo `docker-compose.yml` |
+| `Procfile` | declaração de processos (`release`, `web`, `worker`, `beat`) |
+
+A imagem de produção separa build de runtime: o bundle do Vite sai de um estágio com
+Bun, o `.venv` de um estágio com uv (`--no-dev`) e o `collectstatic` de um estágio que
+já tem os dois. O estágio final parte de `python:3.14-slim-bookworm` e recebe apenas o
+`.venv`, o código da aplicação, `public/` e o `manifest.json` do Vite — nenhum `uv`,
+`bun`, `node_modules`, compilador, teste ou dependência de dev sobrevive. O job
+`docker` do CI verifica isso a cada push.
+
+```bash
+docker build -t app:prod .
+docker run --rm -p 8000:8000 --env-file .env app:prod
+```
+
+O processo roda como usuário sem privilégios e traz um `HEALTHCHECK` apontando para
+`/health/`. Em produção `SECURE_SSL_REDIRECT` está ligado, então toda requisição em
+HTTP puro recebe 301 — o proxy que termina TLS precisa enviar `X-Forwarded-Proto`,
+que é o que `SECURE_PROXY_SSL_HEADER` espera. É por isso que o `HEALTHCHECK` manda
+esse cabeçalho.
+
+Pré-compilar os `.pyc` custa cerca de 60 MB e economiza a compilação no primeiro
+request de cada worker. Para trocar tamanho por latência inicial:
+
+```bash
+docker build --build-arg COMPILE_BYTECODE=0 -t app:prod .
+```
+
+O `Procfile` também vai dentro da imagem, então plataformas que o leem em deploys por
+Dockerfile (Dokku, por exemplo) reconhecem os quatro tipos de processo.
 
 ## Observabilidade
 

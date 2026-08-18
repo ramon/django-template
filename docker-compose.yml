@@ -1,10 +1,74 @@
+# Stack de desenvolvimento completa:
+#
+#   cp .env.example .env
+#   docker compose up
+#
+# Sobe banco, cache, aplicacao, worker, beat e o dev server do Vite. O Prometheus
+# fica atras de um profile para nao entrar no `up` padrao:
+#
+#   docker compose --profile observability up
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  # O .env fornece SECRET_KEY e o resto; as URLs abaixo o sobrescrevem porque
+  # dentro da rede do compose os servicos se acham pelo nome, nao por 127.0.0.1.
+  env_file: .env
+  environment:
+    DATABASE_URL: postgres://user:password@database:5432/app
+    CACHE_URL: redis://kv-database:6379/0
+    SESSION_CACHE_URL: redis://kv-database:6379/1
+    CELERY_BROKER_URL: redis://kv-database:6379/2
+  volumes:
+    - .:/app
+  depends_on:
+    database:
+      condition: service_healthy
+    kv-database:
+      condition: service_healthy
+
 services:
+  app:
+    <<: *app
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  worker:
+    <<: *app
+    command: celery --app config worker --loglevel INFO
+
+  beat:
+    <<: *app
+    command: celery --app config beat --loglevel INFO
+
+  frontend:
+    image: oven/bun:1-alpine
+    working_dir: /app
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+      # volume proprio: os binarios nativos instalados aqui (musl) nao sao os
+      # mesmos do node_modules da maquina do dev.
+      - frontend-modules:/app/node_modules
+    command: sh -c "bun install --frozen-lockfile && bun run dev"
+
   kv-database:
     image: valkey/valkey:9-alpine
     ports:
       - "6379:6379"
     volumes:
       - kv-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   database:
     image: postgres:18-alpine
     shm_size: 256mb
@@ -16,7 +80,14 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d app"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   prometheus:
+    profiles: ["observability"]
     # linha LTS do Prometheus 3.x
     image: prom/prometheus:v3.5.5
     ports:
@@ -25,10 +96,8 @@ services:
       - ./tools/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     extra_hosts:
-      # permite raspar a app Django rodando no host, fora do compose
+      # so e' usado se voce apontar o scrape para a app rodando no host
       - "host.docker.internal:host-gateway"
-
-
 
 volumes:
   kv-data:
@@ -36,4 +105,6 @@ volumes:
   db-data:
     driver: local
   prometheus-data:
+    driver: local
+  frontend-modules:
     driver: local

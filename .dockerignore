@@ -1,0 +1,43 @@
+# Tudo que nao precisa entrar no contexto de build. Quanto menor o contexto,
+# menor a imagem e mais barato o cache do Docker.
+
+# Segredos: nunca dentro de uma imagem.
+.env
+.env.*
+!.env.example
+
+# Controle de versao e metadados
+.git
+.gitignore
+.github
+.idea
+.vscode
+
+# Ambientes e caches locais
+.venv
+node_modules
+__pycache__
+*.py[ocd]
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.coverage
+.coverage.*
+htmlcov
+coverage
+
+# Gerados pelo build; a imagem produz os seus proprios
+static/dist
+public/static
+public/media
+db.sqlite3
+db.sqlite3-journal
+
+# Nao vao a producao
+tests
+test-results
+playwright-report
+docker-compose.yml
+Dockerfile*
+.dockerignore
+.pre-commit-config.yaml

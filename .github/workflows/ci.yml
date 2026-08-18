@@ -162,6 +162,90 @@ jobs:
           path: test-results/
           retention-days: 7
 
+  docker:
+    runs-on: ubuntu-latest
+    services:
+      database:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U user -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      kv-database:
+        image: valkey/valkey:9-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v3
+
+      - name: build da imagem de producao
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: app:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: nenhuma ferramenta de build sobreviveu
+        run: |
+          for cmd in uv bun node npm gcc; do
+            if docker run --rm --entrypoint sh app:ci -c "command -v $cmd" >/dev/null 2>&1; then
+              echo "::error::$cmd sobrou na imagem final"
+              exit 1
+            fi
+          done
+
+      - name: nenhuma dependencia de dev sobreviveu
+        run: |
+          vazou=$(docker run --rm --entrypoint sh app:ci \
+            -c 'ls .venv/lib/python*/site-packages | grep -iE "^(pytest|mypy|ruff|debug_toolbar|factory|faker|playwright|coverage)"' || true)
+          if [ -n "$vazou" ]; then
+            echo "::error::dependencias de dev na imagem: $vazou"
+            exit 1
+          fi
+
+      - name: a imagem sobe e responde
+        # espelha o Procfile: release migra, web serve. O X-Forwarded-Proto imita o
+        # proxy TLS -- sem ele o SECURE_SSL_REDIRECT devolve 301.
+        run: |
+          docker run --rm --network host -e SECRET_KEY=ci $ENVS app:ci \
+            python manage.py migrate --noinput
+
+          docker run -d --name app --network host -e SECRET_KEY=ci -e ALLOWED_HOSTS='*' $ENVS app:ci
+
+          for _ in $(seq 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' http://127.0.0.1:8000/health/ || true)
+            [ "$code" = "200" ] && break
+            sleep 2
+          done
+          docker logs app
+          test "$code" = "200"
+        env:
+          ENVS: >-
+            -e DATABASE_URL=postgres://user:password@127.0.0.1:5432/app
+            -e CACHE_URL=redis://127.0.0.1:6379/0
+            -e SESSION_CACHE_URL=redis://127.0.0.1:6379/1
+
+      - name: build da imagem de desenvolvimento
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.dev
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   typecheck:
     runs-on: ubuntu-latest
     steps:
