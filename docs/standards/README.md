@@ -12,6 +12,7 @@ resolvida — não ignorada.
 | [`i18n.md`](i18n.md) | catálogo por app, `makemessages`, precedência |
 | [`infra.md`](infra.md) | compose e os dois caminhos de dev, imagens, `Procfile`, variáveis, sondas |
 | [`git.md`](git.md) | commits, PR, pre-commit, o que o CI verifica |
+| [`quality-gates.md`](quality-gates.md) | qual gate se aplica a qual mudança, ordem de execução, por que cada um existe |
 
 Setup, comandos e stack ficam no [`README.md`](../../README.md) da raiz; daqui a gente
 linka em vez de repetir.

@@ -171,6 +171,10 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
 
 ## Antes de dizer que terminou
 
+Qual gate se aplica a qual mudança, a ordem de execução e por que cada um existe estão em
+[`docs/standards/quality-gates.md`](docs/standards/quality-gates.md). A lista abaixo é o
+que rodar; aquele documento explica o quando e o porquê.
+
 Na máquina, com `uv run`; via Docker, com `docker compose exec app` e sem o `uv run`.
 
 - [ ] `uv run ruff check . && uv run ruff format --check .`

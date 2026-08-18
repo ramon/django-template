@@ -26,6 +26,8 @@ Muda pouco, e quando muda o código muda com ela.
   precedência
 - [`infra.md`](standards/infra.md) — compose, imagens, processos, variáveis, sondas
 - [`git.md`](standards/git.md) — commits, branches, PR, pre-commit, CI
+- [`quality-gates.md`](standards/quality-gates.md) — qual gate cada mudança exige, ordem
+  de execução
 
 ### `adr/` — Architecture Decision Records
 
