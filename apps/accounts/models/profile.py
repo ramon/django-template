@@ -1,14 +1,10 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import pgettext_lazy
-from PIL.SpiderImagePlugin import TYPE_CHECKING
 
 from apps.accounts.models.mixins import AvatarMixin
 from apps.core.models import BaseModel
 from apps.core.models.mixins import PhoneNumberMixin
-
-if TYPE_CHECKING:
-    pass
 
 
 class ProfileManager(models.Manager["Profile"]):
@@ -51,6 +47,16 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
         indexes = [
             models.Index(fields=["document"], name="idx_profile_document"),
         ]
+
+    @property
+    def email(self) -> str:
+        """
+        Implementa o contrato do AvatarMixin, que precisa do e-mail para o gravatar.
+
+        Sem isto, avatar_url() estourava NotImplementedError sempre que o perfil
+        nao tinha imagem enviada -- ou seja, o fallback nunca chegava a rodar.
+        """
+        return str(self.user.email)
 
     def __str__(self) -> str:
         return str(self.user.name.full)
