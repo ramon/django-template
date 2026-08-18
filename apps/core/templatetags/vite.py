@@ -46,7 +46,8 @@ def _load_manifest() -> dict[str, Any]:
         FileNotFoundError: If the manifest file does not exist at the expected location.
     """
     manifest_path = _manifest_path()
-    return json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest: dict[str, Any] = json.loads(manifest_path.read_text(encoding="utf-8"))
+    return manifest
 
 
 def _get_chunk(entry: str) -> dict[str, Any]:
@@ -60,7 +61,8 @@ def _get_chunk(entry: str) -> dict[str, Any]:
     manifest = _load_manifest()
 
     try:
-        return manifest[entry]
+        chunk: dict[str, Any] = manifest[entry]
+        return chunk
     except KeyError:
         available = ", ".join(sorted(manifest)) or "<manifest vazio>"
         raise KeyError(

@@ -52,4 +52,5 @@ def test_calculate_age_invalid_input():
     Test calculate_age with invalid input.
     """
     with pytest.raises(AttributeError):
-        calculate_age("invalid_date")
+        # tipo invalido de proposito: o teste verifica justamente o AttributeError
+        calculate_age("invalid_date")  # type: ignore[arg-type]

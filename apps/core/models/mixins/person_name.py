@@ -18,8 +18,8 @@ class PersonNameMixin(models.Model):
         last_name (str): The last name of the person.
     """
 
-    first_name: str = models.CharField(max_length=255)
-    last_name: str = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
 
     class Meta:
         abstract = True

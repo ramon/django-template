@@ -1,35 +1,27 @@
-from typing import TYPE_CHECKING
-
-from django.contrib.auth import get_user_model
-
 from apps.core.presenters import BasePresenter
 
 from .domain.services import calculate_age
-
-if TYPE_CHECKING:
-    pass
-
-User = get_user_model()
+from .models import Profile, User
 
 
 class UserPresenter(BasePresenter[User]):
     pass
 
 
-class ProfilePresenter(BasePresenter["Profile"]):
+class ProfilePresenter(BasePresenter[Profile]):
     @property
     def name(self) -> str:
-        return self.user.name.full
+        return str(self.obj.user.name.full)
 
     def first_name(self) -> str:
-        return self.user.name.first
+        return str(self.obj.user.name.first)
 
     def last_name(self) -> str:
-        return self.user.name.last
+        return str(self.obj.user.name.last)
 
     def email(self) -> str:
-        return self.user.email
+        return str(self.obj.user.email)
 
     @property
     def age(self) -> int | None:
-        return calculate_age(self.birth_date) if self.birth_date else None
+        return calculate_age(self.obj.birth_date) if self.obj.birth_date else None

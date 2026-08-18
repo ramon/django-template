@@ -103,8 +103,6 @@ jobs:
 
   typecheck:
     runs-on: ubuntu-latest
-    # informativo: o modo strict do mypy ainda acusa erros herdados
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10

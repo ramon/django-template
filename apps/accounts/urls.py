@@ -1,2 +1,4 @@
+from django.urls import URLPattern, URLResolver
+
 app_name = "accounts"
-urlpatterns = []
+urlpatterns: list[URLPattern | URLResolver] = []

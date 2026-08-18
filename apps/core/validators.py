@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
@@ -6,10 +6,11 @@ from django.utils.translation import gettext_lazy
 
 if TYPE_CHECKING:
     from django.core.files import File
+    from django.utils.functional import _StrOrPromise
 
 
 class FileSizeValidator(BaseValidator):
-    message = gettext_lazy("File size must be less than %sMB")
+    message: _StrOrPromise = gettext_lazy("File size must be less than %sMB")
     code = "max_file_size"
 
     def __init__(
@@ -17,14 +18,14 @@ class FileSizeValidator(BaseValidator):
         max_file_size: int = 5 * 1024 * 1024,
         message: str | None = None,
         code: str | None = None,
-    ):
+    ) -> None:
         self.max_file_size = max_file_size
         if message is not None:
             self.message = message
         if code is not None:
             self.code = code
 
-    def __call__(self, value: File):
+    def __call__(self, value: File[Any]) -> None:
         if value.size > self.max_file_size:
             raise ValidationError(
                 self.message % str(self.max_file_size / 1024),

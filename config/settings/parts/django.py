@@ -3,7 +3,7 @@ from .env import env
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-SILENCED_SYSTEM_CHECKS = []
+SILENCED_SYSTEM_CHECKS: list[str] = []
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")

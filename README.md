@@ -241,8 +241,12 @@ mypy apps
 Instale os hooks de pre-commit uma vez com `pre-commit install`; eles rodam `ruff check --fix`
 e `ruff format` a cada commit.
 
-> O MyPy está em modo `strict` e ainda acusa erros herdados no código existente; por isso o
-> job de tipagem no CI é informativo (`continue-on-error`).
+O MyPy roda em modo `strict` e o código está limpo — o CI falha se um erro de tipagem for
+introduzido. Alguns pontos são silenciados por configuração no `pyproject.toml`, cada um com
+o motivo ao lado: `prop-decorator` (o mypy não suporta `@computed_field` sobre `@property`,
+o padrão do Pydantic v2), generics em `apps/*/admin.py` (`ModelAdmin` é genérico para o
+django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra em runtime) e
+`ignore_missing_imports` para dependências sem stubs.
 
 ## CI
 
@@ -253,7 +257,7 @@ e `ruff format` a cada commit.
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
 | `frontend` | `bun install --frozen-lockfile`, `vite build` e a presença do manifest |
-| `typecheck` | `mypy apps` (informativo) |
+| `typecheck` | `mypy apps` em modo strict |
 
 ## Notas finais
 

@@ -68,4 +68,4 @@ MFA_TRUST_ENABLED = True
 USERSESSIONS_TRACK_ACTIVITY = True
 
 ## Social Accounts
-SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS: dict[str, dict[str, object]] = {}

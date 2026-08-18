@@ -1,3 +1,6 @@
+from typing import Any, Self
+
+
 class BasePresenter[T]:
     """
     BasePresenter provides a generic interface for adapting objects.
@@ -16,9 +19,9 @@ class BasePresenter[T]:
     def __init__(self, obj: T):
         self.obj = obj
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         return getattr(self.obj, name)
 
     @classmethod
-    def collection(cls: T, objs: list[T]) -> list[T]:
+    def collection(cls, objs: list[T]) -> list[Self]:
         return [cls(obj) for obj in objs]

@@ -6,7 +6,7 @@ from apps.core.validators import FileSizeValidator
 
 
 class AvatarMixin(models.Model):
-    avatar: models.ImageField = models.ImageField(
+    avatar = models.ImageField(
         upload_to="avatars/",
         blank=True,
         null=True,

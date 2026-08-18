@@ -1,12 +1,13 @@
 import hashlib
 from tempfile import NamedTemporaryFile
+from typing import Any
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from django.core.files import File
 
 
-def get_avatar_from_url(url):
+def get_avatar_from_url(url: str) -> File[Any]:
     """
     Retrieves an avatar image from the specified URL, stores it in a temporary
     file, and returns the file object.
@@ -36,7 +37,7 @@ def get_avatar_from_url(url):
     return File(img_tmp, name=url.split("/")[-1])
 
 
-def gravatar_url(email, size=40):
+def gravatar_url(email: str, size: int = 40) -> str:
     """
     Generate a Gravatar URL for the given email address.
 

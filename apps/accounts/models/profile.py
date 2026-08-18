@@ -1,5 +1,3 @@
-import datetime
-
 from django.conf import settings
 from django.db import models
 from django.utils.translation import pgettext_lazy
@@ -10,12 +8,11 @@ from apps.core.models import BaseModel
 from apps.core.models.mixins import PhoneNumberMixin
 
 if TYPE_CHECKING:
-    from apps.accounts.models.gender import Gender
-    from apps.accounts.models.user import User
+    pass
 
 
-class ProfileManager(models.Manager):
-    def get_queryset(self):
+class ProfileManager(models.Manager["Profile"]):
+    def get_queryset(self) -> models.QuerySet[Profile]:
         return super().get_queryset().select_related("user", "gender")
 
 
@@ -39,14 +36,12 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
             instance, protected against deletion of associated Gender entries.
     """
 
-    user: User = models.OneToOneField(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name="profile", on_delete=models.CASCADE
     )
-    document: str = models.CharField(max_length=11, null=True, blank=True, unique=True)
-    birth_date: datetime.date = models.DateField(blank=True, null=True)
-    gender: Gender = models.ForeignKey(
-        "accounts.Gender", blank=True, null=True, on_delete=models.PROTECT
-    )
+    document = models.CharField(max_length=11, null=True, blank=True, unique=True)
+    birth_date = models.DateField(blank=True, null=True)
+    gender = models.ForeignKey("accounts.Gender", blank=True, null=True, on_delete=models.PROTECT)
 
     objects = ProfileManager()
 
@@ -57,5 +52,5 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
             models.Index(fields=["document"], name="idx_profile_document"),
         ]
 
-    def __str__(self):
-        return self.user.name.full
+    def __str__(self) -> str:
+        return str(self.user.name.full)

@@ -18,22 +18,22 @@ class PhoneNumberMixin(models.Model):
                             database. It is nullable and can be left blank.
     """
 
-    phone_number: str = models.CharField(max_length=255, null=True, blank=True)
+    phone_number = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         abstract = True
 
     @cached_property
-    def _cached_phone(self) -> PhoneNumber:  # pragma: no cover
-        return PhoneNumber(self.phone_number)
+    def _cached_phone(self) -> PhoneNumber | None:  # pragma: no cover
+        return PhoneNumber(self.phone_number) if self.phone_number else None
 
     @property
-    def phone(self) -> PhoneNumber:
+    def phone(self) -> PhoneNumber | None:
         return self._cached_phone
 
     @phone.setter
     def phone(self, phone_number: str) -> None:
-        phone_number = PhoneNumber(phone_number)
-        self.phone_number = phone_number.e164
+        parsed = PhoneNumber(phone_number)
+        self.phone_number = parsed.e164
 
         self.__dict__.pop("_cached_phone", None)

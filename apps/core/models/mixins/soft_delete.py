@@ -1,8 +1,10 @@
+from typing import Any, Self
+
 from django.db import models
 from django.utils import timezone
 
 
-class SoftDeleteQuerySet(models.QuerySet):
+class SoftDeleteQuerySet(models.QuerySet["SoftDeleteModel"]):
     """
     A custom QuerySet for implementing soft delete functionality.
 
@@ -21,20 +23,20 @@ class SoftDeleteQuerySet(models.QuerySet):
             soft deleted (i.e., 'deleted_at' is not null).
     """
 
-    def delete(self):
+    def delete(self) -> int:  # type: ignore[override]
         return self.update(deleted_at=timezone.now())
 
-    def hard_delete(self):
+    def hard_delete(self) -> tuple[int, dict[str, int]]:
         return super().delete()
 
-    def alive(self):
+    def alive(self) -> Self:
         return self.filter(deleted_at__isnull=True)
 
-    def dead(self):
+    def dead(self) -> Self:
         return self.filter(deleted_at__isnull=False)
 
 
-class SoftDeleteManager(models.Manager):
+class SoftDeleteManager(models.Manager["SoftDeleteModel"]):
     """Manager for handling soft-deleted objects.
 
     Provides a customized queryset that excludes soft-deleted objects by
@@ -46,7 +48,7 @@ class SoftDeleteManager(models.Manager):
         _db (type): The database being used with this manager.
     """
 
-    def get_queryset(self):
+    def get_queryset(self) -> SoftDeleteQuerySet:
         return SoftDeleteQuerySet(self.model, using=self._db).alive()
 
 
@@ -71,12 +73,12 @@ class SoftDeleteModel(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
 
     objects = SoftDeleteManager()
-    all_objects = models.Manager()
+    all_objects = models.Manager["SoftDeleteModel"]()
 
     class Meta:
         abstract = True
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args: Any, **kwargs: Any) -> None:  # type: ignore[override]
         """
         Marks the instance as deleted by setting the `deleted_at` field to the current
         timestamp.
@@ -84,7 +86,7 @@ class SoftDeleteModel(models.Model):
         self.deleted_at = timezone.now()
         self.save(update_fields=["deleted_at"])
 
-    def hard_delete(self, *args, **kwargs) -> None:
+    def hard_delete(self, *args: Any, **kwargs: Any) -> None:
         """
         Permanently deletes an instance from the database.
 

@@ -123,7 +123,6 @@ python_files = [
 ]
 addopts = [
     "--reuse-db",
-    "--nomigrations",
     "--strict-markers",
     "--strict-config",
 ]
@@ -149,17 +148,34 @@ plugins = [
     "mypy_django_plugin.main"
 ]
 
-[[tool.mypy.overrides]]
-module = [
-    "*.migrations.*",
-]
-ignore_errors = true
+# @computed_field sobre @property e' o padrao do Pydantic v2 nos value objects;
+# o mypy nao suporta decorator sobre property e reporta prop-decorator sempre.
+disable_error_code = ["prop-decorator"]
 
 [[tool.mypy.overrides]]
+# os testes vivem em apps.<app>.tests, nao num pacote tests/ na raiz
 module = [
-    "tests.*",
+    "apps.*.tests.*",
 ]
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# ModelAdmin e UserAdmin sao genericos para o django-stubs, mas nao definem
+# __class_getitem__: parametriza-los quebra o import em runtime.
+module = [
+    "apps.*.admin",
+]
+disallow_any_generics = false
+
+[[tool.mypy.overrides]]
+# dependencias sem stubs nem marcador py.typed
+module = [
+    "allauth.*",
+    "environ.*",
+    "health_check.*",
+    "phonenumbers.*",
+]
+ignore_missing_imports = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings.development"

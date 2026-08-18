@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -6,8 +8,8 @@ from django.utils.translation import pgettext_lazy
 from apps.core.models import BaseModel, PersonNameMixin, PhoneNumberMixin
 
 
-class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+class UserManager(BaseUserManager["User"]):
+    def create_user(self, email: str, password: str | None = None, **extra_fields: Any) -> User:
         if not email:
             raise ValueError("The Email must be set")
         user = self.model(email=self.normalize_email(email), **extra_fields)
@@ -20,7 +22,9 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(
+        self, email: str, password: str | None = None, **extra_fields: Any
+    ) -> User:
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, password, **extra_fields)
@@ -43,9 +47,9 @@ class User(PermissionsMixin, PersonNameMixin, PhoneNumberMixin, BaseModel, Abstr
         is_staff (bool): Indicates whether the user has administrative privileges.
     """
 
-    email: str = models.EmailField(unique=True)
-    is_active: bool = models.BooleanField(default=True)
-    is_staff: bool = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -60,5 +64,5 @@ class User(PermissionsMixin, PersonNameMixin, PhoneNumberMixin, BaseModel, Abstr
             models.Index(fields=["phone_number"], name="idx_user_phone_number"),
         ]
 
-    def __str__(self):
-        return self.name.full
+    def __str__(self) -> str:
+        return str(self.name.full)

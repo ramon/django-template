@@ -1,7 +1,7 @@
 from typing import Annotated, Self
 
 import phonenumbers
-from pydantic import Field, RootModel, computed_field, model_validator
+from pydantic import Field, PrivateAttr, RootModel, computed_field, model_validator
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
 from config.app_settings import get_app_settings
@@ -14,7 +14,7 @@ E164NumberType = Annotated[
 ]
 
 
-class PhoneNumber(RootModel[str]):
+class PhoneNumber(RootModel[E164NumberType]):
     """
     Represents a phone number with multiple formatting options and information extraction capabilities.
 
@@ -29,7 +29,7 @@ class PhoneNumber(RootModel[str]):
     """
 
     root: E164NumberType = Field(min_length=1, max_length=20)
-    _parsed_number: phonenumbers.PhoneNumber
+    _parsed_number: phonenumbers.PhoneNumber = PrivateAttr()
 
     @model_validator(mode="after")
     def parse_number(self) -> Self:
