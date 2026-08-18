@@ -73,12 +73,19 @@ desenvolvimento e `manifest.json` em produção.
 ├── tests/
 │   └── e2e/                    # testes ponta a ponta (Playwright)
 ├── locale/                     # catálogo global (templates/, config/)
+├── docs/                       # padrões, ADRs, especificações e planos
+│   ├── standards/              # como se escreve código aqui
+│   ├── adr/                    # decisões arquiteturais registradas
+│   ├── specs/                  # especificações de features
+│   └── plans/                  # planos de implementação
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
 ├── .github/
 │   ├── workflows/              # CI
 │   ├── dependabot.yml
 │   └── pull_request_template.md
 ├── conftest.py                 # fixtures compartilhadas por toda a suite
+├── AGENTS.md                   # instruções canônicas para agentes
+├── CLAUDE.md                   # aponta para AGENTS.md
 ├── .env.example
 ├── Dockerfile                  # produção, multi-stage
 ├── Dockerfile.dev              # desenvolvimento, usada pelo compose
@@ -90,6 +97,22 @@ desenvolvimento e `manifest.json` em produção.
 ├── vite.config.mjs
 └── docker-compose.yml
 ```
+
+## Documentação
+
+Este README cobre a stack, a instalação e a execução. O resto da documentação vive em
+[`docs/`](docs/), organizada por propósito:
+
+| Pasta | Guarda | Pergunta que responde |
+| --- | --- | --- |
+| [`docs/standards/`](docs/standards/) | convenções de código, por área | "como se faz isso neste projeto?" |
+| [`docs/adr/`](docs/adr/) | decisões arquiteturais registradas | "por que está assim?" |
+| [`docs/specs/`](docs/specs/) | especificações de features | "o que exatamente precisa acontecer?" |
+| [`docs/plans/`](docs/plans/) | planos de implementação em andamento | "onde este trabalho parou?" |
+
+Agentes de código leem [`AGENTS.md`](AGENTS.md) — o arquivo canônico de instruções, que
+aponta para `docs/`. Regra nova para agentes entra lá, não nos arquivos por harness
+(`CLAUDE.md`).
 
 ## Convenções arquiteturais
 

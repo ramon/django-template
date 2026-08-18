@@ -21,3 +21,5 @@ não é coberta por nenhum teste — nesse caso, diga o que exercitou à mão.
 - [ ] `bun run lint && bun run test`, se mexeu em JS ou CSS
 - [ ] `manage.py makemessages`, se acrescentou string traduzível
 - [ ] `manage.py makemigrations`, se mexeu em model
+- [ ] `docs/` atualizada: ADR em `docs/adr/` se a decisão é estrutural, o padrão em
+      `docs/standards/` se a convenção mudou, o plano em `docs/plans/` se o trabalho continua
