@@ -5,6 +5,7 @@ from ninja.security import django_auth
 
 from apps.accounts.api.router import router as accounts_router
 
+
 class ORJSONRenderer(BaseRenderer):
     media_type = "application/json"
 

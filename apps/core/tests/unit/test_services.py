@@ -1,39 +1,37 @@
 import pytest
-from apps.core.services import get_errors
 from django.core.exceptions import ValidationError
+
+from apps.core.services import get_errors
 
 
 @pytest.mark.parametrize(
     "error_input, expected_output",
     [
+        (ValidationError("This is an error message."), ["This is an error message."]),
         (
-                ValidationError("This is an error message."),
-                ["This is an error message."]
+            ValidationError(
+                [
+                    "Error one.",
+                    ValidationError("Error two."),
+                ]
+            ),
+            ["Error one.", "Error two."],
         ),
         (
-                ValidationError(
-                    [
-                        "Error one.",
-                        ValidationError("Error two."),
-                    ]
-                ),
-                ["Error one.", "Error two."]
+            ValidationError(
+                [
+                    ValidationError("Nested error."),
+                ]
+            ),
+            ["Nested error."],
         ),
         (
-                ValidationError(
-                    [
-                        ValidationError("Nested error."),
-                    ]
-                ),
-                ["Nested error."]
-        ),
-        (
-                ValidationError(
-                    [
-                        ValidationError({"field1": ["Error for field1", "Another error"]}),
-                    ]
-                ),
-                ["Error for field1", "Another error"]
+            ValidationError(
+                [
+                    ValidationError({"field1": ["Error for field1", "Another error"]}),
+                ]
+            ),
+            ["Error for field1", "Another error"],
         ),
     ],
 )

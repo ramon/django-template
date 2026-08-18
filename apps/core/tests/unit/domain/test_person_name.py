@@ -1,6 +1,5 @@
 # apps/core/tests/test_person_name.py
 
-import pytest
 from apps.core.domain.value_objects.person_name import PersonName
 
 

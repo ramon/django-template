@@ -1,11 +1,13 @@
 from typing import TYPE_CHECKING
 
-from apps.core.presenters import BasePresenter
 from django.contrib.auth import get_user_model
+
+from apps.core.presenters import BasePresenter
+
 from .domain.services import calculate_age
 
 if TYPE_CHECKING:
-    from .models import Profile
+    pass
 
 User = get_user_model()
 

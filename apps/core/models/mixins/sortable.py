@@ -15,8 +15,11 @@ class SortableMixin(models.Model):
             model should be sorted. Defaults to 0 and is indexed for efficient
             queries.
     """
+
     sort_order = models.IntegerField(default=0, db_index=True)
 
     class Meta:
         abstract = True
-        ordering = ['sort_order',]
+        ordering = [
+            "sort_order",
+        ]

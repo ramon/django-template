@@ -1,14 +1,16 @@
 import pytest
-from apps.core.models.mixins import PhoneNumberMixin
 from django.db import models
+
+from apps.core.models.mixins import PhoneNumberMixin
 
 
 class TestPhoneNumberModel(PhoneNumberMixin, models.Model):
     """Concrete model for testing the PhoneNumberMixin."""
+
     __test__ = False
 
     class Meta:
-        app_label = 'core'
+        app_label = "core"
 
 
 @pytest.fixture

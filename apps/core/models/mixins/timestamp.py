@@ -15,16 +15,9 @@ class TimestampMixin(models.Model):
         created_at (datetime): The timestamp indicating when the model instance was created.
         updated_at (datetime): The timestamp indicating the last time the model instance was updated.
     """
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        editable=False,
-        db_index=True
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        editable=False,
-        db_index=True
-    )
+
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, editable=False, db_index=True)
 
     class Meta:
         abstract = True

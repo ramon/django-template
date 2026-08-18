@@ -8,8 +8,8 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 
 __all__ = [
     "EMAIL_HOST",
-    "EMAIL_USE_TLS",
-    "EMAIL_PORT",
-    "EMAIL_HOST_USER",
     "EMAIL_HOST_PASSWORD",
+    "EMAIL_HOST_USER",
+    "EMAIL_PORT",
+    "EMAIL_USE_TLS",
 ]

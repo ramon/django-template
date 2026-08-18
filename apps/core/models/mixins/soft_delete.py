@@ -20,6 +20,7 @@ class SoftDeleteQuerySet(models.QuerySet):
         dead: Filters the queryset to include only objects that have been
             soft deleted (i.e., 'deleted_at' is not null).
     """
+
     def delete(self):
         return self.update(deleted_at=timezone.now())
 
@@ -44,6 +45,7 @@ class SoftDeleteManager(models.Manager):
         model (type): The model class this manager is attached to.
         _db (type): The database being used with this manager.
     """
+
     def get_queryset(self):
         return SoftDeleteQuerySet(self.model, using=self._db).alive()
 
@@ -65,6 +67,7 @@ class SoftDeleteModel(models.Model):
         all_objects (models.Manager): Default manager providing access to all objects, including
             those that are soft-deleted.
     """
+
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
 
     objects = SoftDeleteManager()
@@ -79,7 +82,7 @@ class SoftDeleteModel(models.Model):
         timestamp.
         """
         self.deleted_at = timezone.now()
-        self.save(update_fields=['deleted_at'])
+        self.save(update_fields=["deleted_at"])
 
     def hard_delete(self, *args, **kwargs) -> None:
         """
@@ -102,7 +105,7 @@ class SoftDeleteModel(models.Model):
             None: This method does not return any value.
         """
         self.deleted_at = None
-        self.save(update_fields=['deleted_at'])
+        self.save(update_fields=["deleted_at"])
 
     @property
     def is_deleted(self) -> bool:

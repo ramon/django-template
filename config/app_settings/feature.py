@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,12 +18,13 @@ class FeatureSettings(BaseSettings):
             environment-related settings, including file path, encoding,
             variable prefix, and additional options for feature-specific settings.
     """
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         env_prefix="FEATURE_",
         env_nested_delimiter="__",
-        extra="ignore"
+        extra="ignore",
     )
 
 

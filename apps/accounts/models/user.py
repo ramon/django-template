@@ -1,8 +1,9 @@
-from apps.core.models import BaseModel, PersonNameMixin, PhoneNumberMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import pgettext_lazy
+
+from apps.core.models import BaseModel, PersonNameMixin, PhoneNumberMixin
 
 
 class UserManager(BaseUserManager):
@@ -14,6 +15,7 @@ class UserManager(BaseUserManager):
         user.save()
 
         from apps.accounts.models import Profile
+
         Profile.objects.create(user=user)
 
         return user
@@ -40,21 +42,22 @@ class User(PermissionsMixin, PersonNameMixin, PhoneNumberMixin, BaseModel, Abstr
         is_active (bool): Indicates whether the user's account is active.
         is_staff (bool): Indicates whether the user has administrative privileges.
     """
+
     email: str = models.EmailField(unique=True)
     is_active: bool = models.BooleanField(default=True)
     is_staff: bool = models.BooleanField(default=False)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name", "phone_number"]
 
     class Meta:
-        verbose_name = pgettext_lazy('model', 'user')
-        verbose_name_plural = pgettext_lazy('model', 'users')
+        verbose_name = pgettext_lazy("model", "user")
+        verbose_name_plural = pgettext_lazy("model", "users")
         indexes = [
-            models.Index(fields=['first_name', 'last_name'], name='idx_user_full_name'),
-            models.Index(fields=['phone_number'], name='idx_user_phone_number'),
+            models.Index(fields=["first_name", "last_name"], name="idx_user_full_name"),
+            models.Index(fields=["phone_number"], name="idx_user_phone_number"),
         ]
 
     def __str__(self):

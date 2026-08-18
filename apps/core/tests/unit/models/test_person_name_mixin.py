@@ -1,13 +1,15 @@
 import pytest
+from django.db import models
+
 from apps.core.domain.value_objects.person_name import PersonName
 from apps.core.models.mixins import PersonNameMixin
-from django.db import models
 
 
 class TestPersonNameModel(PersonNameMixin, models.Model):
     """
     Concrete implementation of the PersonNameMixin for testing.
     """
+
     __test__ = False
 
     class Meta:

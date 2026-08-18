@@ -1,7 +1,7 @@
 import re
 from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, AfterValidator, computed_field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, computed_field
 
 
 def _normalize_name(name: str) -> str:
@@ -37,6 +37,7 @@ class PersonName(BaseModel):
         first (NamePart): The first name of the person.
         last (NamePart): The last name of the person.
     """
+
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     first: NamePart
@@ -92,17 +93,19 @@ class PersonName(BaseModel):
     @property
     def initials(self) -> str:
         """Returns just the initials."""
-        cleaned = re.sub(r'[\(\[].*?[\)\]]', '', self.full)
-        initials = re.findall(r'([^\W_])\w*', cleaned, re.IGNORECASE | re.UNICODE)
-        return ''.join(initials).upper()
+        cleaned = re.sub(r"[\(\[].*?[\)\]]", "", self.full)
+        initials = re.findall(r"([^\W_])\w*", cleaned, re.IGNORECASE | re.UNICODE)
+        return "".join(initials).upper()
 
     @computed_field
     @property
     def mentionable(self) -> str:
         """Returns a mentionable version of the familiar name."""
-        return self.familiar[:-1].replace(' ', '').lower()
+        return self.familiar[:-1].replace(" ", "").lower()
 
-    def possessive(self, method: Literal["full", "first", "last", "abbreviated", "sorted", "initials"] = "full") -> str:
+    def possessive(
+        self, method: Literal["full", "first", "last", "abbreviated", "sorted", "initials"] = "full"
+    ) -> str:
         """Returns the full name with trailing 's or ' if name ends in s."""
         name = getattr(self, method)
         return f"{name}'" if name.endswith("s") else f"{name}'s"

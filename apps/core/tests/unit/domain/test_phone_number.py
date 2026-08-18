@@ -1,6 +1,7 @@
 import pytest
-from apps.core.domain.value_objects.phone_number import PhoneNumber
 from pydantic import ValidationError
+
+from apps.core.domain.value_objects.phone_number import PhoneNumber
 
 
 @pytest.mark.parametrize(
@@ -9,7 +10,7 @@ from pydantic import ValidationError
         ("+5511987654321", "+55 11 98765-4321"),
         ("+14435551234", "+1 443-555-1234"),
         ("+81312345678", "+81 3-1234-5678"),
-    ]
+    ],
 )
 def test_international_format(phone_input, expected_format):
     """
@@ -24,7 +25,7 @@ def test_international_format(phone_input, expected_format):
     [
         ("+5511987654321", "(11) 98765-4321"),
         ("+14435551234", "(443) 555-1234"),
-    ]
+    ],
 )
 def test_national_format(phone_input, expected_format):
     """
@@ -39,7 +40,7 @@ def test_national_format(phone_input, expected_format):
     [
         ("+5511987654321", "+5511987654321"),
         ("+14435551234", "+14435551234"),
-    ]
+    ],
 )
 def test_e164_format(phone_input, expected_format):
     """
@@ -55,7 +56,7 @@ def test_e164_format(phone_input, expected_format):
         ("+5511987654321", 55),
         ("+14435551234", 1),
         ("+81312345678", 81),
-    ]
+    ],
 )
 def test_country_code(phone_input, expected_country_code):
     """

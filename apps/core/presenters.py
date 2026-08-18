@@ -1,8 +1,4 @@
-from typing import TypeVar, Generic, Self
-
-T = TypeVar('T')
-
-class BasePresenter(Generic[T]):
+class BasePresenter[T]:
     """
     BasePresenter provides a generic interface for adapting objects.
 
@@ -14,6 +10,7 @@ class BasePresenter(Generic[T]):
     Attributes:
         _obj: The object the presenter wraps around.
     """
+
     obj: T
 
     def __init__(self, obj: T):

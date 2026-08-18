@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
 
 def calculate_age(birth_date: datetime | date) -> int:

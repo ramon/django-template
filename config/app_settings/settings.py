@@ -23,6 +23,7 @@ class Environment(StrEnum):
         PRODUCTION (str): Represents a live production environment
             where the application is accessible to end users.
     """
+
     LOCAL = "local"
     TEST = "test"
     STAGING = "staging"
@@ -44,12 +45,13 @@ class AppSettings(BaseSettings):
         environment (Environment): The current application execution environment. Possible
             values are defined in the `Environment` enumeration.
     """
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         env_prefix="APP_",
         env_nested_delimiter="__",
-        extra="ignore"
+        extra="ignore",
     )
 
     environment: Environment = Environment.LOCAL

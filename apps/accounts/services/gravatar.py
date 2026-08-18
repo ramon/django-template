@@ -25,15 +25,15 @@ def get_avatar_from_url(url):
     Raises:
         AssertionError: If the HTTP response status from the URL is not 200.
     """
-    img_tmp = NamedTemporaryFile(delete=True)
+    # sem context manager de proposito: o arquivo precisa seguir aberto para o caller.
+    img_tmp = NamedTemporaryFile(delete=True)  # noqa: SIM115
 
     with urlopen(url) as uo:
         assert uo.status == 200
         img_tmp.write(uo.read())
         img_tmp.flush()
 
-    img = File(img_tmp, name=url.split("/")[-1])
-    return img
+    return File(img_tmp, name=url.split("/")[-1])
 
 
 def gravatar_url(email, size=40):

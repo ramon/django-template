@@ -1,7 +1,8 @@
-from apps.core.models import BaseModel
-from apps.core.models.mixins import SortableMixin
 from django.db import models
 from django.utils.translation import pgettext_lazy
+
+from apps.core.models import BaseModel
+from apps.core.models.mixins import SortableMixin
 
 
 class Gender(SortableMixin, BaseModel):
@@ -16,11 +17,12 @@ class Gender(SortableMixin, BaseModel):
     Attributes:
         name (str): The name of the gender, with a character limit of 20.
     """
+
     name = models.CharField(max_length=20)
 
     class Meta:
-        verbose_name = pgettext_lazy('model', 'gender')
-        verbose_name_plural = pgettext_lazy('model', 'genders')
+        verbose_name = pgettext_lazy("model", "gender")
+        verbose_name_plural = pgettext_lazy("model", "genders")
 
     def __str__(self) -> str:
         return self.name

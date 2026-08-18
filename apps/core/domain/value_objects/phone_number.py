@@ -1,17 +1,18 @@
-from typing import Annotated, Union, Self
+from typing import Annotated, Self
 
 import phonenumbers
-
-from config.app_settings import get_app_settings
-from pydantic import RootModel, Field, model_validator, computed_field
+from pydantic import Field, RootModel, computed_field, model_validator
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
+from config.app_settings import get_app_settings
+
 E164NumberType = Annotated[
-    Union[str, phonenumbers.PhoneNumber], PhoneNumberValidator(
-        number_format="E164",
-        default_region=get_app_settings().phone_number_region
-    )
+    str | phonenumbers.PhoneNumber,
+    PhoneNumberValidator(
+        number_format="E164", default_region=get_app_settings().phone_number_region
+    ),
 ]
+
 
 class PhoneNumber(RootModel[str]):
     """
@@ -26,19 +27,16 @@ class PhoneNumber(RootModel[str]):
         root (E164NumberType): The raw phone number string. Must have a minimum length of 1 and a
             maximum length of 20 characters.
     """
+
     root: E164NumberType = Field(min_length=1, max_length=20)
     _parsed_number: phonenumbers.PhoneNumber
 
     @model_validator(mode="after")
     def parse_number(self) -> Self:
         try:
-            object.__setattr__(
-                self,
-                "_parsed_number",
-                phonenumbers.parse(str(self.root))
-            )
-        except phonenumbers.NumberParseException: # pragma: no cover
-            raise ValueError("Invalid phone number format.")
+            object.__setattr__(self, "_parsed_number", phonenumbers.parse(str(self.root)))
+        except phonenumbers.NumberParseException as exc:  # pragma: no cover
+            raise ValueError("Invalid phone number format.") from exc
 
         return self
 
@@ -50,8 +48,7 @@ class PhoneNumber(RootModel[str]):
             return None
 
         return phonenumbers.format_number(
-            self._parsed_number,
-            phonenumbers.PhoneNumberFormat.INTERNATIONAL
+            self._parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL
         )
 
     @computed_field
@@ -62,8 +59,7 @@ class PhoneNumber(RootModel[str]):
             return None
 
         return phonenumbers.format_number(
-            self._parsed_number,
-            phonenumbers.PhoneNumberFormat.NATIONAL
+            self._parsed_number, phonenumbers.PhoneNumberFormat.NATIONAL
         )
 
     @computed_field
@@ -73,10 +69,7 @@ class PhoneNumber(RootModel[str]):
         if not self._parsed_number:
             return str(self.root)
 
-        return phonenumbers.format_number(
-            self._parsed_number,
-            phonenumbers.PhoneNumberFormat.E164
-        )
+        return phonenumbers.format_number(self._parsed_number, phonenumbers.PhoneNumberFormat.E164)
 
     @computed_field
     @property

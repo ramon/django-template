@@ -16,6 +16,7 @@ class UUIDPrimaryKeyMixin(models.Model):
     Attributes:
         id (UUIDField): The primary key field for the model, represented as a UUID.
     """
+
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid7)
 
     class Meta:

@@ -1,6 +1,7 @@
-from apps.core.domain import PersonName
 from django.db import models
 from django.utils.functional import cached_property
+
+from apps.core.domain import PersonName
 
 
 class PersonNameMixin(models.Model):
@@ -16,6 +17,7 @@ class PersonNameMixin(models.Model):
         first_name (str): The first name of the person.
         last_name (str): The last name of the person.
     """
+
     first_name: str = models.CharField(max_length=255)
     last_name: str = models.CharField(max_length=255)
 

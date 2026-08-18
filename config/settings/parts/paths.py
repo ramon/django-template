@@ -10,6 +10,6 @@ PUBLIC_DIR = BASE_DIR / "public"
 __all__ = [
     "BASE_DIR",
     "ENV_FILE",
-    "STATIC_DIR",
     "PUBLIC_DIR",
+    "STATIC_DIR",
 ]

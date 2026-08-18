@@ -23,12 +23,13 @@ class IntegrationSettings(BaseSettings):
             used for integration with Sentry error tracking. Defaults to None
             if not provided.
     """
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         env_prefix="INTEGRATION_",
         env_nested_delimiter="__",
-        extra="ignore"
+        extra="ignore",
     )
 
     SENTRY_DSN: SecretStr | None = None

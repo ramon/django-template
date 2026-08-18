@@ -1,7 +1,8 @@
 from functools import cached_property
 
-from apps.core.domain import PhoneNumber
 from django.db import models
+
+from apps.core.domain import PhoneNumber
 
 
 class PhoneNumberMixin(models.Model):
@@ -16,6 +17,7 @@ class PhoneNumberMixin(models.Model):
         phone_number (str): A string representing the phone number stored in the
                             database. It is nullable and can be left blank.
     """
+
     phone_number: str = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
