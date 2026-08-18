@@ -26,7 +26,9 @@ if not DEBUG:
             traces_sample_rate=0.1,
             profile_session_sample_rate=0.1,
             profile_lifecycle="trace",
-            send_default_pii=True,
+            # ADR 0008: sem PII por padrao; cruzar erro com usuario e' via
+            # correlation_id (X-Correlation-Id), nao pelo evento no Sentry.
+            send_default_pii=False,
         )
 
 

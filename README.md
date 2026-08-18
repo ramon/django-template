@@ -409,7 +409,8 @@ saber que o bucket responde, e com storage remoto significa uma ida à rede por 
   `openmetrics`. Retorna 500 se algum check falhar.
 - **Logs**: `structlog` em JSON, com correlation id injetado pelo `django-guid` e exposto no
   header `X-Correlation-Id`.
-- **Sentry**: ativado fora de `DEBUG` quando `INTEGRATION_SENTRY_DSN` está definido.
+- **Sentry**: ativado fora de `DEBUG` quando `INTEGRATION_SENTRY_DSN` está definido, sem PII
+  por padrão (ver [`docs/standards/observability.md`](docs/standards/observability.md)).
 - **Prometheus**: com `ENABLE_PROMETHEUS=true`, as métricas ficam em `/monitoring/metrics`.
   `docker compose up -d prometheus` sobe um Prometheus já configurado em
   `tools/prometheus.yml` para raspar a aplicação rodando no host.

@@ -53,3 +53,4 @@ ADRs novos continua de onde a lista abaixo termina.
 | [0005](0005-makemessages-idempotente-para-o-ci-verificar-catalogos.md) | `makemessages` idempotente para o CI verificar catálogos | Aceito | 2026-08-18 |
 | [0006](0006-django-cotton-para-componentes-de-template.md) | django-cotton para componentes de template | Aceito | 2026-08-18 |
 | [0007](0007-autenticacao-com-django-allauth-e-mfa.md) | Autenticação com django-allauth, MFA e CORS liberado para a API | Aceito | 2026-08-18 |
+| [0008](0008-desativar-envio-de-pii-para-o-sentry.md) | Desativar o envio de PII para o Sentry | Aceito | 2026-08-18 |
