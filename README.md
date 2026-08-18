@@ -1,219 +1,226 @@
 # Django Project Template
 
-Template de projeto Django com foco em organização por domínio, tipagem forte, frontend 
-server-rendered moderno e separação clara entre configuração do framework e configuração 
-da aplicação. 
+Template de projeto Django com foco em organização por domínio, tipagem forte, frontend
+server-rendered moderno e separação clara entre configuração do framework e configuração
+da aplicação.
 
 ## Visão geral
 
-Este template usa Django como backend principal, com a aplicação localizada em `backend/` 
-e o módulo de configuração centralizado em `backend/config/`.
-O frontend usa Vite com Bun como runtime/package manager, mantendo o Django como responsável 
-pela renderização HTML e o Vite como pipeline de assets.
-A estratégia de integração com Vite segue o modelo oficial de backend integration 
-com dev server em desenvolvimento e `manifest.json` para produção.
+O projeto vive na raiz do repositório: `manage.py`, `apps/` e `config/` no mesmo nível,
+sem uma pasta `backend/` intermediária.
+
+O Django é responsável pela renderização HTML e pela API; o Vite atua apenas como pipeline
+de assets, seguindo o modelo oficial de *backend integration* — dev server em
+desenvolvimento e `manifest.json` em produção.
 
 ## Stack principal
 
 ### Backend
 
 - Django 6.x.
-- Django Ninja para APIs HTTP tipadas.
-- `django-environ` para settings específicos do Django, como `DEBUG`, `SECRET_KEY` e `DATABASE_URL`.
-- `pydantic-settings` para configurações específicas da aplicação.
-- PyTest para testes.
-- Ruff + MyPy + `django-stubs` para linting e tipagem.
+- Django Ninja para APIs HTTP tipadas, com renderer `orjson`.
+- `django-allauth` (com `mfa` e `socialaccount`) para autenticação.
+- `django-environ` para settings do framework: `DEBUG`, `SECRET_KEY`, `DATABASE_URL`, cache.
+- `pydantic-settings` para configuração da aplicação e de integrações.
+- Celery + Redis/Valkey para tarefas assíncronas.
+- `structlog` + `django-guid` para logs estruturados com correlation id.
+- Sentry e (opcionalmente) Prometheus para observabilidade.
+- PostgreSQL via `psycopg`.
+- pytest para testes; Ruff + MyPy + `django-stubs` para lint e tipagem.
 
 ### Frontend
 
-- Tailwind CSS para estilização.
-- HTMX para interações server-first em HTML.
-- Stimulus como camada principal de comportamento JavaScript.
-- Alpine.js como opção para microinterações locais simples.
+- Tailwind CSS 4 para estilização.
 - Vite para bundling e dev server.
 - Bun para instalar dependências e executar o pipeline frontend.
+
+O template **não** instala HTMX, Stimulus ou Alpine.js. A arquitetura server-rendered é
+compatível com eles — adicione o que o projeto precisar via `bun add`.
 
 ## Estrutura do projeto
 
 ```text
 .
-├── backend/
-│   ├── manage.py
-│   ├── config/
-│   │   ├── __init__.py
-│   │   ├── urls.py
-│   │   ├── asgi.py
-│   │   ├── wsgi.py
-│   │   ├── settings/
-│   │   │   ├── __init__.py
-│   │   │   ├── base.py
-│   │   │   ├── local.py
-│   │   │   ├── test.py
-│   │   │   └── production.py
-│   │   └── app_settings/
-│   │       ├── __init__.py
-│   │       ├── base.py
-│   │       ├── features.py
-│   │       └── integrations.py
-│   ├── apps/
-│   │   └── core/
-│   │       ├── __init__.py
-│   │       ├── apps.py
-│   │       └── templatetags/
-│   │           ├── __init__.py
-│   │           └── vite.py
-│   ├── templates/
-│   └── static/
+├── manage.py
+├── config/
+│   ├── asgi.py / wsgi.py / celery.py
+│   ├── settings/
+│   │   ├── base.py             # importa os parts, em ordem semântica
+│   │   ├── development.py
+│   │   ├── test.py
+│   │   ├── production.py
+│   │   └── parts/              # um módulo por assunto (django, cache, logging, ...)
+│   ├── app_settings/           # pydantic-settings: app, features, integrações
+│   └── urls/                   # root, admin, web, api
+├── apps/
+│   ├── core/                   # utilidades transversais, templatetags, value objects
+│   └── accounts/               # usuários, perfis, API de perfil
 ├── frontend/
-│   ├── entries/
+│   ├── entries/                # entrypoints do Vite
 │   ├── styles/
-│   ├── controllers/
-│   └── images/
-├── docs/
-├── agents/
-├── package.json
+│   └── controllers/
+├── templates/
+│   ├── layouts/                # base.html
+│   └── components/             # componentes django-cotton
+├── static/                     # STATICFILES_DIRS; recebe dist/ do build do Vite
+├── public/                     # SERVESTATIC_ROOT: static/, media/, manifest.json, favicon.svg
+├── locale/
+├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
+├── .github/workflows/          # CI
+├── pyproject.toml / uv.lock
+├── package.json / bun.lock
 ├── vite.config.mjs
-└── pyproject.toml
+└── docker-compose.yml
 ```
-
-A pasta `backend/` contém apenas o universo Django do projeto, enquanto a raiz do repositório 
-pode conter documentação, arquivos de suporte para agentes e outros artefatos sem relação 
-direta com o framework.
-O módulo `config` concentra bootstrap e configuração do Django, enquanto `apps`, `templates` 
-e `static` ficam no mesmo nível dentro de `backend/`.
 
 ## Convenções arquiteturais
 
-- `backend/config/settings/`: settings do Django separados por ambiente, mantendo o padrão do framework.
-- `backend/config/app_settings/`: configurações específicas da aplicação, tipadas com Pydantic.
-- `backend/apps/`: apps de domínio e apps transversais.
-- `backend/apps/core/`: utilidades globais, incluindo templatetags compartilhadas, como a integração com Vite.
-- `backend/templates/`: templates globais do projeto.
-- `backend/static/`: arquivos estáticos servidos pelo Django, incluindo o output do build do Vite.
-- `frontend/`: código-fonte do frontend que será processado pelo Vite.
+- `config/settings/parts/`: cada arquivo cobre um assunto (django, security, cache, logging,
+  celery, sentry, observability…). **A ordem dos imports em `base.py` é semântica** — os parts
+  mutam `INSTALLED_APPS` e `MIDDLEWARE` em sequência, por isso o arquivo é marcado com
+  `# ruff: noqa: I001` para o isort não reordenar.
+- `config/app_settings/`: configuração da aplicação tipada com Pydantic, em três recortes —
+  `AppSettings` (prefixo `APP_`), `FeatureSettings` (`FEATURE_`) e `IntegrationSettings`
+  (`INTEGRATION_`).
+- `apps/<domínio>/`: modelos, domínio, serviços, API e testes de cada contexto.
+- `apps/core/`: utilidades globais — mixins de modelo, value objects, templatetags.
+- `templates/components/`: componentes `django-cotton` (`COTTON_DIR = "components"`).
 
 ## Settings
 
-Os settings do Django permanecem no formato tradicional em módulos Python, conforme a abordagem 
-documentada pelo framework.
-Itens como `DEBUG`, `SECRET_KEY`, `ALLOWED_HOSTS`, `DATABASE_URL`, cache, email e segurança 
-ficam em `backend/config/settings/` e são lidos com `django-environ`.
+Settings do framework ficam em `config/settings/` e são lidos com `django-environ`.
+Configuração de aplicação e de integrações fica em `config/app_settings/`, com
+`pydantic-settings`, e é consumida diretamente pelo código:
 
-As configurações específicas da aplicação ficam em `backend/config/app_settings/`, 
-usando `pydantic-settings` para modelagem tipada e validação de variáveis de ambiente.
-Exemplos típicos incluem feature flags, URLs de integrações externas, parâmetros de billing, 
-timeouts e limites internos da aplicação.
+```python
+from config.app_settings import get_app_settings, get_integration_settings
 
-## Frontend
+region = get_app_settings().phone_number_region     # APP_PHONE_NUMBER_REGION
+dsn = get_integration_settings().SENTRY_DSN         # INTEGRATION_SENTRY_DSN
+```
 
-O frontend foi pensado para aplicações Django server-rendered, sem depender de SPA.
-A responsabilidade das bibliotecas é dividida da seguinte forma:
+Módulos de settings disponíveis: `config.settings.development` (padrão do `manage.py`),
+`config.settings.test` (usado pelo pytest) e `config.settings.production`.
 
-- HTMX para requests parciais e atualização de fragmentos HTML vindos do servidor.
-- Stimulus para comportamento cliente estruturado e reutilizável.
-- Alpine.js apenas para microestado local simples, quando um controller Stimulus seria desnecessário.
-- Tailwind CSS para composição visual rápida e consistente.
+## Frontend: Vite + Bun
 
-## Vite + Bun
+O build sai em `static/dist/`, que está dentro de `STATICFILES_DIRS` — assim o
+`collectstatic` leva os assets para `public/static/` e o `{% static %}` resolve as URLs com
+hash.
 
-O Vite é usado no modo recomendado para integração com backend: o template renderiza assets a 
-partir do dev server em desenvolvimento e a partir do `manifest.json` em produção.
-O Bun funciona com Vite e pode executar o dev server com `bunx --bun vite`, além do build 
-com `bunx --bun vite build`.
+As template tags ficam em `apps/core/templatetags/vite.py` e expõem `{% vite_css %}`,
+`{% vite_js %}` e `{% vite_asset %}`. **O argumento é a chave do manifest**, que o Vite gera
+a partir do caminho do input relativo à raiz do projeto — a mesma string que o dev server
+usa, evitando um mapeamento paralelo entre dev e produção:
 
-A library de template tags do Vite deve viver em `backend/apps/core/templatetags/vite.py`, e pode 
-expor tags separadas para CSS e JS, por exemplo `{% vite_css %}` e `{% vite_js %}`.
+```django
+{% load vite %}
+{% vite_css 'frontend/entries/app.js' %}
+{% vite_js 'frontend/entries/app.js' %}
+```
+
+Para adicionar um entrypoint, registre-o em `vite.config.mjs` (`build.rollupOptions.input`)
+e referencie o caminho do arquivo no template.
 
 ## Instalação
 
 ### Requisitos
 
-- Python 3.13+
+- Python 3.14+
 - Bun
-- Banco de dados compatível com a configuração escolhida
+- PostgreSQL e Redis/Valkey (o `docker-compose.yml` sobe ambos)
 
-### Backend
+Com [mise](https://mise.jdx.dev) instalado, `mise install` provê Python, uv, Bun e Ruff nas
+versões do `mise.toml`.
+
+### Dependências
 
 ```bash
-uv sync
+uv sync          # backend
+bun install      # frontend
 ```
 
-Ou, se preferir outro gerenciador de ambiente, instale as dependências Python 
-definidas no `pyproject.toml`.
-
-### Frontend
+### Serviços locais
 
 ```bash
-bun install
+docker compose up -d database kv-database
 ```
 
 ## Ambiente local
 
-Crie um arquivo `.env` baseado em `.env.example`.
-Variáveis específicas do Django devem ser consumidas pelos settings tradicionais, enquanto 
-variáveis de aplicação devem seguir a convenção dos modelos em `app_settings`.
-
-Exemplo mínimo:
+Crie um `.env` na raiz. Exemplo mínimo:
 
 ```env
 DEBUG=true
 SECRET_KEY=change-me
 ALLOWED_HOSTS=localhost,127.0.0.1
-DATABASE_URL=sqlite:///db.sqlite3
+DATABASE_URL=postgres://user:password@localhost:5432/app
+CACHE_URL=redis://127.0.0.1:6379/0
+SESSION_CACHE_URL=redis://127.0.0.1:6379/1
+ENABLE_PROMETHEUS=false
 ```
+
+Variáveis do framework não têm prefixo. As da aplicação seguem o prefixo do modelo
+correspondente em `app_settings` — por exemplo `INTEGRATION_SENTRY_DSN` para o DSN do Sentry.
 
 ## Executando o projeto
 
-### Backend
-
 ```bash
-python backend/manage.py runserver --settings=config.settings.local
+python manage.py migrate
+python manage.py runserver     # usa config.settings.development
+bun run dev                    # Vite com HMR na porta 8001
 ```
 
-### Frontend
-
-```bash
-bun run dev
-```
-
-O Django continuará servindo HTML e endpoints, enquanto o Vite servirá assets com HMR 
-durante o desenvolvimento.
+O Django serve HTML e endpoints; o Vite serve os assets com HMR.
 
 ## Build de produção
 
 ```bash
 bun run build
-python backend/manage.py collectstatic --settings=config.settings.production
+DJANGO_SETTINGS_MODULE=config.settings.production python manage.py collectstatic --noinput
 ```
 
-Após o build, o Vite gera os assets compilados e o `manifest.json`, que serão lidos pelas 
-template tags no Django.
+O Vite gera os assets e o `manifest.json` em `static/dist/`; o `collectstatic` publica em
+`public/static/`, de onde o ServeStatic os entrega.
+
+## Observabilidade
+
+- **Health check**: `GET /health/` verifica cache e banco. Aceita `?format=json`, `text`,
+  `openmetrics`. Retorna 500 se algum check falhar.
+- **Logs**: `structlog` em JSON, com correlation id injetado pelo `django-guid` e exposto no
+  header `X-Correlation-Id`.
+- **Sentry**: ativado fora de `DEBUG` quando `INTEGRATION_SENTRY_DSN` está definido.
+- **Prometheus**: com `ENABLE_PROMETHEUS=true`, as métricas ficam em `/monitoring/metrics`.
+  `docker compose up -d prometheus` sobe um Prometheus já configurado em
+  `tools/prometheus.yml` para raspar a aplicação rodando no host.
 
 ## Testes e qualidade
 
-### Testes
-
 ```bash
-pytest
-```
+pytest                                  # usa config.settings.test
+pytest --cov=apps --cov-report=term-missing
 
-### Lint e tipagem
-
-```bash
 ruff check . --fix
 ruff format .
-mypy .
+mypy apps
 ```
 
-Esse fluxo combina linting rápido com Ruff e tipagem estática com MyPy e `django-stubs`, 
-o que é especialmente útil em projetos Django com tipagem forte.
+Instale os hooks de pre-commit uma vez com `pre-commit install`; eles rodam `ruff check --fix`
+e `ruff format` a cada commit.
 
-## Template tags globais
+> O MyPy está em modo `strict` e ainda acusa erros herdados no código existente; por isso o
+> job de tipagem no CI é informativo (`continue-on-error`).
 
-As templatetags globais devem ficar preferencialmente em `backend/apps/core/templatetags/`, 
-já que o Django carrega libraries de custom tags a partir de apps instaladas.
-Esse é o local ideal para tags como integração com Vite, helpers de assets, filtros de 
-formatação e utilidades de UI compartilhadas.
+## CI
+
+`.github/workflows/ci.yml` roda em push para `master` e em pull requests:
+
+| Job | O que valida |
+|-----|--------------|
+| `lint` | `ruff check` e `ruff format --check` |
+| `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
+| `frontend` | `bun install --frozen-lockfile`, `vite build` e a presença do manifest |
+| `typecheck` | `mypy apps` (informativo) |
 
 ## Notas finais
 
