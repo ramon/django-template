@@ -1,4 +1,4 @@
-"""O storage remoto e' opcional; estes testes fixam os dois lados do interruptor."""
+"""Remote storage is optional; these tests pin down both sides of the switch."""
 
 import importlib
 from collections.abc import Iterator
@@ -11,27 +11,28 @@ import config.settings.parts.storage as storage_part
 
 
 @pytest.fixture
-def recarrega_storage(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+def reload_storage(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     """
-    Recarrega o part para ver o efeito das variaveis de ambiente.
+    Reloads the part to see the effect of the environment variables.
 
-    Settings sao resolvidos uma vez, no import; sem recarregar nao da para
-    exercitar o outro ramo do `if USE_S3`. O undo vem antes do reload final para
-    o modulo voltar ao estado padrao mesmo quando o teste deixou USE_S3 ligado.
+    Settings are resolved once, at import time; without a reload there is no way
+    to exercise the other branch of `if USE_S3`. The undo happens before the
+    final reload so the module returns to its default state even when the test
+    left USE_S3 on.
     """
     yield
     monkeypatch.undo()
     importlib.reload(storage_part)
 
 
-def test_por_padrao_os_uploads_ficam_em_disco() -> None:
+def test_uploads_default_to_disk() -> None:
     assert settings.STORAGES["default"]["BACKEND"] == (
         "django.core.files.storage.FileSystemStorage"
     )
 
 
-@pytest.mark.usefixtures("recarrega_storage")
-def test_use_s3_troca_o_backend_padrao(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.usefixtures("reload_storage")
+def test_use_s3_swaps_the_default_backend(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("USE_S3", "True")
     monkeypatch.setenv("AWS_STORAGE_BUCKET_NAME", "meu-bucket")
     monkeypatch.setenv("AWS_S3_REGION_NAME", "sa-east-1")
@@ -42,13 +43,13 @@ def test_use_s3_troca_o_backend_padrao(monkeypatch: pytest.MonkeyPatch) -> None:
     assert default["BACKEND"] == "storages.backends.s3.S3Storage"
     assert default["OPTIONS"]["bucket_name"] == "meu-bucket"
     assert default["OPTIONS"]["region_name"] == "sa-east-1"
-    # o storage de estaticos nao muda: quem entrega e' o ServeStatic
+    # static files storage does not change: ServeStatic still serves it
     assert storage_part.STORAGES["staticfiles"]["BACKEND"].startswith("servestatic")
 
 
-@pytest.mark.usefixtures("recarrega_storage")
-def test_use_s3_exige_o_nome_do_bucket(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Falhar no boot e' melhor que subir apontando para lugar nenhum."""
+@pytest.mark.usefixtures("reload_storage")
+def test_use_s3_requires_the_bucket_name(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Failing at boot is better than coming up pointing nowhere."""
     monkeypatch.setenv("USE_S3", "True")
     monkeypatch.delenv("AWS_STORAGE_BUCKET_NAME", raising=False)
 

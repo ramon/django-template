@@ -1,4 +1,4 @@
-"""ProfilePresenter: a fonte dos campos que a API serializa."""
+"""ProfilePresenter: the source of the fields the API serializes."""
 
 from datetime import date
 
@@ -10,7 +10,7 @@ from apps.accounts.tests.factories import ProfileFactory, UserFactory
 pytestmark = pytest.mark.django_db
 
 
-def test_reune_os_dados_que_moram_no_usuario() -> None:
+def test_gathers_the_data_that_lives_on_the_user() -> None:
     user = UserFactory.create(first_name="Ana", last_name="Souza", email="ana@example.com")
 
     presenter = ProfilePresenter(user.profile)
@@ -21,20 +21,20 @@ def test_reune_os_dados_que_moram_no_usuario() -> None:
     assert presenter.email() == "ana@example.com"
 
 
-def test_calcula_a_idade_a_partir_da_data_de_nascimento() -> None:
+def test_calculates_age_from_birth_date() -> None:
     profile = ProfileFactory.create(birth_date=date(1990, 1, 1))
 
-    esperado = date.today().year - 1990 - ((date.today().month, date.today().day) < (1, 1))
-    assert ProfilePresenter(profile).age == esperado
+    expected = date.today().year - 1990 - ((date.today().month, date.today().day) < (1, 1))
+    assert ProfilePresenter(profile).age == expected
 
 
-def test_idade_e_nula_sem_data_de_nascimento() -> None:
+def test_age_is_none_without_a_birth_date() -> None:
     profile = ProfileFactory.create(birth_date=None)
 
     assert ProfilePresenter(profile).age is None
 
 
-def test_user_presenter_delega_ao_modelo() -> None:
+def test_user_presenter_delegates_to_the_model() -> None:
     user = UserFactory.create(email="ana@example.com")
 
     assert UserPresenter(user).email == "ana@example.com"

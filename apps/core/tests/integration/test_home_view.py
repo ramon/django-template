@@ -1,4 +1,4 @@
-"""A pagina inicial e' o menor caminho que exercita urls, cotton, template e assets."""
+"""The home page is the smallest path that exercises urls, cotton, templates, and assets."""
 
 import pytest
 from django.test import Client
@@ -10,22 +10,22 @@ from apps.core.views import build_diagnostics
 pytestmark = pytest.mark.django_db
 
 
-def test_home_anuncia_que_o_app_subiu(client: Client) -> None:
+def test_home_announces_that_the_app_is_up(client: Client) -> None:
     response = client.get(reverse("core:home"))
 
     assert response.status_code == 200
     assert "Seu app está no ar" in response.content.decode()
 
 
-def test_home_resolve_o_layout_cotton(client: Client) -> None:
+def test_home_resolves_the_cotton_layout(client: Client) -> None:
     body = client.get(reverse("core:home")).content.decode()
 
-    # <title> mora em layouts/base.html, que so e' alcancado se o componente
-    # cotton <c-layouts.guest> resolveu e repassou o page_title.
+    # <title> lives in layouts/base.html, which is only reached if the cotton
+    # <c-layouts.guest> component resolved and forwarded page_title.
     assert "<title>Seu app está no ar</title>" in body
 
 
-def test_home_expoe_os_tres_frameworks_de_frontend(client: Client) -> None:
+def test_home_exposes_the_three_frontend_frameworks(client: Client) -> None:
     body = client.get(reverse("core:home")).content.decode()
 
     assert 'hx-get="/ping/"' in body
@@ -34,29 +34,29 @@ def test_home_expoe_os_tres_frameworks_de_frontend(client: Client) -> None:
 
 
 @override_settings(DEBUG=True)
-def test_home_mostra_o_diagnostico_em_debug(client: Client) -> None:
+def test_home_shows_diagnostics_in_debug(client: Client) -> None:
     body = client.get(reverse("core:home")).content.decode()
 
     assert "Configuração em uso" in body
 
 
-def test_home_esconde_o_diagnostico_fora_de_debug(client: Client) -> None:
-    """A pagina descreve a infraestrutura; isso nao pode vazar num deploy."""
+def test_home_hides_diagnostics_outside_debug(client: Client) -> None:
+    """The page describes the infrastructure; that cannot leak in a deploy."""
     body = client.get(reverse("core:home")).content.decode()
 
     assert "Configuração em uso" not in body
 
 
-def test_ping_devolve_o_fragmento_do_htmx(client: Client) -> None:
+def test_ping_returns_the_htmx_fragment(client: Client) -> None:
     response = client.get(reverse("core:ping"))
 
     assert response.status_code == 200
     assert "pong" in response.content.decode()
 
 
-def test_diagnostico_reporta_os_settings_em_uso() -> None:
-    valores = dict(build_diagnostics())
+def test_diagnostics_reports_the_settings_in_use() -> None:
+    values = dict(build_diagnostics())
 
-    assert valores["Settings"] == "config.settings.test"
-    assert valores["Prometheus"] == "desligado"
-    assert valores["Django"].startswith("6.")
+    assert values["Settings"] == "config.settings.test"
+    assert values["Prometheus"] == "desligado"
+    assert values["Django"].startswith("6.")

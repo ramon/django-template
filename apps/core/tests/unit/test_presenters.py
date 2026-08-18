@@ -1,4 +1,4 @@
-"""BasePresenter: envolve um objeto e delega o que nao souber responder."""
+"""BasePresenter: wraps an object and delegates what it doesn't know how to answer."""
 
 from dataclasses import dataclass
 
@@ -8,41 +8,41 @@ from apps.core.presenters import BasePresenter
 
 
 @dataclass
-class Produto:
-    nome: str
-    preco: int
+class Product:
+    name: str
+    price: int
 
 
-class ProdutoPresenter(BasePresenter[Produto]):
+class ProductPresenter(BasePresenter[Product]):
     @property
-    def preco_formatado(self) -> str:
-        return f"R$ {self.obj.preco / 100:.2f}"
+    def formatted_price(self) -> str:
+        return f"R$ {self.obj.price / 100:.2f}"
 
 
-def test_delega_atributos_desconhecidos_ao_objeto() -> None:
-    presenter = ProdutoPresenter(Produto(nome="Caneta", preco=350))
+def test_delegates_unknown_attributes_to_the_object() -> None:
+    presenter = ProductPresenter(Product(name="Pen", price=350))
 
-    assert presenter.nome == "Caneta"
-    assert presenter.preco == 350
-
-
-def test_expoe_os_atributos_proprios() -> None:
-    presenter = ProdutoPresenter(Produto(nome="Caneta", preco=350))
-
-    assert presenter.preco_formatado == "R$ 3.50"
+    assert presenter.name == "Pen"
+    assert presenter.price == 350
 
 
-def test_atributo_inexistente_continua_sendo_erro() -> None:
-    presenter = ProdutoPresenter(Produto(nome="Caneta", preco=350))
+def test_exposes_its_own_attributes() -> None:
+    presenter = ProductPresenter(Product(name="Pen", price=350))
+
+    assert presenter.formatted_price == "R$ 3.50"
+
+
+def test_missing_attribute_still_raises() -> None:
+    presenter = ProductPresenter(Product(name="Pen", price=350))
 
     with pytest.raises(AttributeError):
-        _ = presenter.inexistente
+        _ = presenter.missing
 
 
-def test_collection_envolve_cada_item() -> None:
-    produtos = [Produto(nome="Caneta", preco=350), Produto(nome="Papel", preco=1200)]
+def test_collection_wraps_each_item() -> None:
+    products = [Product(name="Pen", price=350), Product(name="Paper", price=1200)]
 
-    presenters = ProdutoPresenter.collection(produtos)
+    presenters = ProductPresenter.collection(products)
 
-    assert [p.preco_formatado for p in presenters] == ["R$ 3.50", "R$ 12.00"]
-    assert all(isinstance(p, ProdutoPresenter) for p in presenters)
+    assert [p.formatted_price for p in presenters] == ["R$ 3.50", "R$ 12.00"]
+    assert all(isinstance(p, ProductPresenter) for p in presenters)

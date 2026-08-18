@@ -1,4 +1,4 @@
-"""O unico endpoint da API. Nada o exercitava, entao ele estava em 0% de cobertura."""
+"""The API's only endpoint. Nothing exercised it, so it sat at 0% coverage."""
 
 import io
 
@@ -22,12 +22,12 @@ def _png() -> SimpleUploadedFile:
     return SimpleUploadedFile("avatar.png", buffer.getvalue(), content_type="image/png")
 
 
-def test_exige_autenticacao(client: Client) -> None:
-    """A NinjaAPI declara django_auth globalmente; o endpoint conta com isso."""
+def test_requires_authentication(client: Client) -> None:
+    """NinjaAPI declares django_auth globally; the endpoint relies on that."""
     assert client.get(URL).status_code == 401
 
 
-def test_devolve_o_perfil_do_usuario_logado(auth_client: Client, user: User) -> None:
+def test_returns_the_logged_in_user_profile(auth_client: Client, user: User) -> None:
     response = auth_client.get(URL)
 
     assert response.status_code == 200
@@ -41,12 +41,12 @@ def test_devolve_o_perfil_do_usuario_logado(auth_client: Client, user: User) -> 
     }
 
 
-def test_picture_cai_no_gravatar_quando_nao_ha_avatar(auth_client: Client, user: User) -> None:
-    """Sem este caminho o AvatarMixin.avatar_url e o gravatar_url seriam codigo morto."""
+def test_picture_falls_back_to_gravatar_without_an_avatar(auth_client: Client, user: User) -> None:
+    """Without this path, AvatarMixin.avatar_url and gravatar_url would be dead code."""
     assert auth_client.get(URL).json()["picture"] == gravatar_url(user.email)
 
 
-def test_picture_aponta_para_o_arquivo_enviado(
+def test_picture_points_to_the_uploaded_file(
     auth_client: Client, user: User, tmp_path: object
 ) -> None:
     with override_settings(MEDIA_ROOT=str(tmp_path)):
@@ -59,8 +59,8 @@ def test_picture_aponta_para_o_arquivo_enviado(
     assert picture.endswith(".png")
 
 
-def test_o_payload_expoe_so_os_campos_do_schema(auth_client: Client) -> None:
-    """Um campo a mais aqui e' vazamento de dado; um a menos quebra o cliente."""
+def test_payload_exposes_only_the_schema_fields(auth_client: Client) -> None:
+    """An extra field here is a data leak; a missing one breaks the client."""
     assert set(auth_client.get(URL).json()) == {
         "sub",
         "name",
@@ -71,7 +71,7 @@ def test_o_payload_expoe_so_os_campos_do_schema(auth_client: Client) -> None:
     }
 
 
-def test_o_schema_openapi_descreve_o_endpoint(client: Client) -> None:
+def test_openapi_schema_describes_the_endpoint(client: Client) -> None:
     response = client.get("/api/openapi.json")
 
     assert response.status_code == 200

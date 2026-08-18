@@ -1,4 +1,4 @@
-"""A task de exemplo, executada em modo eager (sem broker nem worker)."""
+"""The example task, run in eager mode (no broker, no worker)."""
 
 from collections.abc import Iterator
 
@@ -9,27 +9,27 @@ from apps.core.tasks import echo
 
 
 @pytest.fixture
-def fila_sincrona() -> Iterator[None]:
-    """Executa as tasks no proprio processo, em vez de publicar no broker."""
-    anterior = current_app.conf.task_always_eager
+def sync_queue() -> Iterator[None]:
+    """Runs tasks in the current process instead of publishing to the broker."""
+    previous = current_app.conf.task_always_eager
     current_app.conf.task_always_eager = True
     yield
-    current_app.conf.task_always_eager = anterior
+    current_app.conf.task_always_eager = previous
 
 
-def test_echo_devolve_a_mensagem() -> None:
+def test_echo_returns_the_message() -> None:
     assert echo("ola") == "ola"
 
 
-@pytest.mark.usefixtures("fila_sincrona")
-def test_echo_roda_pelo_caminho_do_celery() -> None:
-    """Prova que a task esta registrada e que .delay a alcanca, sem exigir broker."""
-    resultado = echo.delay("ola")
+@pytest.mark.usefixtures("sync_queue")
+def test_echo_runs_through_the_celery_path() -> None:
+    """Proves the task is registered and that .delay reaches it, without needing a broker."""
+    result = echo.delay("ola")
 
-    assert resultado.successful()
-    assert resultado.get() == "ola"
+    assert result.successful()
+    assert result.get() == "ola"
 
 
-def test_a_task_esta_registrada_com_o_nome_declarado() -> None:
-    """O autodiscover encontra tasks.py de cada app instalado."""
+def test_the_task_is_registered_under_its_declared_name() -> None:
+    """The autodiscover finds tasks.py in every installed app."""
     assert "core.echo" in current_app.tasks
