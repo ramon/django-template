@@ -11,7 +11,7 @@ class BasePresenter[T]:
     attributes while enabling additional customization.
 
     Attributes:
-        _obj: The object the presenter wraps around.
+        obj: The object the presenter wraps around.
     """
 
     obj: T

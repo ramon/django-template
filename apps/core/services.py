@@ -14,7 +14,7 @@ def get_errors(e: ValidationError) -> list[str]:
     added.
 
     Args:
-        e (ValidationError): The error instance from which to extract messages.
+        e: The error instance from which to extract messages.
 
     Returns:
         list[str]: A list of error messages extracted from the ValidationError instance.

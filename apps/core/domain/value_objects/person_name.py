@@ -49,7 +49,7 @@ class PersonName(BaseModel):
         Creates an instance of the class by parsing a full name into first and last names.
 
         Args:
-            full_name (str): The full name consisting of a first name and a last name,
+            full_name: The full name consisting of a first name and a last name,
                 separated by a space. It should not contain leading or trailing whitespace.
 
         Returns:

@@ -52,11 +52,21 @@ def _load_manifest() -> dict[str, Any]:
 
 def _get_chunk(entry: str) -> dict[str, Any]:
     """
-    Resolve a entrada no manifest do Vite.
+    Resolves an entry in the Vite manifest.
 
-    `entry` e' a chave do manifest, que o Vite gera a partir do path do input
-    relativo a' raiz do projeto (ex.: "frontend/entries/app.js"). A mesma string
-    serve para o dev server, evitando um mapeamento paralelo entre dev e producao.
+    `entry` is the manifest key, which Vite generates from the input path
+    relative to the project root (e.g. "frontend/entries/app.js"). The same
+    string serves the dev server, avoiding a parallel mapping between dev and
+    production.
+
+    Args:
+        entry: The manifest key to look up.
+
+    Returns:
+        dict[str, Any]: The manifest entry for `entry`.
+
+    Raises:
+        KeyError: If `entry` is not present in the manifest.
     """
     manifest = _load_manifest()
 
@@ -64,10 +74,10 @@ def _get_chunk(entry: str) -> dict[str, Any]:
         chunk: dict[str, Any] = manifest[entry]
         return chunk
     except KeyError:
-        available = ", ".join(sorted(manifest)) or "<manifest vazio>"
+        available = ", ".join(sorted(manifest)) or "<empty manifest>"
         raise KeyError(
-            f"Entry '{entry}' nao existe no manifest do Vite. Disponiveis: {available}. "
-            f"Rode `bun run vite build`."
+            f"Entry '{entry}' does not exist in the Vite manifest. Available: {available}. "
+            f"Run `bun run vite build`."
         ) from None
 
 
@@ -93,7 +103,7 @@ def _render_dev_js(entry: str) -> str:
     Vite development server client and another for the specified entry file.
 
     Args:
-        entry (str): The path to the entry JavaScript file.
+        entry: The path to the entry JavaScript file.
 
     Returns:
         str: The HTML string containing the script tags for the development
@@ -157,7 +167,7 @@ def vite_css(entry: str) -> SafeString:
     CSS link elements for templates.
 
     Args:
-        entry (str): The name of the entry file to link to the relevant CSS assets.
+        entry: The name of the entry file to link to the relevant CSS assets.
 
     Returns:
         SafeString: A safe HTML string containing the CSS link elements.
@@ -178,7 +188,7 @@ def vite_js(entry: str) -> SafeString:
     using `mark_safe`.
 
     Args:
-        entry (str): The JavaScript entry point name.
+        entry: The JavaScript entry point name.
 
     Returns:
         SafeString: The safe HTML string of the JavaScript snippet for inclusion
@@ -195,7 +205,7 @@ def vite_asset(entry: str) -> str:
     with the given entry. Ensures the resulting HTML markup is safe for rendering.
 
     Args:
-        entry (str): The asset entry point representing the specific file or bundle to be
+        entry: The asset entry point representing the specific file or bundle to be
             included (usually without file extension).
 
     Returns:

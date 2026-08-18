@@ -17,8 +17,7 @@ def get_avatar_from_url(url: str) -> File[Any]:
     and returned with the name extracted from the URL.
 
     Args:
-        url (str): A string representing the URL of the avatar image to be
-            retrieved.
+        url: A string representing the URL of the avatar image to be retrieved.
 
     Returns:
         File: A File object representing the downloaded avatar image.
@@ -46,9 +45,8 @@ def gravatar_url(email: str, size: int = 40) -> str:
     specified.
 
     Args:
-        email (str): The email address to generate the Gravatar URL for.
-        size (int, optional): The desired size of the Gravatar image in pixels. Defaults
-            to 40.
+        email: The email address to generate the Gravatar URL for.
+        size: The desired size of the Gravatar image in pixels. Defaults to 40.
 
     Returns:
         str: The URL for the generated Gravatar image.

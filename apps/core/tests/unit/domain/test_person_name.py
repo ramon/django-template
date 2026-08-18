@@ -1,5 +1,3 @@
-# apps/core/tests/test_person_name.py
-
 from apps.core.domain.value_objects.person_name import PersonName
 
 
