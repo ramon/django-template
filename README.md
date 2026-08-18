@@ -37,6 +37,7 @@ desenvolvimento e `manifest.json` em produção.
 - Alpine.js para microestado local, quando um controller Stimulus seria demais.
 - Vite para bundling e dev server.
 - Bun para instalar dependências e executar o pipeline frontend.
+- Biome para lint e formatação de JS/CSS; Vitest + happy-dom para testes.
 
 ## Estrutura do projeto
 
@@ -59,6 +60,7 @@ desenvolvimento e `manifest.json` em produção.
 ├── frontend/
 │   ├── entries/                # entrypoints do Vite
 │   ├── styles/
+│   ├── lib/                    # módulos utilitários (ex.: CSRF do HTMX)
 │   └── controllers/            # controllers Stimulus, auto-registrados
 ├── templates/
 │   ├── layouts/                # base.html
@@ -241,6 +243,25 @@ ruff format .
 mypy apps tests
 ```
 
+### Frontend
+
+Biome cobre lint e formatação de JS e CSS num binário só, como o Ruff faz no Python; os
+testes rodam em Vitest com `happy-dom`, ao lado do código em `*.test.js`:
+
+```bash
+bun run lint          # biome check
+bun run lint:fix      # biome check --write
+bun run format        # só formatação
+bun run test          # vitest run
+bun run test:watch    # vitest em watch
+bun run test:coverage # cobertura v8
+```
+
+O pre-commit roda o Biome nos arquivos JS/CSS/JSON alterados, junto do Ruff nos Python.
+
+Lógica de comportamento fica em `frontend/lib/`, não solta no entrypoint — `app.js` só
+orquestra, e o que tem regra (como o header CSRF do HTMX) vira módulo testável.
+
 ### Testes ponta a ponta
 
 Os e2e vivem em `tests/e2e/` e rodam num Chromium real, via `pytest-playwright` e a
@@ -279,7 +300,7 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 |-----|--------------|
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
-| `frontend` | `bun install --frozen-lockfile`, `vite build` e a presença do manifest |
+| `frontend` | Biome (lint + format), Vitest, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` num Chromium real, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |
 

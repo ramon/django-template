@@ -5,3 +5,14 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome (js/css)
+        # hook local em vez do repo oficial: o bun e o biome ja sao dependencias
+        # do projeto, entao a versao vem do bun.lock e nao de um rev separado
+        entry: bunx biome check --write --no-errors-on-unmatched
+        language: system
+        types_or: [javascript, css, json]
+        pass_filenames: true

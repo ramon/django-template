@@ -1,22 +1,13 @@
-import "../styles/app.css";
-
 import Alpine from "alpinejs";
 import htmx from "htmx.org";
 
+import "../styles/app.css";
 import "../controllers";
+import { registerCsrfHeader } from "../lib/csrf.js";
 
 // --- HTMX -------------------------------------------------------------------
 window.htmx = htmx;
-
-// Django rejeita requests unsafe sem o token; o base.html expoe o valor em
-// <meta name="csrf-token">.
-document.addEventListener("htmx:configRequest", (event) => {
-  const token = document.querySelector('meta[name="csrf-token"]')?.content;
-
-  if (token) {
-    event.detail.headers["X-CSRFToken"] = token;
-  }
-});
+registerCsrfHeader();
 
 // --- Alpine -----------------------------------------------------------------
 window.Alpine = Alpine;
