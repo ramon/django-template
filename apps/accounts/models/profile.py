@@ -3,16 +3,16 @@ from django.db import models
 from django.utils.translation import gettext_lazy, pgettext_lazy
 
 from apps.accounts.models.mixins import AvatarMixin
-from apps.core.models import BaseModel
-from apps.core.models.mixins import PhoneNumberMixin
+from apps.core.models import BaseModel, Gender
+from apps.core.models.mixins import PhoneNumberMixin, SelfRepresentationMixin
 
 
 class ProfileManager(models.Manager["Profile"]):
     def get_queryset(self) -> models.QuerySet[Profile]:
-        return super().get_queryset().select_related("user", "gender")
+        return super().get_queryset().select_related("user")
 
 
-class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
+class Profile(AvatarMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel):
     """
     Represents a user's profile, including personal details and associated data.
 
@@ -28,8 +28,8 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
         document: Stores an 11-character string representing the user's
             document ID.
         birth_date: Date of birth of the user.
-        gender: Foreign key linking the user's profile with a Gender instance,
-            protected against deletion of associated Gender entries.
+        gender: The person's gender, from a fixed valueset. Defaults to unknown
+            rather than requiring a value up front.
     """
 
     user = models.OneToOneField(
@@ -42,12 +42,12 @@ class Profile(AvatarMixin, PhoneNumberMixin, BaseModel):
         gettext_lazy("document"), max_length=11, null=True, blank=True, unique=True
     )
     birth_date = models.DateField(gettext_lazy("birth date"), blank=True, null=True)
-    gender = models.ForeignKey(
-        "accounts.Gender",
-        verbose_name=gettext_lazy("gender"),
+    gender = models.CharField(
+        gettext_lazy("gender"),
+        max_length=10,
+        choices=Gender.choices,
+        default=Gender.UNKNOWN,
         blank=True,
-        null=True,
-        on_delete=models.PROTECT,
     )
 
     objects = ProfileManager()

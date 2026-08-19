@@ -5,7 +5,7 @@ from typing import Any
 import factory
 from factory.django import DjangoModelFactory
 
-from apps.accounts.models import Gender, Profile, User
+from apps.accounts.models import Profile, User
 
 
 class UserFactory(DjangoModelFactory[User]):
@@ -35,13 +35,6 @@ class UserFactory(DjangoModelFactory[User]):
 class SuperUserFactory(UserFactory):
     is_staff = True
     is_superuser = True
-
-
-class GenderFactory(DjangoModelFactory[Gender]):
-    class Meta:
-        model = Gender
-
-    name = factory.Iterator(["Feminino", "Masculino", "Nao binario"])
 
 
 class ProfileFactory(DjangoModelFactory[Profile]):

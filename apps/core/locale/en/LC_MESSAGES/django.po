@@ -14,6 +14,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "male"
+msgstr ""
+
+msgid "female"
+msgstr ""
+
+msgid "unknown"
+msgstr ""
+
 msgid "first name"
 msgstr ""
 
@@ -21,6 +30,15 @@ msgid "last name"
 msgstr ""
 
 msgid "phone number"
+msgstr ""
+
+msgid "social name"
+msgstr ""
+
+msgid "gender identity"
+msgstr ""
+
+msgid "pronouns"
 msgstr ""
 
 msgid "deleted at"

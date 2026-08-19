@@ -23,17 +23,6 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-msgid "name"
-msgstr ""
-
-msgctxt "model"
-msgid "gender"
-msgstr ""
-
-msgctxt "model"
-msgid "genders"
-msgstr ""
-
 msgid "avatar"
 msgstr ""
 
