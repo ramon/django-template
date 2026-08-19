@@ -153,9 +153,9 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
   nomes de função de teste, docstrings, logs e mensagens de exceção. Teste não é uma
   categoria à parte aqui; a única folga que `tests.*` tem é a tipagem (ver
   [`backend.md`](docs/standards/backend.md#tipagem-e-docstrings)), não o idioma. Comentários
-  que explicam *por que* em português, sem acento (é o padrão do código existente:
-  `# a NinjaAPI exige django_auth globalmente, entao o usuario nunca e' anonimo aqui`).
-  Prosa em Markdown — README e `docs/` — em português com acento.
+  que explicam *por que* em português (é o padrão do código existente: `# a NinjaAPI exige
+  django_auth globalmente, então o usuário nunca é anônimo aqui`). Prosa em Markdown —
+  README e `docs/` — em português.
 - **Comentário só para o "por quê".** O "o quê" está no código. Comentário que repete a
   linha seguinte é ruído; comentário que explica uma escolha não óbvia é o que impede
   alguém de desfazê-la sem saber.
@@ -169,8 +169,8 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
   entram como argumento, não como singleton lido de dentro da função.
 - **Tipagem completa** em código de produção, MyPy `strict`. Testes podem ficar sem
   anotação (`disallow_untyped_defs = false` para `tests.*`).
-- **Commits**: Conventional Commits em português, sem acento, no imperativo —
-  `feat(accounts): dar catalogo proprio a cada app`. O escopo é o app ou a área.
+- **Commits**: Conventional Commits em português, no imperativo —
+  `feat(accounts): dar catálogo próprio a cada app`. O escopo é o app ou a área.
 - Formatação é assunto do Ruff e do Biome; não ajuste espaçamento à mão.
 
 ## Antes de dizer que terminou

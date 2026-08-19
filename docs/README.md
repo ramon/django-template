@@ -59,7 +59,7 @@ terminar. Convenções em [`plans/README.md`](plans/README.md).
 - **Documento desatualizado é pior que documento ausente**, porque agentes tratam o que
   está aqui como verdade. Se a mudança de código contradiz um documento, atualize os dois
   no mesmo commit.
-- **Português com acento** na prosa; nomes de arquivo em `kebab-case` sem acento.
+- **Português** na prosa; nomes de arquivo em `kebab-case` sem acento.
 - **Data absoluta** (`2026-08-18`), nunca "semana passada".
 - **Linka o código** por caminho (`apps/core/templatetags/vite.py`), não por cópia:
   trecho copiado envelhece em silêncio.

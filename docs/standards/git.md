@@ -2,15 +2,15 @@
 
 ## Commits
 
-Conventional Commits, **em português, sem acento, no imperativo**. O assunto diz o efeito,
-não o arquivo:
+Conventional Commits, **em português, no imperativo**. O assunto diz o efeito, não o
+arquivo:
 
 ```text
-feat(accounts): dar catalogo proprio a cada app
-fix(celery): destravar o worker, que nao subia
-build(docker): adicionar imagens de dev e producao e o Procfile
+feat(accounts): dar catálogo próprio a cada app
+fix(celery): destravar o worker, que não subia
+build(docker): adicionar imagens de dev e produção e o Procfile
 test(accounts): cobrir a API de perfil e os presenters
-docs(env): adicionar .env.example com todas as variaveis
+docs(env): adicionar .env.example com todas as variáveis
 ```
 
 Tipos em uso: `feat`, `fix`, `refactor`, `test`, `docs`, `build`, `chore`. O escopo é o app
@@ -21,8 +21,7 @@ Um commit resolve uma coisa. Se o assunto precisa de "e" para descrever duas mud
 independentes, são dois commits. Migration, catálogo `.po` e teste andam **no mesmo commit**
 da mudança que os exige — separá-los produz um commit intermediário que não passa no CI.
 
-Corpo é opcional; use-o para o *por que*, quando o assunto não cabe. `sem acento` vale para
-a mensagem toda.
+Corpo é opcional; use-o para o *por que*, quando o assunto não cabe.
 
 ## Branches e PR
 
