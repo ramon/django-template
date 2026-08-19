@@ -13,7 +13,7 @@ resolvida — não ignorada.
 | [`infra.md`](infra.md) | compose e os dois caminhos de dev, imagens, `Procfile`, variáveis, sondas |
 | [`auth.md`](auth.md) | allauth, MFA, sessões, contas sociais, CORS da API |
 | [`observability.md`](observability.md) | Sentry (sem PII), Prometheus |
-| [`git.md`](git.md) | commits, PR, pre-commit, o que o CI verifica |
+| [`git.md`](git.md) | commits, branches (git-flow), changelog e versionamento, PR, pre-commit, o que o CI verifica |
 | [`quality-gates.md`](quality-gates.md) | qual gate se aplica a qual mudança, ordem de execução, por que cada um existe |
 
 Setup, comandos e stack ficam no [`README.md`](../../README.md) da raiz; daqui a gente
