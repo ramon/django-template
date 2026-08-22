@@ -1,6 +1,6 @@
 # Plano: estilizar o fluxo de autenticação do allauth (login, MFA, WebAuthn, sessões)
 
-- **Status**: Em andamento
+- **Status**: Concluído
 - **Início**: 2026-08-22
 - **Última atualização**: 2026-08-22
 - **Relacionados**: ADR [0013](../adr/0013-customizacao-de-ui-do-allauth-via-elements-e-apps-ui.md),
