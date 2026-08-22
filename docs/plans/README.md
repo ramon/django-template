@@ -37,7 +37,6 @@ sem saber por que parou.
 
 ## Índice
 
-Nenhum plano em andamento.
-
 | Plano | Status | Início | Fim |
 | --- | --- | --- | --- |
+| [Estilizar o fluxo de autenticação do allauth](frontend-auth-styling.md) | Em andamento | 2026-08-22 | — |
