@@ -2,10 +2,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "bun run lint:js && bun run lint:css",
+    "lint": "bun run lint:js && bun run lint:css && bun run lint:classes",
     "lint:js": "biome check .",
     "lint:css": "stylelint \"frontend/**/*.css\"",
-    "lint:fix": "biome check --write . && stylelint --fix \"frontend/**/*.css\"",
+    "lint:classes": "rustywind --check-formatted -l django templates",
+    "lint:fix": "biome check --write . && stylelint --fix \"frontend/**/*.css\" && bun run lint:classes:fix",
+    "lint:classes:fix": "rustywind --write -l django templates",
     "format": "biome format --write .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -23,7 +25,11 @@
     "@biomejs/biome": "^2.5.9",
     "@vitest/coverage-v8": "^4.1.10",
     "happy-dom": "^20.11.2",
+    "rustywind": "^0.27.0",
     "stylelint": "^17.14.1",
     "vitest": "^4.1.10"
-  }
+  },
+  "trustedDependencies": [
+    "rustywind"
+  ]
 }
