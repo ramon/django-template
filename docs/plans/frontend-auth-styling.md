@@ -143,7 +143,7 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       hardware (login, signup, password reset, MFA index, recovery codes); WebAuthn real
       fica de fora (exigiria virtual authenticator do CDP) — depende de 7 ·
       verificação: `uv run pytest -m e2e` (após `bun run build`).
-- [ ] **10. Docs de padrão** — `docs/standards/frontend.md` ganha a seção de override de
+- [x] **10. Docs de padrão** — `docs/standards/frontend.md` ganha a seção de override de
       allauth via `elements`/`layouts` + `apps/ui`; `docs/standards/auth.md` perde a
       ressalva de "UI é a do allauth, sem estilo" — depende de 9 · verificação: revisão de
       texto.
@@ -186,7 +186,13 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   allauth fazia isso). Também achado (fora de escopo, **não corrigido**): cadastro quebra
   com HTTP 500 hoje — `User.REQUIRED_FIELDS` exige `first_name`/`last_name` que o form de
   signup nunca preenche, gap de `apps/accounts` sem relação com este plano.
-- **Próximo passo**: etapa 10 (docs de padrão).
+  etapa 10 (`docs/standards/frontend.md` ganhou a seção "Telas do allauth: sobrescreva
+  `elements`/`layouts`, não a página", com as duas armadilhas do Cotton documentadas;
+  `docs/standards/auth.md` deixou de descrever a UI de auth como "a do allauth, sem
+  estilo" — agora aponta pra ADR 0013 e pra seção nova do `frontend.md`; ADR 0007 não foi
+  editado — convenção do projeto é ADR aceito não muda, só linka o que resolveu, e a ADR
+  0013 já lista a 0007 em "Relacionados").
+- **Próximo passo**: etapa 11 (fechamento — checklist de qualidade completo, PR).
 
 ## Decisões tomadas no caminho
 

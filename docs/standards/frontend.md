@@ -120,6 +120,41 @@ incluem os dois.
 - Fragmento simples e sem contrato pode continuar como `{% include %}`.
 - Texto visível é traduzível (`{% translate %}` / `{% blocktranslate %}`).
 
+### Telas do allauth: sobrescreva `elements`/`layouts`, não a página
+
+Toda tela de conta (login, cadastro, MFA, sessões, conexões sociais...) vem do
+`django-allauth`, montada com `{% element %}` em vez de HTML cru — botão, campo,
+formulário, painel, alerta e título passam por `allauth/elements/*.html`, e cada
+página estende `allauth/layouts/{base,entrance,manage}.html`. Estilizar é
+sobrescrever esses ~15 arquivos em `templates/allauth/`, nunca uma página
+individual (`account/login.html` etc.) — um override desses estiliza as ~80
+páginas de uma vez. O porquê e as alternativas descartadas estão na
+[ADR 0013](../adr/0013-customizacao-de-ui-do-allauth-via-elements-e-apps-ui.md).
+
+```text
+templates/allauth/
+├── layouts/{entrance,manage}.html   # estendem <c-layouts.{guest,app}>
+└── elements/*.html                  # button, field, form, alert, panel...
+```
+
+Cada `elements/*.html` delega para o componente Cotton genérico correspondente em
+`apps/ui/` (`<c-ui.button>`, `<c-ui.field>`, `<c-ui.form>`...) — a lista completa
+de componentes e das templatetags de apoio está em `apps/ui/AGENTS.md`. Override
+de página individual só quando o `elements` padrão não cobre a marcação (ex.:
+`templates/account/password_change.html`, que existe só porque o allauth deixa o
+link "Esqueceu a senha?" cru, fora de qualquer element, nesse template
+específico) — documente o motivo com um comentário no arquivo.
+
+Duas armadilhas do django-cotton que custam tempo para descobrir:
+
+- **Sem block tag no atributo do componente.** `<c-x {% if %}...{% endif %} %>`
+  quebra o parser (`Invalid block tag ... expected 'endcotton'`) — vale para
+  `{% if %}`, `{% for %}` e `{% with %}`. Resolva fora, com `{% with %}`, e passe
+  o resultado pronto: `:attr="variavel"`.
+- **`:attr="..."` (dynamic binding) não aceita filtro.** `:attr="x|filtro"` falha
+  em silêncio — sem erro, o atributo simplesmente não é setado. Pré-compute com
+  `{% with x=x|filtro %}` e passe a variável já pronta.
+
 ## JS: estilo
 
 Biome com o preset recomendado, aspas duplas, ponto e vírgula, `trailingCommas: "all"`,
