@@ -1,0 +1,24 @@
+{% load allauth ui %}
+{% with fa=attrs|without_tags_and_form %}
+    <c-ui.form :attrs="fa">
+        {% comment %}
+        allauth nunca renderiza form.non_field_errors em nenhum template upstream (nem
+        no elements/form.html padrão) — sem isto, um erro não ligado a nenhum campo
+        específico (ex.: "e-mail e/ou senha incorretos" no login) não aparecia em lugar
+        nenhum da página (ver docs/plans/frontend-auth-styling.md, etapa 7).
+        {% endcomment %}
+        {% if attrs.form.non_field_errors %}
+            <c-ui.alert severity="error">
+                {% for error in attrs.form.non_field_errors %}
+                    {{ error }}{% if not forloop.last %}<br>{% endif %}
+                {% endfor %}
+            </c-ui.alert>
+        {% endif %}
+        {% slot body %}
+        {% endslot %}
+        <c-slot name="actions">
+            {% slot actions %}
+            {% endslot %}
+        </c-slot>
+    </c-ui.form>
+{% endwith %}

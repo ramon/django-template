@@ -1,0 +1,9 @@
+{% load allauth ui %}
+{% button_variant attrs.tags as variant %}
+{% button_color attrs.tags as color %}
+{% with fa=attrs|without_tags %}
+    <c-ui.button :attrs="fa" variant="{{ variant }}" color="{{ color }}">
+        {% slot %}
+        {% endslot %}
+    </c-ui.button>
+{% endwith %}

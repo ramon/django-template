@@ -37,7 +37,9 @@ estão vazios de propósito — o app é dono do **model** (`User`, `Profile`) e
 perfil** (`apps/accounts/api/`), não da UI de login. Customizar uma tela de auth é
 sobrescrever o template do allauth (`allauth/account/...` no
 [template lookup](https://docs.allauth.org/en/latest/common/templates.html)), não recriar a
-view.
+view — mas já vem estilizada: o tema (ADR 0012) chega em toda tela via override de
+`allauth/elements/`/`allauth/layouts/`, delegando para os componentes Cotton genéricos de
+`apps/ui/` (ADR 0013). Ver [`frontend.md#telas-do-allauth-sobrescreva-elementslayouts-não-a-página`](frontend.md).
 
 ### Verificação de e-mail: obrigatória
 

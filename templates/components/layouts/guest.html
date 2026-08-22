@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 
-{% block content %}
-    {{ slot }}
+{% block body %}
+    {% include "layouts/partials/header.html" %}
+    {# guest_content/content: seam para allauth/layouts/entrance.html, que estende este arquivo por {% extends %} em vez do uso normal via <c-layouts.guest> — Cotton não suporta herança de bloco dentro de <c-slot>. Ver o comentário em templates/layouts/base.html sobre por que "content" não é o bloco que este arquivo sobrescreve diretamente. #}
+    {% block guest_content %}{% block content %}{{ slot }}{% endblock %}{% endblock %}
 {% endblock %}

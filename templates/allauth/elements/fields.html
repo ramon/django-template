@@ -1,0 +1,15 @@
+{% load allauth ui %}
+{% for bound_field in attrs.form %}
+    {% if bound_field.is_hidden %}
+        {{ bound_field }}
+    {% else %}
+        {% with fa=bound_field|field_attrs %}
+            {% field_hide_label bound_field attrs.unlabeled as hide_label %}
+            <c-ui.field :attrs="fa"
+                        label="{{ bound_field.label }}"
+                        :hide_label="hide_label"
+                        help_text="{{ bound_field.help_text }}">
+            </c-ui.field>
+        {% endwith %}
+    {% endif %}
+{% endfor %}

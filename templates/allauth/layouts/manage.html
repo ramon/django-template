@@ -1,0 +1,34 @@
+{% extends "components/layouts/app.html" %}
+{% comment %}
+Override do layout de gestão de conta do allauth (MFA, sessões, conexões sociais,
+e-mail/senha) — ver ADR 0013. Estende <c-layouts.app> por {% extends %} (ver o comentário
+de seam em templates/components/layouts/app.html), populando o slot sidebar com a nav de
+configurações de conta.
+{% endcomment %}
+
+{% block page_title %}{% block head_title %}{% endblock %}{% endblock %}
+{% block head %}{% block extra_head %}{% endblock %}{% endblock %}
+
+{% block app_sidebar %}
+    <aside class="lg:w-64 lg:shrink-0">
+        {% include "layouts/partials/manage_nav.html" %}
+    </aside>
+{% endblock %}
+
+{% block app_content %}
+    {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+                <c-ui.alert severity="{{ message.tags|default:'info' }}">
+                    {{ message }}
+                </c-ui.alert>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% block extra_body %}{% endblock %}
+{% endblock %}

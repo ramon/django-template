@@ -58,3 +58,4 @@ ADRs novos continua de onde a lista abaixo termina.
 | [0010](0010-documento-de-identidade-tipado-pela-nacionalidade.md) | Documento de identidade tipado pela nacionalidade, com suporte parcial a países | Aceito | 2026-08-22 |
 | [0011](0011-full-clean-automatico-no-basemodel-save.md) | `full_clean()` automático em `BaseModel.save()` | Aceito | 2026-08-22 |
 | [0012](0012-tema-com-tokens-no-molde-do-material-design-3.md) | Tema com tokens no molde do Material Design 3 | Aceito | 2026-08-22 |
+| [0013](0013-customizacao-de-ui-do-allauth-via-elements-e-apps-ui.md) | Customização de UI do allauth via override de elements/layouts, delegando para `apps/ui` | Aceito | 2026-08-22 |

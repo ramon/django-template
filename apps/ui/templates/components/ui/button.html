@@ -1,0 +1,35 @@
+<c-vars variant="prominent" color="primary" type="button" href="" />
+
+{% if href %}
+    <a href="{{ href }}"
+       {{ attrs }}
+       class="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition
+              {% if variant == "outline" %}
+                  {% if color == "danger" %}border border-error text-error hover:bg-error-container
+                  {% elif color == "secondary" %}border border-secondary text-secondary hover:bg-secondary-container
+                  {% else %}border border-primary text-primary hover:bg-primary-container{% endif %}
+              {% elif variant == "link" %}
+                  {% if color == "danger" %}text-error underline-offset-4 hover:underline
+                  {% else %}text-primary underline-offset-4 hover:underline{% endif %}
+              {% else %}
+                  {% if color == "danger" %}bg-error text-on-error hover:opacity-90
+                  {% elif color == "secondary" %}bg-secondary text-on-secondary hover:opacity-90
+                  {% else %}bg-primary text-on-primary hover:opacity-90{% endif %}
+              {% endif %}">{{ slot }}</a>
+{% else %}
+    <button type="{{ type }}"
+            {{ attrs }}
+            class="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition disabled:pointer-events-none disabled:opacity-50
+                   {% if variant == "outline" %}
+                       {% if color == "danger" %}border border-error text-error hover:bg-error-container
+                       {% elif color == "secondary" %}border border-secondary text-secondary hover:bg-secondary-container
+                       {% else %}border border-primary text-primary hover:bg-primary-container{% endif %}
+                   {% elif variant == "link" %}
+                       {% if color == "danger" %}text-error underline-offset-4 hover:underline
+                       {% else %}text-primary underline-offset-4 hover:underline{% endif %}
+                   {% else %}
+                       {% if color == "danger" %}bg-error text-on-error hover:opacity-90
+                       {% elif color == "secondary" %}bg-secondary text-on-secondary hover:opacity-90
+                       {% else %}bg-primary text-on-primary hover:opacity-90{% endif %}
+                   {% endif %}">{{ slot }}</button>
+{% endif %}

@@ -1,0 +1,11 @@
+<c-vars method="post" action="" />
+
+<form method="{{ method }}"
+      {% if action %}action="{{ action }}"{% endif %}
+      {{ attrs }}
+      class="space-y-4">
+    {{ slot }}
+    {% if actions %}
+        <div class="flex flex-wrap items-center justify-end gap-3 pt-2">{{ actions }}</div>
+    {% endif %}
+</form>

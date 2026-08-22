@@ -4,28 +4,12 @@
     <main class="bg-background text-on-background min-h-screen">
         <div class="mx-auto max-w-3xl px-6 py-16">
 
-            <div class="flex items-center justify-between gap-4">
-                <p class="bg-tertiary-container text-on-tertiary-container inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium">
-                    <span class="bg-tertiary size-2 rounded-full"></span>
-                    Tudo respondendo
-                </p>
+            <p class="bg-tertiary-container text-on-tertiary-container inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium">
+                <span class="bg-tertiary size-2 rounded-full"></span>
+                Tudo respondendo
+            </p>
 
-                {# Alterna a classe .dark na raiz; o estado inicial vem do script anti-flash em templates/layouts/base.html. #}
-                <button type="button"
-                        data-controller="theme"
-                        data-action="theme#toggle"
-                        aria-label="Alternar tema claro/escuro"
-                        class="border-outline-variant text-on-surface-variant hover:bg-surface-container-high rounded-full border p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5 dark:hidden">
-                        <circle cx="12" cy="12" r="4"/>
-                        <path stroke-linecap="round" d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                    </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden size-5 dark:block">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
-                    </svg>
-                </button>
-            </div>
-
+            {# O toggle de tema agora mora no header de <c-layouts.guest>/<c-layouts.app> (templates/layouts/partials/header.html). #}
             <h1 class="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
                 Seu app está no ar
             </h1>
