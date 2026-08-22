@@ -5,6 +5,21 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
+    {% comment %}
+    Decide o tema (claro/escuro) antes do primeiro paint, pra nao piscar o tema
+    errado. Espelha a chave e a logica de frontend/controllers/theme_controller.js.
+    {% endcomment %}
+    <script>
+        (function () {
+            var stored = localStorage.getItem("theme");
+            var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            if (stored === "dark" || (!stored && prefersDark)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -25,7 +40,7 @@
         {% vite_css 'frontend/entries/app.js' %}
     {% endblock %}
 </head>
-<body>
+<body class="bg-background text-on-background">
 {% block content %}{% endblock %}
 
 {% block js %}

@@ -1,1 +1,108 @@
 @import "tailwindcss";
+
+/* Ativa a variant `dark:` por classe (`.dark` em algum ancestral) em vez do
+   `prefers-color-scheme` puro do Tailwind — o toggle manual (theme_controller.js)
+   depende disso. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tema de exemplo: tokens semânticos no molde do Material Design 3 (role/on-role,
+ * containers, superfícies em camadas), com cores livres — não é a paleta oficial do
+ * M3, só a estrutura. Serve de base para o projeto gerado a partir do template:
+ * troque os valores, mantenha (ou não) os nomes.
+ *
+ * Uso: classes normais do Tailwind (`bg-primary`, `text-on-surface`, ...). Nenhuma
+ * classe precisa de prefixo `dark:` para cor — o valor muda sozinho quando `.dark`
+ * está em algum ancestral, porque cada token é uma custom property redefinida abaixo.
+ */
+@theme {
+  --color-primary: var(--color-indigo-600);
+  --color-on-primary: white;
+  --color-primary-container: var(--color-indigo-100);
+  --color-on-primary-container: var(--color-indigo-900);
+
+  --color-secondary: var(--color-teal-700);
+  --color-on-secondary: white;
+  --color-secondary-container: var(--color-teal-100);
+  --color-on-secondary-container: var(--color-teal-900);
+
+  --color-tertiary: var(--color-amber-700);
+  --color-on-tertiary: white;
+  --color-tertiary-container: var(--color-amber-100);
+  --color-on-tertiary-container: var(--color-amber-900);
+
+  --color-error: var(--color-red-600);
+  --color-on-error: white;
+  --color-error-container: var(--color-red-100);
+  --color-on-error-container: var(--color-red-900);
+
+  --color-background: var(--color-slate-50);
+  --color-on-background: var(--color-slate-900);
+
+  --color-surface: white;
+  --color-on-surface: var(--color-slate-900);
+  --color-surface-variant: var(--color-slate-100);
+  --color-on-surface-variant: var(--color-slate-600);
+  --color-surface-dim: var(--color-slate-200);
+  --color-surface-bright: white;
+  --color-surface-container-lowest: white;
+  --color-surface-container-low: var(--color-slate-50);
+  --color-surface-container: var(--color-slate-100);
+  --color-surface-container-high: var(--color-slate-200);
+  --color-surface-container-highest: var(--color-slate-300);
+
+  --color-outline: var(--color-slate-500);
+  --color-outline-variant: var(--color-slate-200);
+  --color-shadow: black;
+  --color-scrim: black;
+
+  --color-inverse-surface: var(--color-slate-800);
+  --color-inverse-on-surface: var(--color-slate-50);
+  --color-inverse-primary: var(--color-indigo-300);
+}
+
+.dark {
+  --color-primary: var(--color-indigo-300);
+  --color-on-primary: var(--color-indigo-900);
+  --color-primary-container: var(--color-indigo-800);
+  --color-on-primary-container: var(--color-indigo-100);
+
+  --color-secondary: var(--color-teal-300);
+  --color-on-secondary: var(--color-teal-900);
+  --color-secondary-container: var(--color-teal-800);
+  --color-on-secondary-container: var(--color-teal-100);
+
+  --color-tertiary: var(--color-amber-300);
+  --color-on-tertiary: var(--color-amber-900);
+  --color-tertiary-container: var(--color-amber-800);
+  --color-on-tertiary-container: var(--color-amber-100);
+
+  --color-error: var(--color-red-300);
+  --color-on-error: var(--color-red-900);
+  --color-error-container: var(--color-red-800);
+  --color-on-error-container: var(--color-red-100);
+
+  --color-background: var(--color-slate-950);
+  --color-on-background: var(--color-slate-100);
+
+  --color-surface: var(--color-slate-900);
+  --color-on-surface: var(--color-slate-100);
+  --color-surface-variant: var(--color-slate-800);
+  --color-on-surface-variant: var(--color-slate-300);
+  --color-surface-dim: var(--color-slate-950);
+  --color-surface-bright: var(--color-slate-700);
+  --color-surface-container-lowest: var(--color-slate-950);
+  --color-surface-container-low: var(--color-slate-900);
+  --color-surface-container: var(--color-slate-800);
+  --color-surface-container-high: var(--color-slate-700);
+  --color-surface-container-highest: var(--color-slate-600);
+
+  --color-outline: var(--color-slate-500);
+  --color-outline-variant: var(--color-slate-700);
+  --color-shadow: black;
+  --color-scrim: black;
+
+  --color-inverse-surface: var(--color-slate-100);
+  --color-inverse-on-surface: var(--color-slate-800);
+  --color-inverse-primary: var(--color-indigo-600);
+}

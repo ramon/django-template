@@ -85,6 +85,30 @@ sem atualizar o teste quebra o CI.
 Formatação e nomenclatura são ferramentas distintas de propósito: o Biome cuida do formato
 (JS, CSS, JSON), o Stylelint da convenção de nomes.
 
+### Tema: tokens semânticos e dark mode
+
+`frontend/styles/app.css` define o tema em `@theme`, com tokens nomeados por papel — no
+molde do Material Design 3 (`primary`/`on-primary`, `*-container`, `background`/`surface`/
+`surface-variant`, os cinco `surface-container-*`, `outline`/`outline-variant`,
+`inverse-*`, `shadow`/`scrim`), cores livres (não é a paleta oficial do M3). Use o token,
+nunca a cor da escala Tailwind direto (`bg-primary`, não `bg-indigo-600`) — é o que deixa
+o tema trocável num só arquivo. O porquê da estrutura e as alternativas descartadas estão
+em [0012](../adr/0012-tema-com-tokens-no-molde-do-material-design-3.md).
+
+Dark mode é a classe `.dark` na raiz do documento (`@custom-variant dark` em `app.css`
+troca o padrão do Tailwind, que seria só `prefers-color-scheme`), alternada por
+`frontend/controllers/theme_controller.js` e persistida em `localStorage`. O script
+inline no `<head>` de `templates/layouts/base.html` aplica a classe antes do primeiro
+paint — não remova, é o que evita o flash do tema errado.
+
+### Ordenação de classe Tailwind
+
+`bun run lint:classes` (`rustywind --check-formatted`) valida a ordem das classes em
+`templates/**`; `bun run lint:classes:fix` corrige. Roda separado do Biome porque o
+parser HTML do Biome 2.5 não entende sintaxe de template Django e falha em qualquer
+`.html` do projeto — só `frontend/**/*.js` passa pelo Biome. `bun run lint`/`lint:fix` já
+incluem os dois.
+
 ## Templates
 
 - Página herda de um componente de layout (`<c-layouts.app>`, `<c-layouts.guest>`), que por
