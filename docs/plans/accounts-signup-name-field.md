@@ -45,11 +45,11 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
       `ACCOUNT_FORMS = {"signup": "apps.accounts.forms.SignupForm"}` — depende de 1 ·
       verificação: `manage.py shell` resolve o form certo via
       `allauth.account.forms.SignupForm` (o de `apps.accounts`, não o padrão).
-- [ ] **3. Teste de integração do fluxo real** — `apps/accounts/tests/integration/` ou
+- [x] **3. Teste de integração do fluxo real** — `apps/accounts/tests/integration/` ou
       `tests/e2e/test_auth_signup.py`: POST em `/auth/signup/` com nome preenchido cria
       `User` com `first_name`/`last_name` certos, sem 500 — depende de 2 · verificação:
       `uv run pytest` novo teste passa.
-- [ ] **4. Reativar a cobertura e2e completa de signup** — `tests/e2e/test_auth_signup.py`
+- [x] **4. Reativar a cobertura e2e completa de signup** — `tests/e2e/test_auth_signup.py`
       hoje só testa renderização (comentário no arquivo aponta pra este bug); acrescentar
       o teste de cadastro bem-sucedido, removendo a ressalva — depende de 3 · verificação:
       `bun run build && uv run pytest -m e2e` passa.
@@ -65,9 +65,13 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
   plano; etapa 1 (`apps/accounts/forms.py::SignupForm`, campo `name`, `clean_name()`
   quebra em `first_name`/`last_name`; 3 testes unitários); etapa 2 (`ACCOUNT_FORMS`
   registrado, confirmado via `allauth.utils.get_form_class` que resolve
-  `apps.accounts.forms.SignupForm`).
-- **Em andamento**: etapa 3 (teste de integração do fluxo real).
-- **Próximo passo**: etapa 3.
+  `apps.accounts.forms.SignupForm`); etapa 3 (`apps/accounts/tests/integration/
+  test_signup.py`, POST real em `/auth/signup/` cria `User` com nome certo e redireciona
+  pra `/auth/confirm-email/`, sem 500); etapa 4 (`tests/e2e/test_auth_signup.py` ganhou o
+  teste de cadastro completo via Playwright, sem a ressalva antiga — o campo "Nome
+  completo" já herda o estilo de `apps/ui` de graça, via `allauth/elements/fields.html`).
+- **Em andamento**: etapa 5 (docs).
+- **Próximo passo**: etapa 5.
 
 ## Decisões tomadas no caminho
 
