@@ -1,0 +1,113 @@
+# Plano: corrigir o cadastro (HTTP 500 por falta de nome)
+
+- **Status**: Concluído
+- **Início**: 2026-08-22
+- **Última atualização**: 2026-08-22
+- **Relacionados**: `docs/plans/frontend-auth-styling.md` (etapa 9, onde o bug foi achado),
+  ADR [0007](../adr/0007-autenticacao-com-django-allauth-e-mfa.md)
+
+## Objetivo
+
+`/auth/signup/` cadastra um usuário de verdade (com `first_name`/`last_name`
+preenchidos), sem HTTP 500, coletando o nome no próprio formulário.
+
+## Contexto
+
+`ACCOUNT_SIGNUP_FIELDS = ["name*", "email*", "password1*", "password2*"]`
+(`config/settings/parts/auth.py:47`) declara um campo `"name"` obrigatório, mas o
+`BaseSignupForm` do allauth (`allauth/account/forms.py:276-334`) só sabe montar campo pra
+`email`, `email2`, `username` e `phone` — `"name"` é lido da configuração e ignorado. Por
+isso a tela de cadastro nunca mostra campo de nome nenhum (confirmado via `curl`: só
+`email`, `password1`, `password2`).
+
+`User` (`PersonNameMixin`, `apps/accounts/models/user.py`) exige `first_name`/`last_name`
+— `CharField` sem `blank=True`. Como `BaseModel.save()` roda `full_clean()` automático
+(ADR 0011), salvar sem esses campos derruba `ValidationError` não tratada → 500.
+
+**Achado que simplifica a correção**: `DefaultAccountAdapter.save_user()`
+(`allauth/account/adapter.py:345-388`) já procura `first_name`/`last_name` em
+`form.cleaned_data` e chama `user_field(user, "first_name", ...)` sozinho — não precisa de
+`ACCOUNT_ADAPTER` customizado, nem do property setter `User.name` (`PersonNameMixin`, que
+quebra "Nome Completo" em first/last). Só falta o **form** ter esses campos — o resto do
+pipeline (`save_user` → `user.save()` → `full_clean()`) já funciona.
+
+`apps/accounts/forms.py` não existe ainda; `views.py`/`urls.py` estão vazios de propósito
+(a UI é do allauth, ver `docs/standards/auth.md`) — um form de signup é a primeira exceção
+legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_FORMS`.
+
+## Etapas
+
+- [x] **1. `apps/accounts/forms.py::SignupForm`** — subclasse de
+      `allauth.account.forms.SignupForm`, adiciona o(s) campo(s) de nome (ver pergunta em
+      aberto) · verificação: teste unitário do form isolado (cria form com dados válidos,
+      `is_valid()` verdadeiro, `cleaned_data` tem `first_name`/`last_name`).
+- [x] **2. Registrar `ACCOUNT_FORMS`** — `config/settings/parts/auth.py`:
+      `ACCOUNT_FORMS = {"signup": "apps.accounts.forms.SignupForm"}` — depende de 1 ·
+      verificação: `manage.py shell` resolve o form certo via
+      `allauth.account.forms.SignupForm` (o de `apps.accounts`, não o padrão).
+- [x] **3. Teste de integração do fluxo real** — `apps/accounts/tests/integration/` ou
+      `tests/e2e/test_auth_signup.py`: POST em `/auth/signup/` com nome preenchido cria
+      `User` com `first_name`/`last_name` certos, sem 500 — depende de 2 · verificação:
+      `uv run pytest` novo teste passa.
+- [x] **4. Reativar a cobertura e2e completa de signup** — `tests/e2e/test_auth_signup.py`
+      hoje só testa renderização (comentário no arquivo aponta pra este bug); acrescentar
+      o teste de cadastro bem-sucedido, removendo a ressalva — depende de 3 · verificação:
+      `bun run build && uv run pytest -m e2e` passa.
+- [x] **5. Docs** — `apps/accounts/AGENTS.md` ganha a entrada do `SignupForm` novo;
+      `docs/plans/frontend-auth-styling.md` marca o achado da etapa 9 como resolvido, com
+      link pra este plano — depende de 4 · verificação: revisão de texto.
+- [x] **6. Fechamento** — checklist de `docs/standards/quality-gates.md` completo, PR pra
+      `develop` (só com autorização explícita).
+
+## Estado atual
+
+- **Feito**: branch `fix/accounts-cadastro-sem-nome` criada a partir de `develop`; este
+  plano; etapa 1 (`apps/accounts/forms.py::SignupForm`, campo `name`, `clean_name()`
+  quebra em `first_name`/`last_name`; 3 testes unitários); etapa 2 (`ACCOUNT_FORMS`
+  registrado, confirmado via `allauth.utils.get_form_class` que resolve
+  `apps.accounts.forms.SignupForm`); etapa 3 (`apps/accounts/tests/integration/
+  test_signup.py`, POST real em `/auth/signup/` cria `User` com nome certo e redireciona
+  pra `/auth/confirm-email/`, sem 500); etapa 4 (`tests/e2e/test_auth_signup.py` ganhou o
+  teste de cadastro completo via Playwright, sem a ressalva antiga — o campo "Nome
+  completo" já herda o estilo de `apps/ui` de graça, via `allauth/elements/fields.html`);
+  etapa 5 (`apps/accounts/AGENTS.md` ganhou a seção "Forms"; `frontend-auth-styling.md`
+  marca os dois achados de cadastro como resolvidos, linkando pra cá; `makemessages`
+  rodado — "Full name"/"Enter your first and last name." traduzidos à mão no catálogo
+  `pt_BR` de `apps/accounts`, já que aqui o `msgid` nasce em inglês, diferente do padrão
+  de template visto no plano de estilização); etapa 6 (`ruff`, `ruff format --check`,
+  `mypy apps tests`, `pytest` — 109 —, `makemigrations --check --dry-run` limpo,
+  `bun run build && pytest -m e2e` — 22 —, `bun run lint`, `bun run test:coverage` —
+  100% — todos limpos).
+- **Próximo passo**: nenhum — plano completo. PR pra `develop` fica pendente de
+  autorização explícita.
+
+## Decisões tomadas no caminho
+
+| Data | Decisão | Motivo | Virou ADR? |
+| --- | --- | --- | --- |
+| 2026-08-22 | Sem `ACCOUNT_ADAPTER` customizado — só `SignupForm` | `DefaultAccountAdapter.save_user()` já lê `first_name`/`last_name` de `form.cleaned_data` sozinho; adapter novo seria código morto | não |
+| 2026-08-22 | Campo único "Nome completo" (`name`), quebrado em `first_name`/`last_name` via `PersonName.from_full_name` dentro de `clean_name()` | Decisão do usuário — reaproveita a mesma lógica do setter `PersonNameMixin.name` | não |
+| 2026-08-22 | Teste do `SignupForm` chama `clean_name()` direto, sem passar por `is_valid()`/`data=` | `clean_email()` herdado do allauth bate no banco (checa e-mail duplicado) — isso não é regra minha, e forçaria `django_db` num teste que devia ser unitário (`testing.md`) | não |
+| 2026-08-22 | `apps/accounts/forms.py` escreve as strings de `_()` em inglês, não em português direto | Segue o padrão já existente no catálogo do app (`apps/accounts/locale/`, ex. "Important dates"/"Datas importantes") — diferente do que o plano de estilização fez em templates, onde o texto já nascia em português | não |
+
+## Riscos e pontos de atenção
+
+- `ACCOUNT_SIGNUP_FIELDS` continua dizendo `"name*"`, mas essa chave nunca fez nada — vale
+  considerar removê-la da lista pra não sugerir um comportamento que não existe (ou
+  documentar por que fica).
+- `docs/standards/auth.md` diz que `apps/accounts/views.py`/`urls.py` ficam vazios "de
+  propósito" porque a UI é do allauth — o `forms.py` novo não contraria isso (o allauth
+  também descobre form por `ACCOUNT_FORMS`), mas vale uma frase no padrão pra deixar
+  explícito que forms de allauth são exceção legítima.
+
+## Fora de escopo
+
+- Qualquer outro gap de `ACCOUNT_SIGNUP_FIELDS`/model (este plano resolve só o campo de
+  nome).
+- Mudar a UI/estilo do campo novo — já herda estilo de `apps/ui` via
+  `allauth/elements/fields.html` (ver `docs/plans/frontend-auth-styling.md`), sem trabalho
+  extra.
+
+## Pergunta em aberto
+
+Nenhuma — resolvida: campo único "Nome completo" (ver tabela de decisões).

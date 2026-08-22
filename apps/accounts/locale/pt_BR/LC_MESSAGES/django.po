@@ -23,6 +23,12 @@ msgstr "Permissões"
 msgid "Important dates"
 msgstr "Datas importantes"
 
+msgid "Full name"
+msgstr "Nome completo"
+
+msgid "Enter your first and last name."
+msgstr "Informe seu nome e sobrenome."
+
 msgid "CPF"
 msgstr "CPF"
 

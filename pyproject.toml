@@ -210,5 +210,14 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# SignupForm subclassa allauth.account.forms.SignupForm, que o mypy ve' como Any
+# por falta de stubs (ver ignore_missing_imports acima) -- disallow_subclassing_any
+# do modo strict rejeitaria isso sem alternativa (nao ha' stub proprio pro allauth).
+module = [
+    "apps.accounts.forms",
+]
+disallow_subclassing_any = false
+
 [tool.django-stubs]
 django_settings_module = "config.settings.development"
