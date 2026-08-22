@@ -32,19 +32,19 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 
 ## Etapas
 
-- [ ] **1. Scaffold de `apps/ui`** — app Django sem models, registrado em `INSTALLED_APPS`
+- [x] **1. Scaffold de `apps/ui`** — app Django sem models, registrado em `INSTALLED_APPS`
       (`config/settings/parts/django.py` ou onde os apps do projeto entram), com
       `apps/ui/templates/components/ui/` e o trio `CONTEXT.md`/`README.md`/`AGENTS.md` ·
       verificação: `uv run python manage.py check` sem erro; entrada nova em
       `CONTEXT-MAP.md`.
-- [ ] **2. Componentes Cotton genéricos** — `<c-ui.button>` (variantes prominent/outline,
+- [x] **2. Componentes Cotton genéricos** — `<c-ui.button>` (variantes prominent/outline,
       primary/secondary, disabled), `<c-ui.field>` (text/textarea/checkbox/radio/password,
       label, help_text, erro), `<c-ui.form>`, `<c-ui.panel>`, `<c-ui.alert>` (severidade
       info/success/warning/error), `<c-ui.h1>`/`<c-ui.h2>`/`<c-ui.p>`/`<c-ui.hr>`,
       `<c-ui.button_group>`, `<c-ui.badge>`, tabela (`table`/`thead`/`tbody`/`tr`/`th`/`td`),
       `<c-ui.provider_list>` — depende de 1 · verificação: `bun run lint:classes` limpo nos
       arquivos novos (classes Tailwind ordenadas).
-- [ ] **3. Controller de mostrar/ocultar senha** —
+- [x] **3. Controller de mostrar/ocultar senha** —
       `frontend/controllers/password_visibility_controller.js` + teste, ligado a
       `<c-ui.field type="password">` — depende de 2 · verificação: `bun run test`.
 - [ ] **4. Header/nav centralizados nos layouts** — `templates/components/layouts/guest.html`
@@ -84,9 +84,13 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 ## Estado atual
 
 - **Feito**: ADR 0013 escrito e indexado; branch `feature/frontend-auth-styling` criada a
-  partir de `develop`; este plano.
-- **Em andamento**: nenhuma etapa de código iniciada ainda.
-- **Próximo passo**: etapa 1 (scaffold de `apps/ui`).
+  partir de `develop`; este plano; etapa 1 (`apps/ui` registrado, trio de docs, entrada em
+  `CONTEXT-MAP.md`); etapa 2 (13 componentes Cotton genéricos em
+  `apps/ui/templates/components/ui/`, `bun run lint:classes` estendido para cobrir
+  `apps/**/templates` também); etapa 3 (`password_visibility_controller.js` + teste, ligado
+  a `<c-ui.field type="password">`).
+- **Em andamento**: etapa 4 (header/nav nos layouts `guest`/`app`).
+- **Próximo passo**: etapa 4.
 
 ## Decisões tomadas no caminho
 
@@ -96,6 +100,9 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 | 2026-08-22 | JS de WebAuthn/passkey do allauth fica intocado | Superfície de segurança já madura e mantida upstream (ADR 0007) | não |
 | 2026-08-22 | Sem HTMX no fluxo de auth | Views do allauth são POST/redirect clássico; forçar swap parcial é briga com a biblioteca | não |
 | 2026-08-22 | e2e cobre só telas sem dependência de hardware (nível "a") | Virtual authenticator de WebAuthn via CDP adiciona setup desproporcional ao ganho agora | não |
+| 2026-08-22 | `<c-ui.alert severity>`/`<c-ui.badge color>` "success"/"warning" reaproveitam os tokens `secondary`/`tertiary` (não existe token dedicado) | ADR 0012 não previu papel semântico de sucesso/aviso, só M3 genérico; `secondary` (teal) e `tertiary` (amber) já carregam a conotação certa sem token novo | não |
+| 2026-08-22 | Variante de `<c-ui.button>` decidida por `attrs.tags` do allauth via `{% if "outline" in attrs.tags %}` etc. (lista Python, não substring) | `ElementNode.render` do allauth já parseia `tags="a,b"` em lista antes de expor `attrs.tags` — nenhuma colisão de substring possível | não |
+| 2026-08-22 | `bun run lint:classes`/`lint:classes:fix` passam a escanear `apps` além de `templates` | Componentes Cotton de app (ex.: `apps/ui/`) não tinham nenhuma checagem de ordenação de classe Tailwind antes disso | não |
 
 ## Riscos e pontos de atenção
 
