@@ -47,12 +47,22 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 - [x] **3. Controller de mostrar/ocultar senha** —
       `frontend/controllers/password_visibility_controller.js` + teste, ligado a
       `<c-ui.field type="password">` — depende de 2 · verificação: `bun run test`.
-- [ ] **4. Header/nav centralizados nos layouts** — `templates/components/layouts/guest.html`
+- [x] **4. Header/nav centralizados nos layouts** — `templates/components/layouts/guest.html`
       ganha header com logo placeholder + toggle de tema; `app.html` ganha o mesmo header
       mais uma sidebar de "configurações de conta" (Segurança, Sessões, Conexões,
       E-mail/Senha) no slot `sidebar` — depende de 2 · verificação: `templates/pages/home.html`
       atualizado para não duplicar mais o toggle, renderiza igual visualmente
       (`python manage.py runserver` + inspeção manual).
+
+      Feito: `templates/layouts/partials/header.html` (logo placeholder + toggle de tema)
+      incluído por `guest.html` e `app.html`; `app.html` reorganizado em shell de duas
+      colunas (`sidebar` opcional + slot default como `main`, sem mais os slots `header`/
+      `main` antigos); `home.html` não duplica mais o toggle. A nav de "configurações de
+      conta" propriamente dita (Segurança/Sessões/Conexões/E-mail/Senha) fica para a etapa
+      5, que é quem popula o slot `sidebar` de `manage.html`. Verificado com
+      `manage.py runserver` + Playwright (`uv run python`, sem `chromium-cli`/dev
+      dependency nova): header único, toggle funcional (classe `.dark` + `localStorage`),
+      CSS/JS do Vite carregando.
 - [ ] **5. Override de `allauth/layouts/*.html`** — `base.html`/`entrance.html` estendem
       `<c-layouts.guest>`, `manage.html` estende `<c-layouts.app>` (populando a sidebar) —
       depende de 4 · verificação: `account_login` renderiza dentro do layout `guest`.
@@ -103,6 +113,7 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 | 2026-08-22 | `<c-ui.alert severity>`/`<c-ui.badge color>` "success"/"warning" reaproveitam os tokens `secondary`/`tertiary` (não existe token dedicado) | ADR 0012 não previu papel semântico de sucesso/aviso, só M3 genérico; `secondary` (teal) e `tertiary` (amber) já carregam a conotação certa sem token novo | não |
 | 2026-08-22 | Variante de `<c-ui.button>` decidida por `attrs.tags` do allauth via `{% if "outline" in attrs.tags %}` etc. (lista Python, não substring) | `ElementNode.render` do allauth já parseia `tags="a,b"` em lista antes de expor `attrs.tags` — nenhuma colisão de substring possível | não |
 | 2026-08-22 | `bun run lint:classes`/`lint:classes:fix` passam a escanear `apps` além de `templates` | Componentes Cotton de app (ex.: `apps/ui/`) não tinham nenhuma checagem de ordenação de classe Tailwind antes disso | não |
+| 2026-08-22 | Header (logo + toggle de tema) vive em `templates/layouts/partials/header.html`, incluído por `{% include %}` em `guest.html`/`app.html` — não virou componente Cotton próprio | Bloco pequeno, sem props: `{% include %}` já é o padrão do projeto para "fragmento simples e sem contrato" (`docs/standards/frontend.md`) | não |
 
 ## Riscos e pontos de atenção
 
@@ -115,6 +126,15 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   no código).
 - `apps/ui` sem nenhum model pode soar estranho no admin/checks — confirmar que
   `python manage.py check` não reclama de app sem `models.py`.
+- `{# comentário #}` do Django só aceita uma linha — comentário de várias linhas nesse
+  formato não é removido no render, aparece como texto literal na página (visto em
+  `templates/layouts/partials/header.html`, corrigido trocando para
+  `{% comment %}...{% endcomment %}`). Cuidado ao anotar os overrides de `elements`/
+  `layouts` nas próximas etapas.
+- `bun run dev` serve com CORS restrito a `http://localhost:8000` (`vite.config.mjs`) —
+  testar manualmente com `runserver` em outra porta quebra o carregamento de
+  `frontend/entries/app.js` em dev (erro de CORS no console, nada a ver com o código do
+  template). Use a porta 8000.
 
 ## Fora de escopo
 

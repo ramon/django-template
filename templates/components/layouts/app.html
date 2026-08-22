@@ -1,10 +1,14 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-    <header>{{ header }}</header>
-    <main>
-        <aside>{{ sidebar }}</aside>
-        <div>{{ main }}</div>
-    </main>
-    <footer>{{ footer }}</footer>
+    {% include "layouts/partials/header.html" %}
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 lg:flex-row">
+        {% if sidebar %}
+            <aside class="lg:w-64 lg:shrink-0">{{ sidebar }}</aside>
+        {% endif %}
+        <div class="min-w-0 flex-1">{{ slot }}</div>
+    </div>
+    {% if footer %}
+        <footer class="border-outline-variant border-t px-6 py-6">{{ footer }}</footer>
+    {% endif %}
 {% endblock %}
