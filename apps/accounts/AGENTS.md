@@ -79,7 +79,19 @@ remover algo listado aqui.
 - `UserAdmin` — `list_display`: name, email, is_active, is_staff, is_superuser.
 - `ProfileAdmin` — `list_display`: user, gender, created_at; `list_filter`: gender.
 
+## Forms — `apps.accounts.forms`
+
+- `SignupForm(allauth.account.forms.SignupForm)` — registrado via `ACCOUNT_FORMS`
+  (`config/settings/parts/auth.py`), é o form real que `/auth/signup/` usa. Acrescenta o
+  campo `name` (nome completo, texto livre) e, em `clean_name()`, quebra em
+  `first_name`/`last_name` via `PersonName.from_full_name` (`apps.core.domain`) —
+  levanta `ValidationError` se não houver um espaço separando nome e sobrenome. Não
+  precisa de `ACCOUNT_ADAPTER`: `DefaultAccountAdapter.save_user()` do próprio allauth já
+  lê `first_name`/`last_name` de `form.cleaned_data` sozinho.
+
 ## Views / URLs
 
 - `apps/accounts/views.py` e `apps/accounts/urls.py` estão vazios — o app hoje só
-  expõe API, sem páginas server-rendered próprias.
+  expõe API, sem páginas server-rendered próprias. `apps/accounts/forms.py` é a exceção
+  legítima: o allauth descobre form customizado por `ACCOUNT_FORMS`, não por view/URL
+  própria do app.

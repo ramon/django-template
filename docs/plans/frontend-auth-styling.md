@@ -107,6 +107,8 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       ou os campos precisam entrar em `ACCOUNT_SIGNUP_FIELDS`. Segue fora do escopo deste
       plano (é bug de `apps/accounts`, não de estilo), mas documentado aqui com o impacto
       real para abrir como issue separado — sem isso, ninguém consegue se cadastrar.
+      **Resolvido** em
+      [`docs/plans/accounts-signup-name-field.md`](accounts-signup-name-field.md).
 - [x] **7. Varredura de páginas sem cobertura de elements** — checar cada template em
       `account/`, `mfa/`, `socialaccount/`, `usersessions/` que usa HTML fora dos elements
       (ex.: `usersessions/usersession_list.html`, `mfa/webauthn/authenticator_list.html`,
@@ -184,9 +186,10 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   string) — vazava `str(form)` dentro de um atributo `form="..."` inválido sempre que a
   página tinha `non_field_errors` (ex. login com senha errada). Corrigido com um filtro
   dedicado; de caminho, também passou a renderizar `non_field_errors` (nenhum template do
-  allauth fazia isso). Também achado (fora de escopo, **não corrigido**): cadastro quebra
-  com HTTP 500 hoje — `User.REQUIRED_FIELDS` exige `first_name`/`last_name` que o form de
-  signup nunca preenche, gap de `apps/accounts` sem relação com este plano.
+  allauth fazia isso). Também achado (fora de escopo, resolvido em
+  `docs/plans/accounts-signup-name-field.md`): cadastro quebrava com HTTP 500 —
+  `User.REQUIRED_FIELDS` exige `first_name`/`last_name` que o form de signup nunca
+  preenchia, gap de `apps/accounts` sem relação com este plano.
   etapa 10 (`docs/standards/frontend.md` ganhou a seção "Telas do allauth: sobrescreva
   `elements`/`layouts`, não a página", com as duas armadilhas do Cotton documentadas;
   `docs/standards/auth.md` deixou de descrever a UI de auth como "a do allauth, sem

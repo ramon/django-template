@@ -23,6 +23,12 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
+msgid "Full name"
+msgstr ""
+
+msgid "Enter your first and last name."
+msgstr ""
+
 msgid "CPF"
 msgstr ""
 

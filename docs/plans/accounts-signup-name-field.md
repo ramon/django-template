@@ -53,7 +53,7 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
       hoje só testa renderização (comentário no arquivo aponta pra este bug); acrescentar
       o teste de cadastro bem-sucedido, removendo a ressalva — depende de 3 · verificação:
       `bun run build && uv run pytest -m e2e` passa.
-- [ ] **5. Docs** — `apps/accounts/AGENTS.md` ganha a entrada do `SignupForm` novo;
+- [x] **5. Docs** — `apps/accounts/AGENTS.md` ganha a entrada do `SignupForm` novo;
       `docs/plans/frontend-auth-styling.md` marca o achado da etapa 9 como resolvido, com
       link pra este plano — depende de 4 · verificação: revisão de texto.
 - [ ] **6. Fechamento** — checklist de `docs/standards/quality-gates.md` completo, PR pra
@@ -69,9 +69,14 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
   test_signup.py`, POST real em `/auth/signup/` cria `User` com nome certo e redireciona
   pra `/auth/confirm-email/`, sem 500); etapa 4 (`tests/e2e/test_auth_signup.py` ganhou o
   teste de cadastro completo via Playwright, sem a ressalva antiga — o campo "Nome
-  completo" já herda o estilo de `apps/ui` de graça, via `allauth/elements/fields.html`).
-- **Em andamento**: etapa 5 (docs).
-- **Próximo passo**: etapa 5.
+  completo" já herda o estilo de `apps/ui` de graça, via `allauth/elements/fields.html`);
+  etapa 5 (`apps/accounts/AGENTS.md` ganhou a seção "Forms"; `frontend-auth-styling.md`
+  marca os dois achados de cadastro como resolvidos, linkando pra cá; `makemessages`
+  rodado — "Full name"/"Enter your first and last name." traduzidos à mão no catálogo
+  `pt_BR` de `apps/accounts`, já que aqui o `msgid` nasce em inglês, diferente do padrão
+  de template visto no plano de estilização).
+- **Em andamento**: etapa 6 (fechamento).
+- **Próximo passo**: etapa 6.
 
 ## Decisões tomadas no caminho
 
@@ -80,6 +85,7 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
 | 2026-08-22 | Sem `ACCOUNT_ADAPTER` customizado — só `SignupForm` | `DefaultAccountAdapter.save_user()` já lê `first_name`/`last_name` de `form.cleaned_data` sozinho; adapter novo seria código morto | não |
 | 2026-08-22 | Campo único "Nome completo" (`name`), quebrado em `first_name`/`last_name` via `PersonName.from_full_name` dentro de `clean_name()` | Decisão do usuário — reaproveita a mesma lógica do setter `PersonNameMixin.name` | não |
 | 2026-08-22 | Teste do `SignupForm` chama `clean_name()` direto, sem passar por `is_valid()`/`data=` | `clean_email()` herdado do allauth bate no banco (checa e-mail duplicado) — isso não é regra minha, e forçaria `django_db` num teste que devia ser unitário (`testing.md`) | não |
+| 2026-08-22 | `apps/accounts/forms.py` escreve as strings de `_()` em inglês, não em português direto | Segue o padrão já existente no catálogo do app (`apps/accounts/locale/`, ex. "Important dates"/"Datas importantes") — diferente do que o plano de estilização fez em templates, onde o texto já nascia em português | não |
 
 ## Riscos e pontos de atenção
 
