@@ -114,7 +114,7 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       template upstream do allauth — corrigido com override pontual de página envolvendo
       em `{% element button tags="link" %}`. `ACCOUNT_LOGOUT_ON_GET = True` faz logout via
       GET redirecionar direto (sem tela de confirmação) — nada a estilizar aí.
-- [ ] **8. i18n** — `makemessages` para qualquer string nova (header, sidebar, componentes)
+- [x] **8. i18n** — `makemessages` para qualquer string nova (header, sidebar, componentes)
       — depende de 4, 7 · verificação: `python manage.py makemessages` sem diff pendente
       além do esperado, catálogos `.po` no commit.
 - [ ] **9. e2e smoke** — `tests/e2e/test_auth_*.py` cobrindo as telas renderizáveis sem
@@ -144,8 +144,12 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   estilo de link embutido; `account/password_change.html` ganhou override pontual para o
   link "Esqueceu a senha?"; passagem visual confirmada em login, signup, logout,
   reset/troca de senha, verificação de e-mail, login por código, MFA index/TOTP/WebAuthn,
-  reauthenticate, sessões, conexões sociais).
-- **Próximo passo**: etapa 8 (i18n / `makemessages`).
+  reauthenticate, sessões, conexões sociais); etapa 8 (`makemessages` rodado — 10 strings
+  novas em `locale/{en,pt_BR}/LC_MESSAGES/django.po`: "Mostrar senha", "Change Password",
+  "Forgot Password?", "App", "Alternar tema claro/escuro", "E-mail", "Senha", "Segurança",
+  "Sessões", "Conexões"; `msgstr` vazio segue o padrão já existente no catálogo raiz —
+  `pt_BR` cai no `msgid` por já estar em português, `en` fica sem tradução por ora).
+- **Próximo passo**: etapa 9 (e2e smoke).
 
 ## Decisões tomadas no caminho
 

@@ -14,8 +14,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "Mostrar senha"
+msgstr ""
+
 msgid "Brazilian Portuguese"
 msgstr "Português do Brasil"
 
 msgid "English"
 msgstr "Inglês"
+
+msgid "Change Password"
+msgstr ""
+
+msgid "Forgot Password?"
+msgstr ""
+
+msgid "App"
+msgstr ""
+
+msgid "Alternar tema claro/escuro"
+msgstr ""
+
+msgid "E-mail"
+msgstr ""
+
+msgid "Senha"
+msgstr ""
+
+msgid "Segurança"
+msgstr ""
+
+msgid "Sessões"
+msgstr ""
+
+msgid "Conexões"
+msgstr ""
