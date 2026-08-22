@@ -850,7 +850,7 @@ requires-dist = [
     { name = "django-ninja", specifier = ">=1.6" },
     { name = "django-prometheus", specifier = ">=2.5.0" },
     { name = "django-storages", specifier = ">=1.14" },
-    { name = "django-storages", extras = ["s3"], marker = "extra == 's3'", specifier = ">=1.14" },
+    { name = "django-storages", extras = ["s3"], marker = "extra == 's3'", specifier = ">=1.14.6" },
     { name = "django-structlog", specifier = ">=10.0.0" },
     { name = "gunicorn", specifier = ">=26.0.0" },
     { name = "orjson", specifier = ">=3.11.9" },

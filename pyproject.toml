@@ -42,7 +42,7 @@ dependencies = [
 [project.optional-dependencies]
 # boto3 + botocore custam 31 MB; so entram em quem usa storage remoto de fato.
 #   uv sync --extra s3
-s3 = ["django-storages[s3]>=1.14"]
+s3 = ["django-storages[s3]>=1.14.6"]
 
 [dependency-groups]
 dev = [
