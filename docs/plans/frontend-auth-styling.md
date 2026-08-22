@@ -63,9 +63,22 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       `manage.py runserver` + Playwright (`uv run python`, sem `chromium-cli`/dev
       dependency nova): header único, toggle funcional (classe `.dark` + `localStorage`),
       CSS/JS do Vite carregando.
-- [ ] **5. Override de `allauth/layouts/*.html`** — `base.html`/`entrance.html` estendem
+- [x] **5. Override de `allauth/layouts/*.html`** — `base.html`/`entrance.html` estendem
       `<c-layouts.guest>`, `manage.html` estende `<c-layouts.app>` (populando a sidebar) —
       depende de 4 · verificação: `account_login` renderiza dentro do layout `guest`.
+
+      Feito: só `entrance.html` e `manage.html` (nada estende `allauth/layouts/base.html`
+      diretamente — ver `grep` no pacote instalado). Os dois usam `{% extends %}` sobre
+      `components/layouts/{guest,app}.html` (não a tag Cotton `<c-layouts.*>`, que não
+      suporta herança de bloco). Isso exigiu um seam novo em `templates/layouts/base.html`
+      (bloco `body` envolvendo `content`) — ver a entrada de risco abaixo sobre por que
+      "content" sozinho não bastava. `templates/layouts/partials/manage_nav.html` populada
+      via bloco `app_sidebar`; mensagens do Django (`messages`) viram `<c-ui.alert>` por
+      `message.tags`. Verificado com `manage.py runserver` (porta 8000, host `localhost`) +
+      Playwright: `/auth/login/` (guest) e `/auth/2fa/`, `/auth/sessions/`, `/auth/3rdparty/`,
+      `/auth/email/` (app, autenticado via `force_login` + cookie de sessão) renderizam
+      header, sidebar com item ativo destacado e o `{% block content %}` de cada página do
+      allauth — ainda sem estilo de formulário/botão porque isso é a etapa 6.
 - [ ] **6. Override de `allauth/elements/*.html`** — cada element delega para o componente
       `ui` correspondente, usando `attrs.tags` do allauth para variante (`prominent`,
       `outline`, `primary`) — depende de 2, 5 · verificação: `account/login.html` (sem
@@ -114,6 +127,9 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 | 2026-08-22 | Variante de `<c-ui.button>` decidida por `attrs.tags` do allauth via `{% if "outline" in attrs.tags %}` etc. (lista Python, não substring) | `ElementNode.render` do allauth já parseia `tags="a,b"` em lista antes de expor `attrs.tags` — nenhuma colisão de substring possível | não |
 | 2026-08-22 | `bun run lint:classes`/`lint:classes:fix` passam a escanear `apps` além de `templates` | Componentes Cotton de app (ex.: `apps/ui/`) não tinham nenhuma checagem de ordenação de classe Tailwind antes disso | não |
 | 2026-08-22 | Header (logo + toggle de tema) vive em `templates/layouts/partials/header.html`, incluído por `{% include %}` em `guest.html`/`app.html` — não virou componente Cotton próprio | Bloco pequeno, sem props: `{% include %}` já é o padrão do projeto para "fragmento simples e sem contrato" (`docs/standards/frontend.md`) | não |
+| 2026-08-22 | `allauth/layouts/{entrance,manage}.html` usam `{% extends "components/layouts/{guest,app}.html" %}`, não a tag `<c-layouts.*>` | Cotton não suporta herança de bloco Django dentro de um componente — `{% extends %}` sobre o arquivo `.html` do componente funciona porque ele também é um template Django válido | não |
+| 2026-08-22 | `templates/layouts/base.html` ganhou um bloco `body` novo envolvendo `content` | Único jeito de `entrance.html`/`manage.html` injetar header/sidebar sem perder para `account/login.html` (que sobrescreve `content` direto) — ver risco abaixo | não |
+| 2026-08-22 | Severidade da mensagem do Django (`messages`) mapeada 1:1 para `<c-ui.alert severity>` via `message.tags` (`error`/`warning`/`success`/`info`/`debug`), sem `if`/`elif` | `message.tags` já usa exatamente esses nomes por padrão (`django.contrib.messages`, sem `MESSAGE_TAGS` custom no projeto); `{% if %}/{% elif %}` dentro de atributo de componente Cotton quebra o parser dele (`Invalid block tag ... expected 'endcotton'`) | não |
 
 ## Riscos e pontos de atenção
 
@@ -131,10 +147,23 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   `templates/layouts/partials/header.html`, corrigido trocando para
   `{% comment %}...{% endcomment %}`). Cuidado ao anotar os overrides de `elements`/
   `layouts` nas próximas etapas.
-- `bun run dev` serve com CORS restrito a `http://localhost:8000` (`vite.config.mjs`) —
-  testar manualmente com `runserver` em outra porta quebra o carregamento de
-  `frontend/entries/app.js` em dev (erro de CORS no console, nada a ver com o código do
-  template). Use a porta 8000.
+- `{% extends %}` precisa ser a primeira tag do arquivo — nem `{% comment %}` antes dele é
+  aceito (`must be the first tag`). Comentário de cabeçalho do arquivo vai *depois* do
+  `{% extends %}`.
+- `bun run dev` serve com CORS restrito a **`http://localhost:8000`** (`vite.config.mjs`),
+  não `127.0.0.1:8000` — mesmo servidor, origem diferente para o browser. Testar/screenshot
+  manual com qualquer ferramenta (curl não sofre, mas Playwright/browser sim) precisa usar
+  exatamente `localhost` na URL, senão os dois `<script type="module">` do Vite falham por
+  CORS e a página renderiza sem nenhum CSS/JS — sintoma enganoso, parece bug de template.
+- **Bloco Django do mesmo nome usado em mais de um nível do `{% extends %}` não "empilha"**:
+  só a versão mais derivada (mais perto da folha) renderiza; qualquer wrapper que um
+  ancestral tenha posto around esse bloco é descartado inteiro, não só o conteúdo default.
+  Por isso `allauth/layouts/entrance.html`/`manage.html` não podem sobrescrever `content`
+  direto (ele já é o nome que `account/login.html` etc. usam) — precisam de um nome de bloco
+  próprio e não competido (`guest_content`/`app_content`), com `content` reintroduzido *uma
+  única vez*, no nível mais fundo, para o allauth ganhar a resolução. Testado isoladamente
+  antes de mexer nos arquivos reais (`render_to_string` num template dir descartável) — vale
+  o mesmo teste rápido se essa árvore de blocos crescer mais nas próximas etapas.
 
 ## Fora de escopo
 

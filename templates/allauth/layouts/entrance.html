@@ -1,0 +1,32 @@
+{% extends "components/layouts/guest.html" %}
+{% comment %}
+Override do layout de entrada do allauth (login, signup, reset de senha, verificação de
+e-mail, login por código) — ver ADR 0013. Estende <c-layouts.guest> por {% extends %} em
+vez do uso normal via tag Cotton (guest_content é o seam para isso, ver o comentário em
+templates/components/layouts/guest.html) para herdar o header com toggle de tema de graça.
+{% endcomment %}
+
+{% block page_title %}{% block head_title %}{% endblock %}{% endblock %}
+{% block head %}{% block extra_head %}{% endblock %}{% endblock %}
+
+{% block guest_content %}
+    <main class="bg-background text-on-background min-h-screen">
+        <div class="mx-auto max-w-md px-6 py-16">
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <c-ui.alert severity="{{ message.tags|default:'info' }}">
+                            {{ message }}
+                        </c-ui.alert>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
