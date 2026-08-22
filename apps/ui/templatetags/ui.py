@@ -88,6 +88,28 @@ def without_tags(attrs: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in attrs.items() if key != "tags"}
 
 
+@register.filter
+def without_tags_and_form(attrs: dict[str, Any]) -> dict[str, Any]:
+    """Strip `tags` and `form` from the `form` element's own `attrs` dict.
+
+    `{% element form form=form ... %}` names its own Django `Form` instance
+    kwarg `form` — the same name as the element. Unlike `attrs.form` on a
+    `button` element (a real HTML `form="some-id"` passthrough attribute used
+    to associate a button living outside a `<form>` tag, e.g. the login
+    page's passkey button), on the `form` element `attrs.form` is never an
+    HTML attribute: it's always the `Form` instance itself. Forwarding it
+    into `<c-ui.form :attrs>` would stringify the whole rendered form (every
+    field, including any `errorlist`) into a bogus `form="..."` attribute.
+
+    Args:
+        attrs: The `attrs` dict of an allauth `{% element form %}` call.
+
+    Returns:
+        A shallow copy of `attrs` without the `tags` and `form` keys.
+    """
+    return {key: value for key, value in attrs.items() if key not in ("tags", "form")}
+
+
 def _field_type(bound_field: BoundField) -> str:
     widget = bound_field.field.widget
     widget_name = widget.__class__.__name__

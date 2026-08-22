@@ -113,7 +113,21 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       senha?" de `account/password_change.html` é `<a>` cru fora de qualquer element no
       template upstream do allauth — corrigido com override pontual de página envolvendo
       em `{% element button tags="link" %}`. `ACCOUNT_LOGOUT_ON_GET = True` faz logout via
-      GET redirecionar direto (sem tela de confirmação) — nada a estilizar aí.
+      GET redirecionar direto (sem tela de confirmação) — nada a estilizar aí. **Bug real
+      encontrado e corrigido**: `templates/allauth/elements/form.html` (etapa 6) repassava
+      `attrs` inteiro — incluindo a chave `form` (a instância real do `Form`, não uma
+      string) — para `<c-ui.form :attrs>`, que serializava `str(form)` (HTML de todos os
+      campos, incluindo qualquer `errorlist`) dentro de um atributo `form="..."` inválido
+      em toda página com `{% element form form=form ... %}` (login, signup, troca/reset de
+      senha, MFA activate etc. — quase todo o fluxo). Só não quebrava visivelmente porque
+      normalmente não havia `non_field_errors`; credencial errada no login expunha o HTML
+      cru. Corrigido com um filtro dedicado (`without_tags_and_form`, distinto de
+      `without_tags` porque `attrs.form` **é** um atributo HTML legítimo — `form="id-do-
+      form"` — em elements como `button`, só não no próprio elemento `form`). Descoberto
+      também que nenhum template do allauth (nem o `elements/form.html` padrão da
+      biblioteca) renderiza `form.non_field_errors` — erro de login inválido nunca
+      apareceu de verdade em lugar nenhum; agora `elements/form.html` renderiza
+      `attrs.form.non_field_errors` como `<c-ui.alert severity="error">` quando presente.
 - [x] **8. i18n** — `makemessages` para qualquer string nova (header, sidebar, componentes)
       — depende de 4, 7 · verificação: `python manage.py makemessages` sem diff pendente
       além do esperado, catálogos `.po` no commit.
