@@ -20,7 +20,12 @@ def test_admin_login_renders(page: Page, live_server: LiveServer) -> None:
 
 
 def test_admin_login_authenticates_the_user(page: Page, live_server: LiveServer) -> None:
-    get_user_model().objects.create_superuser(email="admin@example.com", password="senha-forte-123")
+    get_user_model().objects.create_superuser(
+        email="admin@example.com",
+        password="senha-forte-123",
+        first_name="Admin",
+        last_name="User",
+    )
 
     page.goto(f"{live_server.url}/admin/login/")
     page.locator(USERNAME).fill("admin@example.com")
