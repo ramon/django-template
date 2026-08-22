@@ -1,0 +1,12 @@
+{% load allauth ui %}
+{% with fa=attrs|without_tags %}
+    <c-ui.field :attrs="fa">
+        <c-slot name="label">{% slot label %}{% endslot %}</c-slot>
+        {% if slots.help_text %}
+            <c-slot name="help_text">{% slot help_text %}{% endslot %}</c-slot>
+        {% endif %}
+        {% if attrs.type == "textarea" %}
+            <c-slot name="value">{% slot value %}{% endslot %}</c-slot>
+        {% endif %}
+    </c-ui.field>
+{% endwith %}

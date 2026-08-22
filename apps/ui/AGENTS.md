@@ -21,9 +21,11 @@ comportamento próprio.
   em coluna em vez de linha.
 - **`<c-ui.field>`** — `type` (`text` padrão; `checkbox`/`radio`/`textarea` mudam o
   layout), `label`, `help_text`, `errors` (iterável de mensagens), `value`, `rows`
-  (`3`, só `textarea`). `label`/`help_text` aceitam prop ou `<c-slot name="label">`/
-  `<c-slot name="help_text">` — mesmo nome, o slot tem prioridade quando presente.
-  `type="password"` já vem com o botão de mostrar/ocultar
+  (`3`, só `textarea`), `hide_label` (`False` padrão — `True` mantém o `<label>` no
+  DOM para leitor de tela, só visualmente oculto via `sr-only`, para formulário que
+  usa `placeholder` no lugar de rótulo visível). `label`/`help_text` aceitam prop ou
+  `<c-slot name="label">`/`<c-slot name="help_text">` — mesmo nome, o slot tem
+  prioridade quando presente. `type="password"` já vem com o botão de mostrar/ocultar
   (`password_visibility_controller.js`, `frontend/controllers/`) embutido.
 - **`<c-ui.form>`** — `method` (`post` padrão), `action`. Slot default é o corpo;
   `<c-slot name="actions">` vira uma faixa alinhada à direita abaixo do corpo.
@@ -42,6 +44,24 @@ comportamento próprio.
 - **`<c-ui.provider_list>`** — `<ul>` para links de provedor social; cada item é um
   `<li>` de marcação livre do chamador (sem `<c-ui.provider>` — só um `<a>` simples,
   estilizado direto no override do allauth).
+
+## Templatetags — `{% load ui %}` (`apps.ui.templatetags.ui`)
+
+Usadas pelos overrides de `templates/allauth/elements/*.html` para traduzir `attrs`
+de um `{% element %}` do allauth em props de componente — não são de uso geral fora
+desse contexto.
+
+- `{% button_variant tags as v %}` / `{% button_color tags as c %}` — leem
+  `attrs.tags` (lista) e resolvem `variant`/`color` de `<c-ui.button>`.
+- `tags|tag_color` — mesma ideia para `color` de `<c-ui.badge>`/severidade de
+  `<c-ui.alert>` (primeira tag reconhecida, `neutral` se nenhuma bater).
+- `attrs|without_tags` — copia de `attrs` sem a chave `tags` (que é lista Python, não
+  serializa em atributo HTML) — usar antes de `:attrs="…"` num componente.
+- `bound_field|field_attrs` — monta o dict de `:attrs` de `<c-ui.field>` a partir de
+  um `BoundField` (usado por `allauth/elements/fields.html` para render por-campo).
+- `{% field_hide_label bound_field unlabeled as h %}` — decide `hide_label`: nunca
+  para checkbox/radio, mesmo com `unlabeled=True` (sem `placeholder` como
+  alternativa visual ao rótulo).
 
 ## Controllers Stimulus ligados a estes componentes
 

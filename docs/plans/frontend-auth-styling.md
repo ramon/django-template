@@ -79,10 +79,26 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       `/auth/email/` (app, autenticado via `force_login` + cookie de sessão) renderizam
       header, sidebar com item ativo destacado e o `{% block content %}` de cada página do
       allauth — ainda sem estilo de formulário/botão porque isso é a etapa 6.
-- [ ] **6. Override de `allauth/elements/*.html`** — cada element delega para o componente
+- [x] **6. Override de `allauth/elements/*.html`** — cada element delega para o componente
       `ui` correspondente, usando `attrs.tags` do allauth para variante (`prominent`,
       `outline`, `primary`) — depende de 2, 5 · verificação: `account/login.html` (sem
       override próprio) já sai estilizado.
+
+      Feito: os 22 elements do allauth cobertos (`h1`/`h2`/`p`/`hr`/`alert`/`badge`/
+      `button`/`button_group`/`form`/`panel`/`field`/`fields`/`table`+`thead`+`tbody`+
+      `tr`+`th`+`td`/`provider_list`), mais `provider`/`details`/`img` estilizados direto
+      (fora do vocabulário genérico de `apps/ui`, ver ADR 0013). Mapeamento de
+      `attrs.tags` → variante/cor centralizado em `apps/ui/templatetags/ui.py`
+      (`button_variant`, `button_color`, `tag_color`, `field_attrs`, `field_hide_label`).
+      django-cotton não aceita `{% if %}`/`{% elif %}` dentro da lista de atributos de um
+      componente nem filtro (`|`) num binding `:attr=`; toda lógica condicional/computada
+      virou helper Python + `{% with %}` (ver riscos abaixo). Verificado com
+      `manage.py runserver` + Playwright em ~12 páginas (login, signup, password reset,
+      email, password change, 2FA index, TOTP activate com QR code, WebAuthn add,
+      sessions, connections) — todas estilizadas, sem erro de template. Achado (fora de
+      escopo, não corrigido): `account/signup.html` não mostra o campo "Nome"
+      (`ACCOUNT_SIGNUP_FIELDS = ["name*", ...]`) mesmo no `form.as_p` puro, sem relação
+      com este override — provável gap de configuração do form/model, não da UI.
 - [ ] **7. Varredura de páginas sem cobertura de elements** — checar cada template em
       `account/`, `mfa/`, `socialaccount/`, `usersessions/` que usa HTML fora dos elements
       (ex.: `usersessions/usersession_list.html`, `mfa/webauthn/authenticator_list.html`,
@@ -112,8 +128,13 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   `apps/ui/templates/components/ui/`, `bun run lint:classes` estendido para cobrir
   `apps/**/templates` também); etapa 3 (`password_visibility_controller.js` + teste, ligado
   a `<c-ui.field type="password">`).
-- **Em andamento**: etapa 4 (header/nav nos layouts `guest`/`app`).
-- **Próximo passo**: etapa 4.
+  etapa 4 (header/toggle de tema centralizado em `templates/layouts/partials/header.html`,
+  incluído por `guest.html`/`app.html`); etapa 5 (`allauth/layouts/{entrance,manage}.html`
+  sobrescritos, nav de conta em `templates/layouts/partials/manage_nav.html`); etapa 6
+  (22 `allauth/elements/*.html` sobrescritos, delegando para `apps/ui` via
+  `apps/ui/templatetags/ui.py`).
+- **Em andamento**: etapa 7 (varredura de páginas sem cobertura de `elements`).
+- **Próximo passo**: etapa 7.
 
 ## Decisões tomadas no caminho
 
@@ -124,7 +145,9 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 | 2026-08-22 | Sem HTMX no fluxo de auth | Views do allauth são POST/redirect clássico; forçar swap parcial é briga com a biblioteca | não |
 | 2026-08-22 | e2e cobre só telas sem dependência de hardware (nível "a") | Virtual authenticator de WebAuthn via CDP adiciona setup desproporcional ao ganho agora | não |
 | 2026-08-22 | `<c-ui.alert severity>`/`<c-ui.badge color>` "success"/"warning" reaproveitam os tokens `secondary`/`tertiary` (não existe token dedicado) | ADR 0012 não previu papel semântico de sucesso/aviso, só M3 genérico; `secondary` (teal) e `tertiary` (amber) já carregam a conotação certa sem token novo | não |
-| 2026-08-22 | Variante de `<c-ui.button>` decidida por `attrs.tags` do allauth via `{% if "outline" in attrs.tags %}` etc. (lista Python, não substring) | `ElementNode.render` do allauth já parseia `tags="a,b"` em lista antes de expor `attrs.tags` — nenhuma colisão de substring possível | não |
+| 2026-08-22 | Variante/cor de `<c-ui.button>`/`<c-ui.badge>`/`<c-ui.alert>` decidida por `attrs.tags` do allauth via helpers Python (`apps/ui/templatetags/ui.py`: `button_variant`, `button_color`, `tag_color`), não `{% if %}` no template | `ElementNode.render` do allauth já parseia `tags="a,b"` em lista antes de expor `attrs.tags` (sem colisão de substring); e django-cotton não aceita `{% if %}`/`{% elif %}` dentro da lista de atributos de um componente (ver risco abaixo) | não |
+| 2026-08-22 | `button_variant`: tag `outline`/`link` vence `prominent` quando ambas presentes (`"prominent,login,outline,primary"` → outline) | allauth tagueia ênfase (`prominent` = grande) e estilo visual (`outline` = contornado) como eixos independentes; `<c-ui.button variant>` é um eixo só — o estilo visual explícito é o que importa pra não preencher um botão que o allauth marcou como secundário | não |
+| 2026-08-22 | `<c-ui.field hide_label>` some visualmente (`sr-only`) só quando `unlabeled=True` **e** o campo não é checkbox/radio (`field_hide_label` em `ui.py`) | Checkbox/radio não tem `placeholder` como alternativa visual ao rótulo — esconder o label deixaria o campo sem indicação nenhuma do que ele é | não |
 | 2026-08-22 | `bun run lint:classes`/`lint:classes:fix` passam a escanear `apps` além de `templates` | Componentes Cotton de app (ex.: `apps/ui/`) não tinham nenhuma checagem de ordenação de classe Tailwind antes disso | não |
 | 2026-08-22 | Header (logo + toggle de tema) vive em `templates/layouts/partials/header.html`, incluído por `{% include %}` em `guest.html`/`app.html` — não virou componente Cotton próprio | Bloco pequeno, sem props: `{% include %}` já é o padrão do projeto para "fragmento simples e sem contrato" (`docs/standards/frontend.md`) | não |
 | 2026-08-22 | `allauth/layouts/{entrance,manage}.html` usam `{% extends "components/layouts/{guest,app}.html" %}`, não a tag `<c-layouts.*>` | Cotton não suporta herança de bloco Django dentro de um componente — `{% extends %}` sobre o arquivo `.html` do componente funciona porque ele também é um template Django válido | não |
@@ -164,6 +187,27 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   única vez*, no nível mais fundo, para o allauth ganhar a resolução. Testado isoladamente
   antes de mexer nos arquivos reais (`render_to_string` num template dir descartável) — vale
   o mesmo teste rápido se essa árvore de blocos crescer mais nas próximas etapas.
+- **django-cotton não aceita `{% if %}`/`{% for %}`/`{% with %}` (nenhum block tag) dentro da
+  lista de atributos de um componente** (`<c-ui.x {% if %}...{% endif %}>` →
+  `TemplateSyntaxError: ... expected 'endcotton'`) — o compilador regex de `<c-x ...>` não
+  entende tag aninhada aí. Também **não aceita filtro (`|`) num binding dinâmico
+  `:attr="expr"`** (`:attrs="attrs|without_tags"` falha *silenciosamente*: vira
+  `UnprocessableDynamicAttr`, o atributo simplesmente não é setado, sem erro nenhum —
+  descoberto só ao ver `id=""` no HTML renderizado). Padrão que funciona: computar o valor
+  antes, com `{% with x=expr|filtro %}`, e passar `:attr="x"` (variável simples, sem `|`) —
+  ou, para o conjunto inteiro de atributos de um `{% element %}` do allauth, mesclar direto
+  com `:attrs="attrs"` quando os nomes já batem com os c-vars do componente (evita reescrever
+  `{% if attrs.x %}x="{{ attrs.x }}"{% endif %}` por atributo). `apps/ui/templatetags/ui.py`
+  (`without_tags`, `field_attrs`) existe por causa dessa restrição.
+- **Default de `<c-vars nome="False">` é a *string* `"False"`, não o booleano `False`** —
+  `{% if nome %}` dentro do componente é sempre verdadeiro (string não vazia), mesmo sem o
+  chamador passar nada. Vale para qualquer c-var pensado como booleano
+  (`<c-ui.field hide_label>`, `<c-ui.button_group vertical>`) — declare sem valor
+  (`<c-vars ... nome />`, sem `="False"`) para que o padrão vire "variável indefinida" (falsy)
+  quando o chamador não passa nada, e `True` de verdade quando passa o atributo puro
+  (`<c-x nome>`) ou via `:nome="var_python"`. Bug real, encontrado só depois de renderizar a
+  página (rótulo de campo saindo sempre `sr-only`, secreto do TOTP sem rótulo visível) — não
+  aparece em `manage.py check` nem em teste de template isolado que não olha o HTML final.
 
 ## Fora de escopo
 

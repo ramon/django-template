@@ -1,4 +1,4 @@
-<c-vars type="text" label="" help_text="" errors="" value="" rows="3" />
+<c-vars type="text" label="" help_text="" errors="" value="" rows="3" hide_label />
 
 <div class="mb-4">
     {% if type == "checkbox" or type == "radio" %}
@@ -8,19 +8,19 @@
                    {{ attrs }}
                    class="border-outline text-primary focus:ring-primary size-4 rounded focus:ring-2">
             {% if label %}
-                <label for="{{ id }}" class="text-on-surface text-sm">{{ label }}</label>
+                <label for="{{ id }}" class="text-on-surface text-sm{% if hide_label %} sr-only{% endif %}">{{ label }}</label>
             {% endif %}
         </div>
     {% elif type == "textarea" %}
         {% if label %}
-            <label for="{{ id }}" class="text-on-surface-variant mb-1 block text-sm font-medium">{{ label }}</label>
+            <label for="{{ id }}" class="text-on-surface-variant mb-1 block text-sm font-medium{% if hide_label %} sr-only{% endif %}">{{ label }}</label>
         {% endif %}
         <textarea rows="{{ rows }}"
                   {{ attrs }}
                   class="border-outline bg-surface-container-lowest text-on-surface focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2">{{ value }}{{ slot }}</textarea>
     {% else %}
         {% if label %}
-            <label for="{{ id }}" class="text-on-surface-variant mb-1 block text-sm font-medium">{{ label }}</label>
+            <label for="{{ id }}" class="text-on-surface-variant mb-1 block text-sm font-medium{% if hide_label %} sr-only{% endif %}">{{ label }}</label>
         {% endif %}
         <div class="relative">
             <input type="{{ type }}"

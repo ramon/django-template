@@ -1,0 +1,11 @@
+{% load allauth ui %}
+{% with fa=attrs|without_tags %}
+    <c-ui.form :attrs="fa">
+        {% slot body %}
+        {% endslot %}
+        <c-slot name="actions">
+            {% slot actions %}
+            {% endslot %}
+        </c-slot>
+    </c-ui.form>
+{% endwith %}

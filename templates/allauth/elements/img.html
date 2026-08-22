@@ -1,0 +1,4 @@
+{# Não delega a <c-ui.*> — não está no vocabulário genérico de apps/ui (ver ADR 0013). #}
+<img src="{{ attrs.src }}"
+     {% if attrs.alt %}alt="{{ attrs.alt }}"{% endif %}
+     class="border-outline-variant mx-auto rounded-lg border">
