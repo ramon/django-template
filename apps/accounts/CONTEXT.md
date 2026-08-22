@@ -34,12 +34,9 @@ nunca escolhido diretamente por quem preenche o perfil.
 _Avoid_: document kind
 
 **Avatar**:
-Imagem de perfil enviada pelo usuário. Quando ausente, cai para o Gravatar.
+Imagem de perfil enviada pelo usuário. Quando ausente, a URL exposta fica vazia --
+não há avatar padrão gerado a partir de dado do usuário.
 _Avoid_: foto, picture
-
-**Gravatar**:
-Serviço externo que gera uma imagem a partir do hash do e-mail do usuário; usado como
-avatar padrão quando nenhuma imagem foi enviada.
 
 **Age**:
 Idade calculada a partir do birth_date do Profile no momento da leitura — nunca

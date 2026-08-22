@@ -13,6 +13,7 @@ resolvida — não ignorada.
 | [`infra.md`](infra.md) | compose e os dois caminhos de dev, imagens, `Procfile`, variáveis, sondas |
 | [`auth.md`](auth.md) | allauth, MFA, sessões, contas sociais, CORS da API |
 | [`observability.md`](observability.md) | Sentry (sem PII), Prometheus |
+| [`privacy.md`](privacy.md) | dado pessoal, LGPD e GDPR: minimização, PII em log, terceiro, decisões que cada projeto registra em ADR |
 | [`git.md`](git.md) | commits, branches (git-flow), changelog e versionamento, PR, pre-commit, o que o CI verifica |
 | [`quality-gates.md`](quality-gates.md) | qual gate se aplica a qual mudança, ordem de execução, por que cada um existe |
 

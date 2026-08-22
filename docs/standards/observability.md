@@ -22,7 +22,7 @@ esperando ver o e-mail direto.
 Não reative `send_default_pii` como atalho de depuração: se um caso específico precisa de
 mais contexto, anexe explicitamente via `sentry_sdk.set_context(...)` no ponto do código que
 já sabe que aquele dado é seguro de sair, em vez de ligar a captura automática para todo
-evento.
+evento. Ver [`privacy.md`](privacy.md) para o resto das regras de dado pessoal, LGPD e GDPR.
 
 `traces_sample_rate` e `profile_session_sample_rate` estão em `0.1` (10% das transações) —
 mudar a amostragem é decisão de custo/observabilidade de cada projeto, não algo a inferir

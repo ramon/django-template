@@ -7,6 +7,13 @@ release está documentado em
 
 ## [Unreleased]
 
+### Security
+
+- Removido o fallback de avatar para o Gravatar: perfil sem avatar próprio devolvia o
+  hash SHA-256 do e-mail do usuário para `gravatar.com` por padrão, sem opção de
+  desligar ([ADR 0014](docs/adr/0014-remover-fallback-de-avatar-para-o-gravatar.md)).
+  `GET /profile/me` agora devolve `picture` vazio nesse caso.
+
 ## [0.1.1] - 2026-08-18
 
 ### Fixed
