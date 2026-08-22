@@ -72,6 +72,44 @@ Fica tudo o mais: `apps/core/` (mixins, value objects, templatetags, sondas de s
 `frontend/lib/`, `templates/layouts/`, `conftest.py` e as sondas `/health/`. Apagar uma
 sonda ou um mixin porque "não está sendo usado ainda" é remover base, não exemplo.
 
+## Fluxo de trabalho de tarefas
+
+Antes de iniciar qualquer tarefa nova, nessa ordem:
+
+1. **Worktree limpa.** Rode `git status`. Se houver mudança pendente (staged, não staged
+   ou untracked que não seja scratch da sessão), pare e pergunte ao usuário o que fazer
+   com ela antes de tocar em qualquer arquivo — não descarte nem comite por conta própria.
+2. **`develop` sincronizado com o remote.** `git fetch origin` e garanta que `develop`
+   local está em fast-forward com `origin/develop` antes de criar a branch da tarefa.
+
+Depois:
+
+3. **Uma branch por tarefa, no padrão git-flow**
+   ([`docs/standards/git.md#branches-e-pr`](docs/standards/git.md#branches-e-pr)):
+   `feature/<escopo>-<descricao>` a partir de `develop`, PR de volta para `develop`. Não
+   trabalhe direto em `develop` ou `master`.
+4. **Subtask usa a branch da tarefa-mãe como base**, não `develop`: crie a branch da
+   subtask a partir da branch em andamento, e o PR da subtask aponta para ela, não para
+   `develop`. Só a branch de topo (a tarefa "raiz") abre PR contra `develop`.
+5. **Commits pequenos e frequentes**, um por unidade de mudança coerente — não acumule o
+   trabalho da tarefa inteira num commit só ao final. A regra de sempre continua valendo:
+   migration, catálogo `.po` e teste que uma mudança exige andam no mesmo commit dela
+   ([`git.md`](docs/standards/git.md#commits)), mas mudanças independentes são commits
+   separados.
+6. **Tarefa com migration ou qualquer mudança de schema usa um banco próprio da tarefa**,
+   não o banco de desenvolvimento compartilhado. Crie um banco com o nome da branch no
+   serviço `database` do compose:
+   ```bash
+   docker compose exec database createdb -U user <nome-da-tarefa>
+   ```
+   e aponte `DATABASE_URL` para ele (`.env` local ou variável de ambiente da sessão)
+   enquanto trabalhar na tarefa. Ao terminar — merge ou descarte —, derrube o banco:
+   ```bash
+   docker compose exec database dropdb -U user <nome-da-tarefa>
+   ```
+   Isso evita que migration experimental, revertida ou de tentativa deixe resíduo no
+   banco de desenvolvimento padrão.
+
 ## Comandos
 
 Dois caminhos, e eles não se misturam na mesma sessão: o `.venv` da máquina e o `/opt/venv`
