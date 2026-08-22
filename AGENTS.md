@@ -52,7 +52,7 @@ código:
 
 | Pasta | O que guarda | Leia quando |
 | --- | --- | --- |
-| [`docs/standards/`](docs/standards/) | como se escreve código aqui: camadas, nomes, tipagem, testes, i18n, infra, git, dado pessoal/LGPD | sempre, antes de editar a área correspondente |
+| [`docs/standards/`](docs/standards/) | como se escreve código aqui: camadas, nomes, tipagem, testes, i18n, infra, git, dado pessoal/LGPD/GDPR | sempre, antes de editar a área correspondente |
 | [`docs/adr/`](docs/adr/) | decisões arquiteturais, com o motivo e as alternativas descartadas | antes de mudar ou contrariar uma decisão estrutural |
 | [`docs/specs/`](docs/specs/) | especificações de features: comportamento esperado, regras, casos de borda | antes de implementar uma feature especificada |
 | [`docs/plans/`](docs/plans/) | planos de implementação de trabalhos multi-etapa | ao retomar ou continuar um trabalho em andamento |
