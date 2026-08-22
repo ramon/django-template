@@ -21,6 +21,30 @@ vivem na raiz, e cada app em `apps/` é um contexto de domínio. Stack, instala�
 execução ficam no [`README.md`](README.md), que é a referência para *como rodar* este
 projeto; este arquivo trata de *como trabalhar* nele.
 
+## Anatomia de um app (`apps/<nome>/`)
+
+Cada app em `apps/` é um contexto de domínio e carrega três arquivos de documentação,
+além do código:
+
+| Arquivo | Para quem | Conteúdo |
+| --- | --- | --- |
+| `CONTEXT.md` | humano e agente | glossário do domínio: termos com definição de 1-2 frases e `_Avoid_` para sinônimos rejeitados. Nunca decisão técnica ou implementação. |
+| `README.md` | humano | o que o app faz e por quê, em linguagem de negócio — não repete o que já está tipado no código. |
+| `AGENTS.md` | agente | referência da interface pública: models, funções, endpoints, tasks — com caminho de import e uma linha de propósito, para não precisar vasculhar o código antes de usar algo que já existe. |
+
+Regras:
+
+- **App novo exige os três no mesmo PR que o cria.** Sem eles, o app fica sem
+  glossário e sem referência de interface — a próxima tarefa nele começa vasculhando
+  código.
+- **Havendo mais de um app, mantenha [`CONTEXT-MAP.md`](CONTEXT-MAP.md) na raiz**
+  apontando para cada `CONTEXT.md` e descrevendo a relação entre os contextos.
+- **Mudou a interface pública (assinatura, model novo, endpoint novo)? Atualize o
+  `AGENTS.md` do app no mesmo commit.** Referência de interface desatualizada é pior
+  que ausente — um agente confia nela sem checar o código.
+- **Apagou o app?** Apague os três arquivos dele e a entrada correspondente em
+  `CONTEXT-MAP.md` junto.
+
 ## A pasta `docs/`
 
 `docs/` é a memória de decisão do projeto e a sua primeira parada antes de escrever
