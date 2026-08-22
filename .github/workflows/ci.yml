@@ -206,10 +206,10 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v7
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: build da imagem de producao
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           load: true
@@ -258,7 +258,7 @@ jobs:
             -e SESSION_CACHE_URL=redis://127.0.0.1:6379/1
 
       - name: build da imagem de desenvolvimento
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile.dev
