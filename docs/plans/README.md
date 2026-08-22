@@ -40,4 +40,4 @@ sem saber por que parou.
 | Plano | Status | Início | Fim |
 | --- | --- | --- | --- |
 | [Estilizar o fluxo de autenticação do allauth](frontend-auth-styling.md) | Concluído | 2026-08-22 | 2026-08-22 |
-| [Corrigir o cadastro (HTTP 500 por falta de nome)](accounts-signup-name-field.md) | Em andamento | 2026-08-22 | — |
+| [Corrigir o cadastro (HTTP 500 por falta de nome)](accounts-signup-name-field.md) | Concluído | 2026-08-22 | 2026-08-22 |

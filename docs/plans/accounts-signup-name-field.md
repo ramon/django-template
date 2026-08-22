@@ -1,6 +1,6 @@
 # Plano: corrigir o cadastro (HTTP 500 por falta de nome)
 
-- **Status**: Em andamento
+- **Status**: Concluído
 - **Início**: 2026-08-22
 - **Última atualização**: 2026-08-22
 - **Relacionados**: `docs/plans/frontend-auth-styling.md` (etapa 9, onde o bug foi achado),
@@ -56,7 +56,7 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
 - [x] **5. Docs** — `apps/accounts/AGENTS.md` ganha a entrada do `SignupForm` novo;
       `docs/plans/frontend-auth-styling.md` marca o achado da etapa 9 como resolvido, com
       link pra este plano — depende de 4 · verificação: revisão de texto.
-- [ ] **6. Fechamento** — checklist de `docs/standards/quality-gates.md` completo, PR pra
+- [x] **6. Fechamento** — checklist de `docs/standards/quality-gates.md` completo, PR pra
       `develop` (só com autorização explícita).
 
 ## Estado atual
@@ -74,9 +74,12 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
   marca os dois achados de cadastro como resolvidos, linkando pra cá; `makemessages`
   rodado — "Full name"/"Enter your first and last name." traduzidos à mão no catálogo
   `pt_BR` de `apps/accounts`, já que aqui o `msgid` nasce em inglês, diferente do padrão
-  de template visto no plano de estilização).
-- **Em andamento**: etapa 6 (fechamento).
-- **Próximo passo**: etapa 6.
+  de template visto no plano de estilização); etapa 6 (`ruff`, `ruff format --check`,
+  `mypy apps tests`, `pytest` — 109 —, `makemigrations --check --dry-run` limpo,
+  `bun run build && pytest -m e2e` — 22 —, `bun run lint`, `bun run test:coverage` —
+  100% — todos limpos).
+- **Próximo passo**: nenhum — plano completo. PR pra `develop` fica pendente de
+  autorização explícita.
 
 ## Decisões tomadas no caminho
 
