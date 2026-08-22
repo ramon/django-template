@@ -147,8 +147,9 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       allauth via `elements`/`layouts` + `apps/ui`; `docs/standards/auth.md` perde a
       ressalva de "UI é a do allauth, sem estilo" — depende de 9 · verificação: revisão de
       texto.
-- [ ] **11. Fechamento** — checklist de qualidade completo (`docs/standards/quality-gates.md`),
-      PR para `develop`.
+- [x] **11. Fechamento** — checklist de qualidade completo (`docs/standards/quality-gates.md`);
+      PR para `develop` pendente de autorização explícita (não fiz `push`/PR sozinho — ver
+      "Estado atual").
 
 ## Estado atual
 
@@ -191,8 +192,12 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   `docs/standards/auth.md` deixou de descrever a UI de auth como "a do allauth, sem
   estilo" — agora aponta pra ADR 0013 e pra seção nova do `frontend.md`; ADR 0007 não foi
   editado — convenção do projeto é ADR aceito não muda, só linka o que resolveu, e a ADR
-  0013 já lista a 0007 em "Relacionados").
-- **Próximo passo**: etapa 11 (fechamento — checklist de qualidade completo, PR).
+  0013 já lista a 0007 em "Relacionados"); etapa 11 (checklist completo de
+  `docs/standards/quality-gates.md` rodado e limpo: `ruff check`/`format --check`, `mypy
+  apps tests`, `pytest` completo — 103 —, `pytest -m e2e` — 21 —, `makemigrations --check
+  --dry-run`, `bun run lint`, `bun run test:coverage` — 100% —).
+- **Próximo passo**: nenhum — plano completo. Falta só abrir o PR para `develop`, que
+  exige autorização explícita do usuário (não é uma ação a tomar sozinho).
 
 ## Decisões tomadas no caminho
 
