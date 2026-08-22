@@ -1,7 +1,7 @@
 # Accounts
 
 Identidade do usuário: autenticação (`User`) e o perfil pessoal que a estende
-(`Profile`) — documento, data de nascimento, gênero e avatar.
+(`Profile`) — nacionalidade, documento, data de nascimento, gênero e avatar.
 
 Para o vocabulário do domínio (o que é `User`, `Profile`, `Document`, `Avatar`...),
 veja [`CONTEXT.md`](CONTEXT.md).
@@ -12,8 +12,11 @@ veja [`CONTEXT.md`](CONTEXT.md).
   telefone são obrigatórios já na criação. Ao criar um `User`, um `Profile` vazio é
   criado junto — os dois nascem sempre juntos.
 - **`Profile`**: dados complementares que não fazem parte da autenticação —
-  documento, data de nascimento, gênero, avatar, e como a pessoa se autorrepresenta
-  (nome social, identidade de gênero, pronomes — herdado de `apps.core`).
+  nacionalidade, documento, data de nascimento, gênero, avatar, e como a pessoa se
+  autorrepresenta (nome social, identidade de gênero, pronomes — herdado de
+  `apps.core`). O tipo de documento exigido é derivado da nacionalidade: CPF para
+  Brasil, SSN para EUA, passaporte (sem validação de formato) para qualquer outra —
+  ver [ADR 0010](../../docs/adr/0010-documento-de-identidade-tipado-pela-nacionalidade.md).
 - **Avatar com fallback pro Gravatar**: se o usuário não enviou uma imagem, a UI usa
   uma gerada a partir do hash do e-mail pelo serviço externo Gravatar.
 - **API** (`django-ninja`, montada em `/profile/`): `GET /profile/me` devolve os

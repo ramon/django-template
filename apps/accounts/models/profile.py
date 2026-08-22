@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy, pgettext_lazy
 
-from apps.accounts.models.mixins import AvatarMixin
+from apps.accounts.models.mixins import AvatarMixin, DocumentMixin
 from apps.core.models import BaseModel, Gender
 from apps.core.models.mixins import PhoneNumberMixin, SelfRepresentationMixin
 
@@ -12,7 +12,7 @@ class ProfileManager(models.Manager["Profile"]):
         return super().get_queryset().select_related("user")
 
 
-class Profile(AvatarMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel):
+class Profile(AvatarMixin, DocumentMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel):
     """
     Represents a user's profile, including personal details and associated data.
 
@@ -25,8 +25,6 @@ class Profile(AvatarMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel)
     Attributes:
         user: Defines a one-to-one relationship with the User model, ensuring
             each Profile is associated with a unique User instance.
-        document: Stores an 11-character string representing the user's
-            document ID.
         birth_date: Date of birth of the user.
         gender: The person's gender, from a fixed valueset. Defaults to unknown
             rather than requiring a value up front.
@@ -37,9 +35,6 @@ class Profile(AvatarMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel)
         verbose_name=gettext_lazy("user"),
         related_name="profile",
         on_delete=models.CASCADE,
-    )
-    document = models.CharField(
-        gettext_lazy("document"), max_length=11, null=True, blank=True, unique=True
     )
     birth_date = models.DateField(gettext_lazy("birth date"), blank=True, null=True)
     gender = models.CharField(

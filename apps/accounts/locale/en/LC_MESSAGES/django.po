@@ -23,13 +23,31 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
+msgid "CPF"
+msgstr ""
+
+msgid "SSN"
+msgstr ""
+
+msgid "passport"
+msgstr ""
+
 msgid "avatar"
 msgstr ""
 
-msgid "user"
+msgid "nationality"
+msgstr ""
+
+msgid "document type"
 msgstr ""
 
 msgid "document"
+msgstr ""
+
+msgid "This nationality requires a document number."
+msgstr ""
+
+msgid "user"
 msgstr ""
 
 msgid "birth date"

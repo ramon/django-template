@@ -15,22 +15,37 @@ remover algo listado aqui.
   salva o `User` e cria o `Profile` associado automaticamente — não crie um `Profile`
   à parte. `UserManager.create_superuser(email, password=None, **extra_fields)` seta
   `is_staff`/`is_superuser`.
-- `Profile(AvatarMixin, PhoneNumberMixin, SelfRepresentationMixin, BaseModel)` — one-
-  to-one com `User` (`related_name="profile"`). Campos: `document` (11 caracteres,
-  único, sem validação de dígito), `birth_date`, `gender`
-  (`apps.core.models.Gender`, default `UNKNOWN`). `ProfileManager` já aplica
-  `select_related("user")` no manager padrão. A propriedade `.email` delega para
-  `user.email` — é o contrato exigido por `AvatarMixin` para montar o fallback do
-  Gravatar.
+- `Profile(AvatarMixin, DocumentMixin, PhoneNumberMixin, SelfRepresentationMixin,
+  BaseModel)` — one-to-one com `User` (`related_name="profile"`). Campos:
+  `nationality`/`document_type`/`document` (ver `DocumentMixin`), `birth_date`,
+  `gender` (`apps.core.models.Gender`, default `UNKNOWN`). `ProfileManager` já
+  aplica `select_related("user")` no manager padrão. A propriedade `.email` delega
+  para `user.email` — é o contrato exigido por `AvatarMixin` para montar o fallback
+  do Gravatar.
 - `AvatarMixin` (`apps.accounts.models.mixins`) — campo `avatar` (`ImageField`,
   valida extensão `jpg/jpeg/png/webp` e tamanho ≤5MB via `FileSizeValidator` de
   `apps.core`). `.avatar_url()` retorna a URL da imagem enviada ou, se não houver,
   chama `gravatar_url(self.email)`.
+- `DocumentMixin` (`apps.accounts.models.mixins`) — campos `nationality`
+  (`django_countries.fields.CountryField`, opcional), `document_type`
+  (`apps.accounts.models.choices.DocumentType`: `CPF`/`SSN`/`PASSPORT`, nunca
+  setado à mão) e `document` (`CharField`, único, normalizado sem pontuação).
+  `.clean()` é um no-op sem `nationality`; com ela preenchida, exige `document` e
+  usa `apps.accounts.domain.Document` para validar e normalizar de acordo com o
+  tipo derivado (`BR`→CPF, `US`→SSN, qualquer outra→passaporte sem validação de
+  formato) — levanta `django.core.exceptions.ValidationError` se inválido. Ver
+  [ADR 0010](../../docs/adr/0010-documento-de-identidade-tipado-pela-nacionalidade.md).
 
-## Domain services — `apps.accounts.domain.services`
+## Domain — `apps.accounts.domain`
 
-- `calculate_age(birth_date: date | datetime) -> int` — idade em anos completos na
-  data de hoje.
+- `Document(BaseModel)` (Pydantic, `apps.accounts.domain.value_objects.document`)
+  — recebe `nationality` (código ISO alpha-2) e `value` (número bruto). Valida e
+  normaliza no construtor via `python-stdnum` para `BR`/`US`; para as demais
+  nacionalidades, só exige um caractere alfanumérico. `.document_type` (`"cpf"`,
+  `"ssn"` ou `"passport"`) é derivado de `nationality`. Levanta
+  `pydantic.ValidationError` se o número não for válido para o tipo.
+- `calculate_age(birth_date: date | datetime) -> int` (`apps.accounts.domain.services`)
+  — idade em anos completos na data de hoje.
 
 ## Services — `apps.accounts.services`
 
