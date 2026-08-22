@@ -137,8 +137,8 @@ Configuração de aplicação e de integrações fica em `config/app_settings/`,
 ```python
 from config.app_settings import get_app_settings, get_integration_settings
 
-region = get_app_settings().phone_number_region     # APP_PHONE_NUMBER_REGION
-dsn = get_integration_settings().SENTRY_DSN         # INTEGRATION_SENTRY_DSN
+region = get_app_settings().phone_number_region  # APP_PHONE_NUMBER_REGION
+dsn = get_integration_settings().SENTRY_DSN  # INTEGRATION_SENTRY_DSN
 ```
 
 Módulos de settings disponíveis: `config.settings.development` (padrão do `manage.py`),
