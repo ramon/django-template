@@ -99,6 +99,14 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       escopo, não corrigido): `account/signup.html` não mostra o campo "Nome"
       (`ACCOUNT_SIGNUP_FIELDS = ["name*", ...]`) mesmo no `form.as_p` puro, sem relação
       com este override — provável gap de configuração do form/model, não da UI.
+      **Atualização na etapa 9**: o gap é mais sério do que parecia — sem o campo "Nome",
+      o cadastro **quebra com HTTP 500** (`ValidationError: first_name`/`last_name` "não
+      pode estar vazio"), porque `User.REQUIRED_FIELDS = ["first_name", "last_name",
+      "phone_number"]` (`apps/accounts/models/user.py`) nunca é preenchido — falta um
+      `ACCOUNT_ADAPTER` que traduza o campo `name` do allauth em `first_name`/`last_name`,
+      ou os campos precisam entrar em `ACCOUNT_SIGNUP_FIELDS`. Segue fora do escopo deste
+      plano (é bug de `apps/accounts`, não de estilo), mas documentado aqui com o impacto
+      real para abrir como issue separado — sem isso, ninguém consegue se cadastrar.
 - [x] **7. Varredura de páginas sem cobertura de elements** — checar cada template em
       `account/`, `mfa/`, `socialaccount/`, `usersessions/` que usa HTML fora dos elements
       (ex.: `usersessions/usersession_list.html`, `mfa/webauthn/authenticator_list.html`,
@@ -131,7 +139,7 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 - [x] **8. i18n** — `makemessages` para qualquer string nova (header, sidebar, componentes)
       — depende de 4, 7 · verificação: `python manage.py makemessages` sem diff pendente
       além do esperado, catálogos `.po` no commit.
-- [ ] **9. e2e smoke** — `tests/e2e/test_auth_*.py` cobrindo as telas renderizáveis sem
+- [x] **9. e2e smoke** — `tests/e2e/test_auth_*.py` cobrindo as telas renderizáveis sem
       hardware (login, signup, password reset, MFA index, recovery codes); WebAuthn real
       fica de fora (exigiria virtual authenticator do CDP) — depende de 7 ·
       verificação: `uv run pytest -m e2e` (após `bun run build`).
@@ -162,8 +170,23 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   novas em `locale/{en,pt_BR}/LC_MESSAGES/django.po`: "Mostrar senha", "Change Password",
   "Forgot Password?", "App", "Alternar tema claro/escuro", "E-mail", "Senha", "Segurança",
   "Sessões", "Conexões"; `msgstr` vazio segue o padrão já existente no catálogo raiz —
-  `pt_BR` cai no `msgid` por já estar em português, `en` fica sem tradução por ora).
-- **Próximo passo**: etapa 9 (e2e smoke).
+  `pt_BR` cai no `msgid` por já estar em português, `en` fica sem tradução por ora);
+  etapa 9 (`tests/e2e/test_auth_{login,signup,password_reset,mfa}.py`, 8 testes: página de
+  login renderiza e autentica um usuário verificado, credencial errada mostra o alerta de
+  erro novo; signup só cobre renderização — ver bug encontrado abaixo; reset de senha
+  renderiza e redireciona para `done/`; index de MFA oferece ativar TOTP; ativação de TOTP
+  gera e mostra os códigos de recuperação, calculando o código TOTP com `hmac`/`hashlib`
+  da stdlib a partir do segredo exibido na tela — sem lib externa nem hardware).
+  **Bug real encontrado durante a etapa 9** (fora do escopo de estilo, ver
+  `apps/ui/templatetags/ui.py`): `templates/allauth/elements/form.html` repassava
+  `attrs` inteiro pro componente, incluindo a chave `form` (a instância do `Form`, não uma
+  string) — vazava `str(form)` dentro de um atributo `form="..."` inválido sempre que a
+  página tinha `non_field_errors` (ex. login com senha errada). Corrigido com um filtro
+  dedicado; de caminho, também passou a renderizar `non_field_errors` (nenhum template do
+  allauth fazia isso). Também achado (fora de escopo, **não corrigido**): cadastro quebra
+  com HTTP 500 hoje — `User.REQUIRED_FIELDS` exige `first_name`/`last_name` que o form de
+  signup nunca preenche, gap de `apps/accounts` sem relação com este plano.
+- **Próximo passo**: etapa 10 (docs de padrão).
 
 ## Decisões tomadas no caminho
 
