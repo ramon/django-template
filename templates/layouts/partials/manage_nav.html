@@ -1,0 +1,33 @@
+{% comment %}
+Nav de "configurações de conta" — populada no slot sidebar de allauth/layouts/manage.html
+(MFA, sessões, conexões sociais, e-mail, senha). Não é um <c-ui.*> porque conhece rota e
+página atual do allauth, algo específico deste override, não um componente genérico.
+{% endcomment %}
+<nav class="flex flex-col gap-1">
+    {% url 'account_email' as email_url %}
+    {% url 'account_change_password' as change_password_url %}
+    {% url 'mfa_index' as mfa_url %}
+    {% url 'usersessions_list' as usersessions_url %}
+    {% url 'socialaccount_connections' as connections_url %}
+
+    <a href="{{ email_url }}"
+       class="rounded-lg px-3 py-2 text-sm font-medium {% if request.path == email_url %}bg-primary-container text-on-primary-container{% else %}text-on-surface-variant hover:bg-surface-container-high{% endif %}">
+        {% translate "E-mail" %}
+    </a>
+    <a href="{{ change_password_url }}"
+       class="rounded-lg px-3 py-2 text-sm font-medium {% if request.path == change_password_url %}bg-primary-container text-on-primary-container{% else %}text-on-surface-variant hover:bg-surface-container-high{% endif %}">
+        {% translate "Senha" %}
+    </a>
+    <a href="{{ mfa_url }}"
+       class="rounded-lg px-3 py-2 text-sm font-medium {% if request.path == mfa_url %}bg-primary-container text-on-primary-container{% else %}text-on-surface-variant hover:bg-surface-container-high{% endif %}">
+        {% translate "Segurança" %}
+    </a>
+    <a href="{{ usersessions_url }}"
+       class="rounded-lg px-3 py-2 text-sm font-medium {% if request.path == usersessions_url %}bg-primary-container text-on-primary-container{% else %}text-on-surface-variant hover:bg-surface-container-high{% endif %}">
+        {% translate "Sessões" %}
+    </a>
+    <a href="{{ connections_url }}"
+       class="rounded-lg px-3 py-2 text-sm font-medium {% if request.path == connections_url %}bg-primary-container text-on-primary-container{% else %}text-on-surface-variant hover:bg-surface-container-high{% endif %}">
+        {% translate "Conexões" %}
+    </a>
+</nav>

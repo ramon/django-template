@@ -1,0 +1,11 @@
+{% load allauth %}
+<c-ui.panel>
+    <c-slot name="title">{% slot title %}{% endslot %}</c-slot>
+    {% slot body %}
+    {% endslot %}
+    {% if slots.actions %}
+        <c-slot name="actions">
+            {% for action in slots.actions %}{{ action }}{% endfor %}
+        </c-slot>
+    {% endif %}
+</c-ui.panel>

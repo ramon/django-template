@@ -1,0 +1,16 @@
+<c-vars severity="info" />
+
+<div role="alert"
+     {{ attrs }}
+     class="flex items-start gap-2 rounded-lg px-4 py-3 text-sm
+            {% if severity == "success" %}bg-secondary-container text-on-secondary-container
+            {% elif severity == "warning" %}bg-tertiary-container text-on-tertiary-container
+            {% elif severity == "error" %}bg-error-container text-on-error-container
+            {% else %}bg-primary-container text-on-primary-container{% endif %}">
+    <span class="mt-1.5 size-2 shrink-0 rounded-full
+                 {% if severity == "success" %}bg-secondary
+                 {% elif severity == "warning" %}bg-tertiary
+                 {% elif severity == "error" %}bg-error
+                 {% else %}bg-primary{% endif %}"></span>
+    <span>{{ slot }}</span>
+</div>

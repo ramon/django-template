@@ -13,6 +13,27 @@ O Django é responsável pela renderização HTML e pela API; o Vite atua apenas
 de assets, seguindo o modelo oficial de *backend integration* — dev server em
 desenvolvimento e `manifest.json` em produção.
 
+## Iniciando um projeto a partir deste template
+
+Este repositório é um template: use o botão **Use this template** do GitHub (ou
+`git clone` seguido de um novo `git init`, se preferir não herdar o histórico) para criar
+o repositório do projeto novo.
+
+Depois de criar o repositório:
+
+1. **Identidade do projeto**: atualize `name`, `description` e `authors` em
+   `pyproject.toml`, além deste `README.md` e do `LICENSE`.
+2. **Scaffolding de exemplo**: apague a página de exemplo, a task de exemplo e o
+   controller de exemplo — o que cada um envolve está listado em
+   [`AGENTS.md`](AGENTS.md#começando-um-projeto-a-partir-desta-base). O resto (mixins,
+   sondas de saúde, `apps/accounts/`, `config/` inteiro etc.) fica: é base do template,
+   não exemplo.
+3. **Ambiente e dependências**: siga [Instalação](#instalação) e
+   [Ambiente local](#ambiente-local) abaixo para subir o projeto pela primeira vez.
+4. **Decisões herdadas**: os ADRs em [`docs/adr/`](docs/adr/) vêm do template e valem por
+   padrão no projeto novo. Para contrariar um deles, registre um ADR que o substitua, em
+   vez de simplesmente fazer diferente no código.
+
 ## Stack principal
 
 ### Backend
@@ -137,8 +158,8 @@ Configuração de aplicação e de integrações fica em `config/app_settings/`,
 ```python
 from config.app_settings import get_app_settings, get_integration_settings
 
-region = get_app_settings().phone_number_region     # APP_PHONE_NUMBER_REGION
-dsn = get_integration_settings().SENTRY_DSN         # INTEGRATION_SENTRY_DSN
+region = get_app_settings().phone_number_region  # APP_PHONE_NUMBER_REGION
+dsn = get_integration_settings().SENTRY_DSN  # INTEGRATION_SENTRY_DSN
 ```
 
 Módulos de settings disponíveis: `config.settings.development` (padrão do `manage.py`),

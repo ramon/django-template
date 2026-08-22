@@ -38,7 +38,7 @@ por um acessor com `lru_cache`, e o código consome direto, sem passar por
 ```python
 from config.app_settings import get_app_settings
 
-region = get_app_settings().phone_number_region   # APP_PHONE_NUMBER_REGION
+region = get_app_settings().phone_number_region  # APP_PHONE_NUMBER_REGION
 ```
 
 Configuração nova de aplicação entra como campo tipado em um dos três modelos. Variável

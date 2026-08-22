@@ -1,0 +1,9 @@
+<c-vars color="neutral" />
+
+<span {{ attrs }}
+      class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium
+             {% if color == "primary" %}bg-primary-container text-on-primary-container
+             {% elif color == "success" %}bg-secondary-container text-on-secondary-container
+             {% elif color == "warning" %}bg-tertiary-container text-on-tertiary-container
+             {% elif color == "danger" %}bg-error-container text-on-error-container
+             {% else %}bg-surface-container-high text-on-surface-variant{% endif %}">{{ slot }}</span>

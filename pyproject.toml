@@ -1,6 +1,6 @@
 [project]
 name = "django-template"
-version = "0.1.1"
+version = "1.0.0"
 description = "Base template for Django projects with Django"
 authors = [{name="Ramon", email="dev@ramon.dev.br"}]
 readme = "README.md"
@@ -9,57 +9,59 @@ dependencies = [
     "argon2-cffi>=25.1.0",
     "celery[redis]>=5.6.3",
     "django>=6.0,<6.1",
-    "django-allauth[mfa,socialaccount]>=65.17",
+    "django-allauth[mfa,socialaccount]>=65.19.1",
     "django-celery-beat>=2.9.0",
     "django-celery-results>=2.6.0",
     "django-cors-headers>=4.9",
     "django-cotton>=2.7",
+    "django-countries>=9.0.0",
     "django-environ>=0.13",
     "django-guid>=3.6.1",
-    "django-health-check>=4.4",
+    "django-health-check>=4.5.0",
     "django-ninja>=1.6",
     "django-prometheus>=2.5.0",
     "django-storages>=1.14",
     "django-structlog>=10.0.0",
     "gunicorn>=26.0.0",
-    "orjson>=3.11.9",
-    "phonenumbers>=9.0.31",
-    "pillow>=12.2.0",
+    "orjson>=3.12.0",
+    "phonenumbers>=9.0.37",
+    "pillow>=12.3.0",
     "psycopg[binary]>=3.3",
     "pydantic>=2.0,<3.0",
     "pydantic-extra-types>=2.11.1",
-    "pydantic-settings>=2.14.1",
+    "pydantic-settings>=2.15.0",
+    "python-stdnum>=2.2",
     "redis[hiredis]>=6.4",
     "sentry-sdk[django]>=2.60",
     "servestatic[brotli,minify]>=4.3.0",
     "structlog>=25.5.0",
     "uvicorn-worker>=0.4.0",
-    "uvicorn[standard]>=0.48.0",
+    "uvicorn[standard]>=0.52.4",
 ]
 
 [project.optional-dependencies]
 # boto3 + botocore custam 31 MB; so entram em quem usa storage remoto de fato.
 #   uv sync --extra s3
-s3 = ["django-storages[s3]>=1.14"]
+s3 = ["django-storages[s3]>=1.14.6"]
 
 [dependency-groups]
 dev = [
     "celery-types>=0.26.0",
-    "coverage>=7.14.1",
-    "django-debug-toolbar>=6.3.0",
+    "coverage>=7.15.4",
+    "django-debug-toolbar>=7.1.1",
     "django-extensions>=4.1",
-    "django-stubs[compatible-mypy]>=6.0.4",
+    "django-stubs[compatible-mypy]>=6.1.0",
     "factory-boy>=3.3",
-    "faker>=40.19.1",
-    "ipython>=9.13.0",
-    "mypy>=2.1",
-    "pre-commit>=4.6",
+    "faker>=40.36.0",
+    "ipython>=9.16.1",
+    "mypy>=2.3.1",
+    "pre-commit>=4.6.2",
     "pytest>=9.0",
     "pytest-cov>=7.1.0",
-    "pytest-django>=4.12",
+    "pytest-django>=4.14.0",
     "pytest-mock>=3.15.1",
     "pytest-playwright>=0.9.0",
-    "ruff>=0.15",
+    "ruff>=0.16.3",
 ]
 
 [tool.ruff]
@@ -202,11 +204,21 @@ no_implicit_reexport = false
 # dependencias sem stubs nem marcador py.typed
 module = [
     "allauth.*",
+    "django_celery_beat.*",
     "environ.*",
     "health_check.*",
     "phonenumbers.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# SignupForm subclassa allauth.account.forms.SignupForm, que o mypy ve' como Any
+# por falta de stubs (ver ignore_missing_imports acima) -- disallow_subclassing_any
+# do modo strict rejeitaria isso sem alternativa (nao ha' stub proprio pro allauth).
+module = [
+    "apps.accounts.forms",
+]
+disallow_subclassing_any = false
 
 [tool.django-stubs]
 django_settings_module = "config.settings.development"

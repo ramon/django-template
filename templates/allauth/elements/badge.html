@@ -1,0 +1,7 @@
+{% load allauth ui %}
+{% with fa=attrs|without_tags %}
+    <c-ui.badge :attrs="fa" color="{{ attrs.tags|tag_color }}">
+        {% slot %}
+        {% endslot %}
+    </c-ui.badge>
+{% endwith %}

@@ -15,7 +15,7 @@ apps/accounts/
 ├── domain/              # regra de negócio pura, sem Django
 │   ├── services.py
 │   └── value_objects/
-├── services/            # integrações e efeitos colaterais (ex.: gravatar.py)
+├── services/            # integrações e efeitos colaterais
 ├── api/                 # django-ninja: router, schemas, endpoints/
 ├── presenters.py        # adapta model → apresentação (HTML ou API)
 ├── views.py             # views web
@@ -56,6 +56,12 @@ Sobre `@computed_field` em cima de `@property`: é o padrão do Pydantic v2 aqui
 - Herde de `apps.core.models.BaseModel` (PK UUID + timestamps) por padrão. Precisa de
   menos, use o mixin direto: `UUIDPrimaryKeyMixin`, `TimestampMixin`, `SoftDeleteModel`,
   `SortableMixin`, `PersonNameMixin`, `PhoneNumberMixin`.
+- **`BaseModel.save()` chama `full_clean()` antes de salvar** (ver
+  [ADR 0011](../adr/0011-full-clean-automatico-no-basemodel-save.md)): `clean()`,
+  validators de campo e `validate_unique()` rodam em qualquer `.save()` direto, não
+  só via `ModelForm`. Consequência: **nunca use `bulk_create`/`bulk_update` em model
+  que herda `BaseModel`** — essas operações escrevem direto no banco sem passar por
+  `save()`, então ignoram silenciosamente qualquer `clean()` custom.
 - `SoftDeleteModel` troca `delete()` por marcação em `deleted_at`. O manager `objects` já
   filtra os vivos; `all_objects` vê todos. Quem precisa apagar de verdade chama
   `hard_delete()`.
@@ -103,7 +109,7 @@ arquivo. Task recebe dado serializável — id, não instância de model.
   estado compartilhado entre métodos (`BasePresenter`, que guarda `obj` e empresta
   `__getattr__`), contrato exigido por um framework (`TemplateView`, `RootModel` e
   `BaseModel` do Pydantic) ou necessidade de herança de verdade. Lógica que roda uma vez e
-  devolve um valor é função (`calculate_age`, `gravatar_url`), não um `Service` com um
+  devolve um valor é função (`calculate_age`, `get_errors`), não um `Service` com um
   método.
 - **Injeção de dependência é por parâmetro.** Cliente HTTP, horário, configuração ou
   repositório entram como argumento da função, não como import de singleton lido dentro
@@ -120,8 +126,8 @@ arquivo. Task recebe dado serializável — id, não instância de model.
   quando precisa, `Args:`/`Returns:`/`Raises:`/`Attributes:`. Sem repetir o tipo entre
   parênteses quando já existe type hint — `birth_date: The birth date...`, não
   `birth_date (datetime): ...` (alguns arquivos anteriores a esta convenção, como
-  `gravatar.py`, ainda repetem o tipo; não são o modelo a seguir). Toda classe pública tem
-  uma; função trivial não precisa.
+  `person_name.py`, ainda repetem o tipo; não são o modelo a seguir). Toda classe pública
+  tem uma; função trivial não precisa.
 - Comentário explica **por que**, nunca o quê.
 - **Idioma**: todo código — produção e teste, sem exceção — em inglês: identificadores
   (incluindo nome de função de teste), docstrings, mensagens de log e de exceção. Teste só

@@ -1,0 +1,26 @@
+{% comment %}
+Cabecalho compartilhado por <c-layouts.guest> e <c-layouts.app> — logo placeholder
+e o toggle de tema (antes duplicado dentro de templates/pages/home.html).
+{% endcomment %}
+<header class="border-outline-variant bg-surface flex items-center justify-between gap-4 border-b px-6 py-4">
+    <a href="{% url 'core:home' %}" class="text-on-surface flex items-center gap-2 text-lg font-semibold">
+        <span class="bg-primary text-on-primary flex size-8 items-center justify-center rounded-lg text-sm font-bold">
+            A
+        </span>
+        {% translate "App" %}
+    </a>
+
+    <button type="button"
+            data-controller="theme"
+            data-action="theme#toggle"
+            aria-label="{% translate 'Alternar tema claro/escuro' %}"
+            class="border-outline-variant text-on-surface-variant hover:bg-surface-container-high rounded-full border p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5 dark:hidden">
+            <circle cx="12" cy="12" r="4"/>
+            <path stroke-linecap="round" d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden size-5 dark:block">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+        </svg>
+    </button>
+</header>

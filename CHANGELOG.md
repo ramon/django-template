@@ -7,6 +7,17 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-22
+
+### Security
+
+- Removido o fallback de avatar para o Gravatar: perfil sem avatar próprio devolvia o
+  hash SHA-256 do e-mail do usuário para `gravatar.com` por padrão, sem opção de
+  desligar ([ADR 0014](docs/adr/0014-remover-fallback-de-avatar-para-o-gravatar.md)).
+  `GET /profile/me` agora devolve `picture` vazio nesse caso.
+  **BREAKING CHANGE**: `GET /profile/me` devolve `"picture": ""` para perfil sem avatar,
+  em vez de uma URL do Gravatar.
+
 ## [0.1.1] - 2026-08-18
 
 ### Fixed
@@ -45,6 +56,7 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/ramon/django-template/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/ramon/django-template/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ramon/django-template/releases/tag/v0.1.0

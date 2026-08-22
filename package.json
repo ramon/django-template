@@ -2,10 +2,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "bun run lint:js && bun run lint:css",
+    "lint": "bun run lint:js && bun run lint:css && bun run lint:classes",
     "lint:js": "biome check .",
     "lint:css": "stylelint \"frontend/**/*.css\"",
-    "lint:fix": "biome check --write . && stylelint --fix \"frontend/**/*.css\"",
+    "lint:classes": "rustywind --check-formatted -l django templates apps",
+    "lint:fix": "biome check --write . && stylelint --fix \"frontend/**/*.css\" && bun run lint:classes:fix",
+    "lint:classes:fix": "rustywind --write -l django templates apps",
     "format": "biome format --write .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -13,17 +15,21 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@tailwindcss/vite": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.3",
     "alpinejs": "^3.16.2",
     "htmx.org": "^2.0.10",
-    "tailwindcss": "^4.3.0",
-    "vite": "^8.0.14"
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.9",
-    "@vitest/coverage-v8": "^4.1.10",
-    "happy-dom": "^20.11.2",
+    "@biomejs/biome": "^2.5.10",
+    "@vitest/coverage-v8": "^4.1.11",
+    "happy-dom": "^20.11.6",
+    "rustywind": "^0.27.0",
     "stylelint": "^17.14.1",
-    "vitest": "^4.1.10"
-  }
+    "vitest": "^4.1.11"
+  },
+  "trustedDependencies": [
+    "rustywind"
+  ]
 }

@@ -44,7 +44,11 @@ LOGIN_REDIRECT_URL = "/"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 ### Signup
+# "name*" aqui não tem efeito no BaseSignupForm padrão do allauth (só reconhece
+# email/email2/username/phone) -- quem materializa o campo de nome é o SignupForm
+# customizado abaixo, registrado independente desta lista.
 ACCOUNT_SIGNUP_FIELDS = ["name*", "email*", "password1*", "password2*"]
+ACCOUNT_FORMS = {"signup": "apps.accounts.forms.SignupForm"}
 ACCOUNT_LOGIN_METHODS = {"email"}
 
 ### Login

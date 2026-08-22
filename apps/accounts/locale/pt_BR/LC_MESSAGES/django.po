@@ -23,14 +23,38 @@ msgstr "Permissões"
 msgid "Important dates"
 msgstr "Datas importantes"
 
+msgid "Full name"
+msgstr "Nome completo"
+
+msgid "Enter your first and last name."
+msgstr "Informe seu nome e sobrenome."
+
+msgid "CPF"
+msgstr "CPF"
+
+msgid "SSN"
+msgstr "SSN"
+
+msgid "passport"
+msgstr "passaporte"
+
 msgid "avatar"
 msgstr "avatar"
 
-msgid "user"
-msgstr "usuário"
+msgid "nationality"
+msgstr "nacionalidade"
+
+msgid "document type"
+msgstr "tipo de documento"
 
 msgid "document"
 msgstr "documento"
+
+msgid "This nationality requires a document number."
+msgstr "Esta nacionalidade exige um número de documento."
+
+msgid "user"
+msgstr "usuário"
 
 msgid "birth date"
 msgstr "data de nascimento"

@@ -21,6 +21,30 @@ vivem na raiz, e cada app em `apps/` é um contexto de domínio. Stack, instala�
 execução ficam no [`README.md`](README.md), que é a referência para *como rodar* este
 projeto; este arquivo trata de *como trabalhar* nele.
 
+## Anatomia de um app (`apps/<nome>/`)
+
+Cada app em `apps/` é um contexto de domínio e carrega três arquivos de documentação,
+além do código:
+
+| Arquivo | Para quem | Conteúdo |
+| --- | --- | --- |
+| `CONTEXT.md` | humano e agente | glossário do domínio: termos com definição de 1-2 frases e `_Avoid_` para sinônimos rejeitados. Nunca decisão técnica ou implementação. |
+| `README.md` | humano | o que o app faz e por quê, em linguagem de negócio — não repete o que já está tipado no código. |
+| `AGENTS.md` | agente | referência da interface pública: models, funções, endpoints, tasks — com caminho de import e uma linha de propósito, para não precisar vasculhar o código antes de usar algo que já existe. |
+
+Regras:
+
+- **App novo exige os três no mesmo PR que o cria.** Sem eles, o app fica sem
+  glossário e sem referência de interface — a próxima tarefa nele começa vasculhando
+  código.
+- **Havendo mais de um app, mantenha [`CONTEXT-MAP.md`](CONTEXT-MAP.md) na raiz**
+  apontando para cada `CONTEXT.md` e descrevendo a relação entre os contextos.
+- **Mudou a interface pública (assinatura, model novo, endpoint novo)? Atualize o
+  `AGENTS.md` do app no mesmo commit.** Referência de interface desatualizada é pior
+  que ausente — um agente confia nela sem checar o código.
+- **Apagou o app?** Apague os três arquivos dele e a entrada correspondente em
+  `CONTEXT-MAP.md` junto.
+
 ## A pasta `docs/`
 
 `docs/` é a memória de decisão do projeto e a sua primeira parada antes de escrever
@@ -28,7 +52,7 @@ código:
 
 | Pasta | O que guarda | Leia quando |
 | --- | --- | --- |
-| [`docs/standards/`](docs/standards/) | como se escreve código aqui: camadas, nomes, tipagem, testes, i18n, infra, git | sempre, antes de editar a área correspondente |
+| [`docs/standards/`](docs/standards/) | como se escreve código aqui: camadas, nomes, tipagem, testes, i18n, infra, git, dado pessoal/LGPD/GDPR | sempre, antes de editar a área correspondente |
 | [`docs/adr/`](docs/adr/) | decisões arquiteturais, com o motivo e as alternativas descartadas | antes de mudar ou contrariar uma decisão estrutural |
 | [`docs/specs/`](docs/specs/) | especificações de features: comportamento esperado, regras, casos de borda | antes de implementar uma feature especificada |
 | [`docs/plans/`](docs/plans/) | planos de implementação de trabalhos multi-etapa | ao retomar ou continuar um trabalho em andamento |
@@ -71,6 +95,56 @@ Fica tudo o mais: `apps/core/` (mixins, value objects, templatetags, sondas de s
 `makemessages` customizado), `apps/accounts/` (User e Profile), `config/` inteiro,
 `frontend/lib/`, `templates/layouts/`, `conftest.py` e as sondas `/health/`. Apagar uma
 sonda ou um mixin porque "não está sendo usado ainda" é remover base, não exemplo.
+
+## Fluxo de trabalho de tarefas
+
+**Regra sem exceção, para qualquer agente, em qualquer tarefa que vá tocar arquivo do
+repositório — inclusive a que começou como pergunta exploratória, entrevista de
+levantamento de requisitos ou "só um ajuste pequeno": os passos 1–3 abaixo rodam antes de
+criar, editar ou reescrever qualquer arquivo.** Entrar direto em modo de investigação ou
+implementação em `develop`/`master` porque a conversa começou de outro jeito (ex.: uma
+skill de entrevista que já parte para ler código) não é justificativa — é exatamente o
+erro de processo que esta seção existe para prevenir. Perceber no meio de uma tarefa que
+esse passo foi pulado não autoriza seguir em frente até o commit para "resolver depois":
+pare, crie a branch, mova o trabalho para ela, e só então continue.
+
+Antes de iniciar qualquer tarefa nova, nessa ordem:
+
+1. **Worktree limpa.** Rode `git status`. Se houver mudança pendente (staged, não staged
+   ou untracked que não seja scratch da sessão), pare e pergunte ao usuário o que fazer
+   com ela antes de tocar em qualquer arquivo — não descarte nem comite por conta própria.
+2. **`develop` sincronizado com o remote.** `git fetch origin` e garanta que `develop`
+   local está em fast-forward com `origin/develop` antes de criar a branch da tarefa.
+
+Depois:
+
+3. **Uma branch por tarefa, no padrão git-flow**
+   ([`docs/standards/git.md#branches-e-pr`](docs/standards/git.md#branches-e-pr)):
+   `feature/<escopo>-<descricao>` a partir de `develop`, PR de volta para `develop`.
+   **Nunca trabalhe direto em `develop` ou `master`** — nem para uma mudança de um
+   arquivo só, nem para prototipar uma ideia antes de decidir se ela fica: crie a branch
+   primeiro, sempre, mesmo que ache que vai descartar o resultado.
+4. **Subtask usa a branch da tarefa-mãe como base**, não `develop`: crie a branch da
+   subtask a partir da branch em andamento, e o PR da subtask aponta para ela, não para
+   `develop`. Só a branch de topo (a tarefa "raiz") abre PR contra `develop`.
+5. **Commits pequenos e frequentes**, um por unidade de mudança coerente — não acumule o
+   trabalho da tarefa inteira num commit só ao final. A regra de sempre continua valendo:
+   migration, catálogo `.po` e teste que uma mudança exige andam no mesmo commit dela
+   ([`git.md`](docs/standards/git.md#commits)), mas mudanças independentes são commits
+   separados.
+6. **Tarefa com migration ou qualquer mudança de schema usa um banco próprio da tarefa**,
+   não o banco de desenvolvimento compartilhado. Crie um banco com o nome da branch no
+   serviço `database` do compose:
+   ```bash
+   docker compose exec database createdb -U user <nome-da-tarefa>
+   ```
+   e aponte `DATABASE_URL` para ele (`.env` local ou variável de ambiente da sessão)
+   enquanto trabalhar na tarefa. Ao terminar — merge ou descarte —, derrube o banco:
+   ```bash
+   docker compose exec database dropdb -U user <nome-da-tarefa>
+   ```
+   Isso evita que migration experimental, revertida ou de tentativa deixe resíduo no
+   banco de desenvolvimento padrão.
 
 ## Comandos
 
