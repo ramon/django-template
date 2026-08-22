@@ -98,6 +98,16 @@ sonda ou um mixin porque "não está sendo usado ainda" é remover base, não ex
 
 ## Fluxo de trabalho de tarefas
 
+**Regra sem exceção, para qualquer agente, em qualquer tarefa que vá tocar arquivo do
+repositório — inclusive a que começou como pergunta exploratória, entrevista de
+levantamento de requisitos ou "só um ajuste pequeno": os passos 1–3 abaixo rodam antes de
+criar, editar ou reescrever qualquer arquivo.** Entrar direto em modo de investigação ou
+implementação em `develop`/`master` porque a conversa começou de outro jeito (ex.: uma
+skill de entrevista que já parte para ler código) não é justificativa — é exatamente o
+erro de processo que esta seção existe para prevenir. Perceber no meio de uma tarefa que
+esse passo foi pulado não autoriza seguir em frente até o commit para "resolver depois":
+pare, crie a branch, mova o trabalho para ela, e só então continue.
+
 Antes de iniciar qualquer tarefa nova, nessa ordem:
 
 1. **Worktree limpa.** Rode `git status`. Se houver mudança pendente (staged, não staged
@@ -110,8 +120,10 @@ Depois:
 
 3. **Uma branch por tarefa, no padrão git-flow**
    ([`docs/standards/git.md#branches-e-pr`](docs/standards/git.md#branches-e-pr)):
-   `feature/<escopo>-<descricao>` a partir de `develop`, PR de volta para `develop`. Não
-   trabalhe direto em `develop` ou `master`.
+   `feature/<escopo>-<descricao>` a partir de `develop`, PR de volta para `develop`.
+   **Nunca trabalhe direto em `develop` ou `master`** — nem para uma mudança de um
+   arquivo só, nem para prototipar uma ideia antes de decidir se ela fica: crie a branch
+   primeiro, sempre, mesmo que ache que vai descartar o resultado.
 4. **Subtask usa a branch da tarefa-mãe como base**, não `develop`: crie a branch da
    subtask a partir da branch em andamento, e o PR da subtask aponta para ela, não para
    `develop`. Só a branch de topo (a tarefa "raiz") abre PR contra `develop`.
