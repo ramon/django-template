@@ -99,13 +99,21 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
       escopo, não corrigido): `account/signup.html` não mostra o campo "Nome"
       (`ACCOUNT_SIGNUP_FIELDS = ["name*", ...]`) mesmo no `form.as_p` puro, sem relação
       com este override — provável gap de configuração do form/model, não da UI.
-- [ ] **7. Varredura de páginas sem cobertura de elements** — checar cada template em
+- [x] **7. Varredura de páginas sem cobertura de elements** — checar cada template em
       `account/`, `mfa/`, `socialaccount/`, `usersessions/` que usa HTML fora dos elements
       (ex.: `usersessions/usersession_list.html`, `mfa/webauthn/authenticator_list.html`,
       `account/email.html`) e decidir override pontual quando necessário — depende de 6 ·
       verificação: inspeção manual de cada URL listada no objetivo (login, signup, logout,
       reset de senha, verificação de e-mail, login por código, MFA index, TOTP, WebAuthn
       add/list, recovery codes, reauthenticate, trust device, sessões, conexões sociais).
+      Achados: links crus dentro de `{% blocktranslate %}` (ex. "cadastre-se" no login,
+      confirmação de e-mail) não herdavam estilo de `<c-ui.p>`/`help_text` de
+      `<c-ui.field>` — corrigido com `[&_a]:text-primary [&_a]:underline
+      [&_a]:underline-offset-4 [&_a]:hover:no-underline` em ambos; link "Esqueceu a
+      senha?" de `account/password_change.html` é `<a>` cru fora de qualquer element no
+      template upstream do allauth — corrigido com override pontual de página envolvendo
+      em `{% element button tags="link" %}`. `ACCOUNT_LOGOUT_ON_GET = True` faz logout via
+      GET redirecionar direto (sem tela de confirmação) — nada a estilizar aí.
 - [ ] **8. i18n** — `makemessages` para qualquer string nova (header, sidebar, componentes)
       — depende de 4, 7 · verificação: `python manage.py makemessages` sem diff pendente
       além do esperado, catálogos `.po` no commit.
@@ -132,9 +140,12 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
   incluído por `guest.html`/`app.html`); etapa 5 (`allauth/layouts/{entrance,manage}.html`
   sobrescritos, nav de conta em `templates/layouts/partials/manage_nav.html`); etapa 6
   (22 `allauth/elements/*.html` sobrescritos, delegando para `apps/ui` via
-  `apps/ui/templatetags/ui.py`).
-- **Em andamento**: etapa 7 (varredura de páginas sem cobertura de `elements`).
-- **Próximo passo**: etapa 7.
+  `apps/ui/templatetags/ui.py`); etapa 7 (`<c-ui.p>`/help_text de `<c-ui.field>` ganharam
+  estilo de link embutido; `account/password_change.html` ganhou override pontual para o
+  link "Esqueceu a senha?"; passagem visual confirmada em login, signup, logout,
+  reset/troca de senha, verificação de e-mail, login por código, MFA index/TOTP/WebAuthn,
+  reauthenticate, sessões, conexões sociais).
+- **Próximo passo**: etapa 8 (i18n / `makemessages`).
 
 ## Decisões tomadas no caminho
 
@@ -153,6 +164,8 @@ Fora não instalado: `allauth.idp` e o `openid` legado — não entram no trabal
 | 2026-08-22 | `allauth/layouts/{entrance,manage}.html` usam `{% extends "components/layouts/{guest,app}.html" %}`, não a tag `<c-layouts.*>` | Cotton não suporta herança de bloco Django dentro de um componente — `{% extends %}` sobre o arquivo `.html` do componente funciona porque ele também é um template Django válido | não |
 | 2026-08-22 | `templates/layouts/base.html` ganhou um bloco `body` novo envolvendo `content` | Único jeito de `entrance.html`/`manage.html` injetar header/sidebar sem perder para `account/login.html` (que sobrescreve `content` direto) — ver risco abaixo | não |
 | 2026-08-22 | Severidade da mensagem do Django (`messages`) mapeada 1:1 para `<c-ui.alert severity>` via `message.tags` (`error`/`warning`/`success`/`info`/`debug`), sem `if`/`elif` | `message.tags` já usa exatamente esses nomes por padrão (`django.contrib.messages`, sem `MESSAGE_TAGS` custom no projeto); `{% if %}/{% elif %}` dentro de atributo de componente Cotton quebra o parser dele (`Invalid block tag ... expected 'endcotton'`) | não |
+| 2026-08-22 | `<c-ui.p>` e o `help_text` de `<c-ui.field>` ganham `[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:no-underline` fixo na própria classe, não como prop | Links dentro de `{% blocktranslate %}` (ex. "cadastre-se" no login) não passam por nenhum element próprio — só existem como texto interpolado dentro de outro element (`p`); dar estilo ao container via seletor descendente é mais simples que criar um element/component só pra isso | não |
+| 2026-08-22 | `templates/account/password_change.html` criado como override pontual de página (não element/layout) | Único lugar do allauth onde um link ("Esqueceu a senha?") é `<a>` cru fora de qualquer `{% element %}` no template upstream — não dá pra alcançar via `elements`/`layouts` sem reescrever a página inteira | não |
 
 ## Riscos e pontos de atenção
 
