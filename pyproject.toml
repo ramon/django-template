@@ -36,7 +36,7 @@ dependencies = [
     "servestatic[brotli,minify]>=4.3.0",
     "structlog>=25.5.0",
     "uvicorn-worker>=0.4.0",
-    "uvicorn[standard]>=0.48.0",
+    "uvicorn[standard]>=0.52.4",
 ]
 
 [project.optional-dependencies]
