@@ -95,8 +95,8 @@ poder ser chamada de uma origem diferente da que serve o HTML — um client mobi
 separado no futuro:
 
 ```python
-CORS_ALLOW_ALL_ORIGINS = DEBUG        # em dev, qualquer origem passa
-CORS_ALLOWED_ORIGINS = [...]          # fora de DEBUG, lista explícita do .env
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # em dev, qualquer origem passa
+CORS_ALLOWED_ORIGINS = [...]  # fora de DEBUG, lista explícita do .env
 ```
 
 `CORS_ALLOWED_ORIGINS` (`.env`) é vazio por padrão — **nada passa em produção até alguém

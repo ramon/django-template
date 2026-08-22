@@ -89,7 +89,7 @@ services:
   prometheus:
     profiles: ["observability"]
     # linha LTS do Prometheus 3.x
-    image: prom/prometheus:v3.5.5
+    image: prom/prometheus:v3.13.2
     ports:
       - "9090:9090"
     volumes:
