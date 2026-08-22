@@ -37,11 +37,11 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
 
 ## Etapas
 
-- [ ] **1. `apps/accounts/forms.py::SignupForm`** — subclasse de
+- [x] **1. `apps/accounts/forms.py::SignupForm`** — subclasse de
       `allauth.account.forms.SignupForm`, adiciona o(s) campo(s) de nome (ver pergunta em
       aberto) · verificação: teste unitário do form isolado (cria form com dados válidos,
       `is_valid()` verdadeiro, `cleaned_data` tem `first_name`/`last_name`).
-- [ ] **2. Registrar `ACCOUNT_FORMS`** — `config/settings/parts/auth.py`:
+- [x] **2. Registrar `ACCOUNT_FORMS`** — `config/settings/parts/auth.py`:
       `ACCOUNT_FORMS = {"signup": "apps.accounts.forms.SignupForm"}` — depende de 1 ·
       verificação: `manage.py shell` resolve o form certo via
       `allauth.account.forms.SignupForm` (o de `apps.accounts`, não o padrão).
@@ -62,15 +62,20 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
 ## Estado atual
 
 - **Feito**: branch `fix/accounts-cadastro-sem-nome` criada a partir de `develop`; este
-  plano.
-- **Em andamento**: etapa 1.
-- **Próximo passo**: decidir a pergunta em aberto abaixo, depois escrever o `SignupForm`.
+  plano; etapa 1 (`apps/accounts/forms.py::SignupForm`, campo `name`, `clean_name()`
+  quebra em `first_name`/`last_name`; 3 testes unitários); etapa 2 (`ACCOUNT_FORMS`
+  registrado, confirmado via `allauth.utils.get_form_class` que resolve
+  `apps.accounts.forms.SignupForm`).
+- **Em andamento**: etapa 3 (teste de integração do fluxo real).
+- **Próximo passo**: etapa 3.
 
 ## Decisões tomadas no caminho
 
 | Data | Decisão | Motivo | Virou ADR? |
 | --- | --- | --- | --- |
 | 2026-08-22 | Sem `ACCOUNT_ADAPTER` customizado — só `SignupForm` | `DefaultAccountAdapter.save_user()` já lê `first_name`/`last_name` de `form.cleaned_data` sozinho; adapter novo seria código morto | não |
+| 2026-08-22 | Campo único "Nome completo" (`name`), quebrado em `first_name`/`last_name` via `PersonName.from_full_name` dentro de `clean_name()` | Decisão do usuário — reaproveita a mesma lógica do setter `PersonNameMixin.name` | não |
+| 2026-08-22 | Teste do `SignupForm` chama `clean_name()` direto, sem passar por `is_valid()`/`data=` | `clean_email()` herdado do allauth bate no banco (checa e-mail duplicado) — isso não é regra minha, e forçaria `django_db` num teste que devia ser unitário (`testing.md`) | não |
 
 ## Riscos e pontos de atenção
 
@@ -92,7 +97,4 @@ legítima a isso, porque o allauth também busca form customizado via `ACCOUNT_F
 
 ## Pergunta em aberto
 
-Campo único "Nome completo" (quebrado em `first_name`/`last_name` via o setter que já
-existe, `PersonNameMixin.name`) ou dois campos separados "Nome"/"Sobrenome" (batem direto
-com o que `save_user` já procura, sem usar o setter)? Ambos resolvem o bug — é decisão de
-UX do formulário de cadastro, não técnica.
+Nenhuma — resolvida: campo único "Nome completo" (ver tabela de decisões).
