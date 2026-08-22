@@ -56,6 +56,12 @@ Sobre `@computed_field` em cima de `@property`: é o padrão do Pydantic v2 aqui
 - Herde de `apps.core.models.BaseModel` (PK UUID + timestamps) por padrão. Precisa de
   menos, use o mixin direto: `UUIDPrimaryKeyMixin`, `TimestampMixin`, `SoftDeleteModel`,
   `SortableMixin`, `PersonNameMixin`, `PhoneNumberMixin`.
+- **`BaseModel.save()` chama `full_clean()` antes de salvar** (ver
+  [ADR 0011](../adr/0011-full-clean-automatico-no-basemodel-save.md)): `clean()`,
+  validators de campo e `validate_unique()` rodam em qualquer `.save()` direto, não
+  só via `ModelForm`. Consequência: **nunca use `bulk_create`/`bulk_update` em model
+  que herda `BaseModel`** — essas operações escrevem direto no banco sem passar por
+  `save()`, então ignoram silenciosamente qualquer `clean()` custom.
 - `SoftDeleteModel` troca `delete()` por marcação em `deleted_at`. O manager `objects` já
   filtra os vivos; `all_objects` vê todos. Quem precisa apagar de verdade chama
   `hard_delete()`.
