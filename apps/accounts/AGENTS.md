@@ -33,17 +33,21 @@ remover algo listado aqui.
   `.clean()` é um no-op sem `nationality`; com ela preenchida, exige `document` e
   usa `apps.accounts.domain.Document` para validar e normalizar de acordo com o
   tipo derivado (`BR`→CPF, `US`→SSN, qualquer outra→passaporte sem validação de
-  formato) — levanta `django.core.exceptions.ValidationError` se inválido. Ver
+  formato) — levanta `django.core.exceptions.ValidationError` se inválido. Passa
+  `allow_repeated_digits=settings.DEBUG` ao `Document`: um CPF de dígito único
+  repetido (`111.111.111-11`) só é aceito com `DEBUG=True`. Ver
   [ADR 0010](../../docs/adr/0010-documento-de-identidade-tipado-pela-nacionalidade.md).
 
 ## Domain — `apps.accounts.domain`
 
 - `Document(BaseModel)` (Pydantic, `apps.accounts.domain.value_objects.document`)
-  — recebe `nationality` (código ISO alpha-2) e `value` (número bruto). Valida e
-  normaliza no construtor via `python-stdnum` para `BR`/`US`; para as demais
-  nacionalidades, só exige um caractere alfanumérico. `.document_type` (`"cpf"`,
-  `"ssn"` ou `"passport"`) é derivado de `nationality`. Levanta
-  `pydantic.ValidationError` se o número não for válido para o tipo.
+  — recebe `nationality` (código ISO alpha-2), `value` (número bruto) e
+  `allow_repeated_digits: bool = False`. Valida e normaliza no construtor via
+  `python-stdnum` para `BR`/`US`; para as demais nacionalidades, só exige um
+  caractere alfanumérico. `.document_type` (`"cpf"`, `"ssn"` ou `"passport"`) é
+  derivado de `nationality`. Levanta `pydantic.ValidationError` se o número não
+  for válido para o tipo — inclui CPF de dígito repetido, a menos que
+  `allow_repeated_digits=True`.
 - `calculate_age(birth_date: date | datetime) -> int` (`apps.accounts.domain.services`)
   — idade em anos completos na data de hoje.
 

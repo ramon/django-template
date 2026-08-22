@@ -37,6 +37,13 @@ A validação e a normalização moram em `apps.accounts.domain.value_objects.Do
 validador plugado ainda, só exige presença de ao menos um caractere
 alfanumérico — sem checar formato.
 
+`python-stdnum` valida CPF só pelo dígito verificador — não rejeita sequências
+de um único dígito repetido (`111.111.111-11` passa no checksum), uma lacuna
+conhecida da lib. `Document` cobre essa lacuna com uma checagem própria, mas
+com uma válvula de escape: `DocumentMixin.clean()` passa
+`allow_repeated_digits=settings.DEBUG`, então a sequência repetida — comum
+como valor descartável em teste local — só é aceita fora de produção.
+
 ## Consequências
 
 - **Positivas**: extensão futura para outro país é registrar mais uma entrada
@@ -44,9 +51,10 @@ alfanumérico — sem checar formato.
   correspondente do `stdnum` — não é preciso desenhar arquitetura nova.
   `django-countries` cobre a lista de países sem manutenção própria.
 - **Negativas**: duas dependências novas (`python-stdnum`, `django-countries`).
-  `python-stdnum` valida CPF só pelo dígito verificador — não rejeita
-  sequências repetidas (`111.111.111-11` passa no checksum), uma lacuna
-  conhecida da lib, não deste projeto.
+  `allow_repeated_digits` amarrado a `settings.DEBUG` é implícito: quem lê só
+  `Document` sem saber desse detalhe do `DocumentMixin` pode se surpreender
+  que um CPF de dígitos repetidos passa em `DEBUG=True` — mitigado pelo
+  docstring do parâmetro e pelo teste que cobre os dois lados do flag.
 - **Neutras**: `document` continua único globalmente (não por país) — CPF (11
   dígitos) e SSN (9 dígitos) não colidem por tamanho, e a chance de colisão de
   string bruta entre um CPF/SSN e um passaporte de outro país é desprezível.

@@ -1,6 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.test import override_settings
 
 from apps.accounts.models.mixins import DocumentMixin
 
@@ -69,3 +70,22 @@ def test_clean_falls_back_to_passport_for_an_unsupported_nationality(test_model_
 
     assert test_model_instance.document == "AB12CD34"
     assert test_model_instance.document_type == "passport"
+
+
+@override_settings(DEBUG=False)
+def test_clean_rejects_repeated_digit_cpf_outside_debug(test_model_instance):
+    test_model_instance.nationality = "BR"
+    test_model_instance.document = "111.111.111-11"
+
+    with pytest.raises(ValidationError):
+        test_model_instance.clean()
+
+
+@override_settings(DEBUG=True)
+def test_clean_allows_repeated_digit_cpf_in_debug(test_model_instance):
+    test_model_instance.nationality = "BR"
+    test_model_instance.document = "111.111.111-11"
+
+    test_model_instance.clean()
+
+    assert test_model_instance.document == "11111111111"

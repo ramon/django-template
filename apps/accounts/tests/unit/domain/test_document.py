@@ -23,6 +23,18 @@ def test_br_nationality_rejects_invalid_cpf():
         Document(nationality="BR", value="123.456.789-00")
 
 
+def test_br_nationality_rejects_repeated_digit_cpf_by_default():
+    """111.111.111-11 passes the checksum stdnum validates but was never issued."""
+    with pytest.raises(ValidationError):
+        Document(nationality="BR", value="111.111.111-11")
+
+
+def test_br_nationality_allows_repeated_digit_cpf_when_opted_in():
+    document = Document(nationality="BR", value="111.111.111-11", allow_repeated_digits=True)
+
+    assert document.value == "11111111111"
+
+
 @pytest.mark.parametrize(
     "raw_value, expected_value",
     [

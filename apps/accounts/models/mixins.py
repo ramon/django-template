@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -44,6 +45,10 @@ class DocumentMixin(models.Model):
     at the format level). `document_type` is derived from `nationality`, never set
     directly by the caller.
 
+    A CPF made of a single repeated digit (e.g. `111.111.111-11`) is only accepted
+    while `settings.DEBUG` is `True` -- it's a common throwaway value in local
+    testing, but was never actually issued, so production keeps rejecting it.
+
     Attributes:
         nationality: The country that issued the document.
         document_type: The kind of document stored in `document`.
@@ -77,7 +82,11 @@ class DocumentMixin(models.Model):
             )
 
         try:
-            parsed = Document(nationality=str(self.nationality), value=self.document)
+            parsed = Document(
+                nationality=str(self.nationality),
+                value=self.document,
+                allow_repeated_digits=settings.DEBUG,
+            )
         except PydanticValidationError as exc:
             raise ValidationError(
                 {"document": [str(error["msg"]) for error in exc.errors()]}

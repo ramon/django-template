@@ -30,10 +30,16 @@ class Document(BaseModel):
         value: The document number. Normalized in place: punctuation stripped,
             and, for a supported nationality, replaced by the checksum-validated
             canonical form.
+        allow_repeated_digits: Whether a CPF made of the same digit repeated
+            eleven times (e.g. `111.111.111-11`) is accepted. Such numbers pass
+            the checksum `python-stdnum` validates but were never actually
+            issued -- real systems reject them. Only meant to be `True` in
+            development, where they're a common throwaway test fixture.
     """
 
     nationality: str = Field(min_length=2, max_length=2)
     value: str = Field(min_length=1, max_length=20)
+    allow_repeated_digits: bool = False
 
     @computed_field
     @property
@@ -47,6 +53,10 @@ class Document(BaseModel):
         try:
             if document_type == "cpf":
                 normalized = br_cpf.validate(self.value)
+                if not self.allow_repeated_digits and len(set(normalized)) == 1:
+                    raise ValueError(
+                        "CPF made of a single digit repeated eleven times isn't a real document."
+                    )
             elif document_type == "ssn":
                 normalized = us_ssn.validate(self.value)
             else:
