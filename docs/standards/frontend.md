@@ -104,7 +104,8 @@ paint — não remova, é o que evita o flash do tema errado.
 ### Ordenação de classe Tailwind
 
 `bun run lint:classes` (`rustywind --check-formatted`) valida a ordem das classes em
-`templates/**`; `bun run lint:classes:fix` corrige. Roda separado do Biome porque o
+`templates/**` e `apps/**/templates/**` (componentes Cotton de app, ex.: `apps/ui/`);
+`bun run lint:classes:fix` corrige. Roda separado do Biome porque o
 parser HTML do Biome 2.5 não entende sintaxe de template Django e falha em qualquer
 `.html` do projeto — só `frontend/**/*.js` passa pelo Biome. `bun run lint`/`lint:fix` já
 incluem os dois.
