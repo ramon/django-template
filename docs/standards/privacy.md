@@ -45,19 +45,21 @@ e [`backend.md#logs`](backend.md#logs) — resumo aqui só para o cruzamento com
   caso precisa desse contexto, é `set_context`/`set_tag` explícito no ponto que já sabe que
   aquele dado é seguro de sair, nunca captura automática.
 
-## Compartilhamento com terceiro já existente: Gravatar
+## Compartilhamento com terceiro: sem fallback de avatar
 
-`AvatarMixin` (`apps/accounts/models/mixins.py:32`) cai para `gravatar_url()`
-(`apps/accounts/services/gravatar.py`) sempre que o usuário não tem avatar próprio — sem
-flag para desligar. Isso envia o hash SHA-256 do e-mail do usuário para
-`gravatar.com`, um serviço de terceiro fora do projeto, em toda resposta da API de perfil
-que cai no fallback. É um fluxo de dado pessoal (ainda que hasheado, e-mail é dado pessoal
-tanto sob a LGPD quanto sob o GDPR, cujo art. 4(1) trata identificador pseudonimizado como
-dado pessoal) para fora do perímetro que **já está no template por padrão** — projeto que
-não pode compartilhar nem um hash de e-mail com terceiro precisa remover ou condicionar
-esse fallback antes de ir a produção. Se o terceiro (Automattic/Gravatar) processa esse
-dado fora do Brasil ou da UE, isso também é a transferência internacional descrita mais
-abaixo — não um caso à parte.
+`AvatarMixin.avatar_url()` (`apps/accounts/models/mixins.py`) devolve a URL do avatar
+enviado ou string vazia — **não** existe mais fallback para gerar um avatar a partir do
+e-mail do usuário em um serviço externo. Até este ADR o template caía para o Gravatar
+(`gravatar.com`), enviando o hash SHA-256 do e-mail em toda resposta de perfil sem avatar
+próprio, sem flag para desligar; era um fluxo de dado pessoal (hash de e-mail é dado
+pessoal tanto sob a LGPD quanto sob o GDPR, cujo art. 4(1) trata identificador
+pseudonimizado como dado pessoal) para fora do perímetro do projeto, ligado por padrão. Ver
+[ADR 0014](../adr/0014-remover-fallback-de-avatar-para-o-gravatar.md) para o raciocínio
+completo e as alternativas descartadas.
+
+Integração nova que reintroduzir um avatar padrão vindo de terceiro (Gravatar ou qualquer
+outro) reabre exatamente esse problema — trate como uma decisão nova, com ADR próprio, não
+como reverter esta em silêncio.
 
 ## Segurança do dado armazenado
 
@@ -114,8 +116,9 @@ divergem, a diferença está explícita.
       documentada no `CONTEXT.md` do app
 - [ ] nenhum dado pessoal cru em `structlog` ou evento do Sentry — contexto explícito via
       `set_context`, nunca `send_default_pii`
-- [ ] integração nova que envia dado pessoal a terceiro documenta o que sai e por quê,
-      igual ao Gravatar aqui
+- [ ] integração nova que envia dado pessoal a terceiro documenta o que sai e por quê, e
+      passa por ADR — não reintroduza o padrão que o Gravatar tinha (fallback ligado por
+      padrão, sem decisão explícita; ver [ADR 0014](../adr/0014-remover-fallback-de-avatar-para-o-gravatar.md))
 - [ ] indo a produção com usuário real: consentimento (se aplicável), direitos do titular e
       retenção decididos e registrados em ADR — não fica para depois
 - [ ] projeto com usuário na UE (ou que oferece serviço/monitora comportamento de gente na

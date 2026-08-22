@@ -54,15 +54,5 @@ class Profile(AvatarMixin, DocumentMixin, PhoneNumberMixin, SelfRepresentationMi
             models.Index(fields=["document"], name="idx_profile_document"),
         ]
 
-    @property
-    def email(self) -> str:
-        """
-        Implementa o contrato do AvatarMixin, que precisa do e-mail para o gravatar.
-
-        Sem isto, avatar_url() estourava NotImplementedError sempre que o perfil
-        nao tinha imagem enviada -- ou seja, o fallback nunca chegava a rodar.
-        """
-        return str(self.user.email)
-
     def __str__(self) -> str:
         return str(self.user.name.full)

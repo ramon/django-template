@@ -15,7 +15,7 @@ apps/accounts/
 ├── domain/              # regra de negócio pura, sem Django
 │   ├── services.py
 │   └── value_objects/
-├── services/            # integrações e efeitos colaterais (ex.: gravatar.py)
+├── services/            # integrações e efeitos colaterais
 ├── api/                 # django-ninja: router, schemas, endpoints/
 ├── presenters.py        # adapta model → apresentação (HTML ou API)
 ├── views.py             # views web
@@ -109,7 +109,7 @@ arquivo. Task recebe dado serializável — id, não instância de model.
   estado compartilhado entre métodos (`BasePresenter`, que guarda `obj` e empresta
   `__getattr__`), contrato exigido por um framework (`TemplateView`, `RootModel` e
   `BaseModel` do Pydantic) ou necessidade de herança de verdade. Lógica que roda uma vez e
-  devolve um valor é função (`calculate_age`, `gravatar_url`), não um `Service` com um
+  devolve um valor é função (`calculate_age`, `get_errors`), não um `Service` com um
   método.
 - **Injeção de dependência é por parâmetro.** Cliente HTTP, horário, configuração ou
   repositório entram como argumento da função, não como import de singleton lido dentro
@@ -126,8 +126,8 @@ arquivo. Task recebe dado serializável — id, não instância de model.
   quando precisa, `Args:`/`Returns:`/`Raises:`/`Attributes:`. Sem repetir o tipo entre
   parênteses quando já existe type hint — `birth_date: The birth date...`, não
   `birth_date (datetime): ...` (alguns arquivos anteriores a esta convenção, como
-  `gravatar.py`, ainda repetem o tipo; não são o modelo a seguir). Toda classe pública tem
-  uma; função trivial não precisa.
+  `person_name.py`, ainda repetem o tipo; não são o modelo a seguir). Toda classe pública
+  tem uma; função trivial não precisa.
 - Comentário explica **por que**, nunca o quê.
 - **Idioma**: todo código — produção e teste, sem exceção — em inglês: identificadores
   (incluindo nome de função de teste), docstrings, mensagens de log e de exceção. Teste só

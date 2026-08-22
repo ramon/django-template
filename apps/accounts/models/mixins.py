@@ -8,7 +8,6 @@ from pydantic import ValidationError as PydanticValidationError
 
 from apps.accounts.domain import Document
 from apps.accounts.models.choices import DocumentType
-from apps.accounts.services import gravatar_url
 from apps.core.validators import FileSizeValidator
 
 
@@ -24,12 +23,8 @@ class AvatarMixin(models.Model):
         ],
     )
 
-    @property
-    def email(self) -> str:
-        raise NotImplementedError("Subclasses must implement email method")
-
     def avatar_url(self) -> str:
-        return self.avatar.url if self.avatar else gravatar_url(self.email)
+        return self.avatar.url if self.avatar else ""
 
     class Meta:
         abstract = True

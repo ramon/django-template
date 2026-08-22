@@ -17,8 +17,9 @@ veja [`CONTEXT.md`](CONTEXT.md).
   `apps.core`). O tipo de documento exigido é derivado da nacionalidade: CPF para
   Brasil, SSN para EUA, passaporte (sem validação de formato) para qualquer outra —
   ver [ADR 0010](../../docs/adr/0010-documento-de-identidade-tipado-pela-nacionalidade.md).
-- **Avatar com fallback pro Gravatar**: se o usuário não enviou uma imagem, a UI usa
-  uma gerada a partir do hash do e-mail pelo serviço externo Gravatar.
+- **Avatar sem fallback externo**: se o usuário não enviou uma imagem, a API devolve
+  `picture` vazio — nenhum dado do usuário sai para um serviço de terceiro para gerar
+  um avatar padrão (ver [`docs/standards/privacy.md`](../../docs/standards/privacy.md)).
 - **API** (`django-ninja`, montada em `/profile/`): `GET /profile/me` devolve os
   dados do usuário autenticado num formato parecido com o userinfo do OIDC.
 

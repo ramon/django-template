@@ -9,7 +9,6 @@ from django.test.utils import override_settings
 from PIL import Image
 
 from apps.accounts.models import User
-from apps.accounts.services import gravatar_url
 
 pytestmark = pytest.mark.django_db
 
@@ -36,14 +35,14 @@ def test_returns_the_logged_in_user_profile(auth_client: Client, user: User) -> 
         "name": f"{user.first_name} {user.last_name}",
         "given_name": user.first_name,
         "family_name": user.last_name,
-        "picture": gravatar_url(user.email),
+        "picture": "",
         "email": user.email,
     }
 
 
-def test_picture_falls_back_to_gravatar_without_an_avatar(auth_client: Client, user: User) -> None:
-    """Without this path, AvatarMixin.avatar_url and gravatar_url would be dead code."""
-    assert auth_client.get(URL).json()["picture"] == gravatar_url(user.email)
+def test_picture_is_empty_without_an_avatar(auth_client: Client) -> None:
+    """Without this path, AvatarMixin.avatar_url's no-avatar branch would be dead code."""
+    assert auth_client.get(URL).json()["picture"] == ""
 
 
 def test_picture_points_to_the_uploaded_file(

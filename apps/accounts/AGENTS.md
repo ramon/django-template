@@ -19,13 +19,12 @@ remover algo listado aqui.
   BaseModel)` — one-to-one com `User` (`related_name="profile"`). Campos:
   `nationality`/`document_type`/`document` (ver `DocumentMixin`), `birth_date`,
   `gender` (`apps.core.models.Gender`, default `UNKNOWN`). `ProfileManager` já
-  aplica `select_related("user")` no manager padrão. A propriedade `.email` delega
-  para `user.email` — é o contrato exigido por `AvatarMixin` para montar o fallback
-  do Gravatar.
+  aplica `select_related("user")` no manager padrão.
 - `AvatarMixin` (`apps.accounts.models.mixins`) — campo `avatar` (`ImageField`,
   valida extensão `jpg/jpeg/png/webp` e tamanho ≤5MB via `FileSizeValidator` de
   `apps.core`). `.avatar_url()` retorna a URL da imagem enviada ou, se não houver,
-  chama `gravatar_url(self.email)`.
+  string vazia — sem fallback para serviço de terceiro
+  ([ADR 0014](../../docs/adr/0014-remover-fallback-de-avatar-para-o-gravatar.md)).
 - `DocumentMixin` (`apps.accounts.models.mixins`) — campos `nationality`
   (`django_countries.fields.CountryField`, opcional), `document_type`
   (`apps.accounts.models.choices.DocumentType`: `CPF`/`SSN`/`PASSPORT`, nunca
@@ -50,13 +49,6 @@ remover algo listado aqui.
   `allow_repeated_digits=True`.
 - `calculate_age(birth_date: date | datetime) -> int` (`apps.accounts.domain.services`)
   — idade em anos completos na data de hoje.
-
-## Services — `apps.accounts.services`
-
-- `gravatar_url(email: str, size: int = 40) -> str` — monta a URL do Gravatar a
-  partir do hash SHA-256 do e-mail (minúsculo).
-- `get_avatar_from_url(url: str) -> File` — baixa uma imagem de uma URL externa para
-  um arquivo temporário, pronto para atribuir a um `ImageField`.
 
 ## Presenters — `apps.accounts.presenters`
 
