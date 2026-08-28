@@ -45,8 +45,9 @@ Convenções em [`specs/README.md`](specs/README.md).
 ### `plans/` — planos
 
 Trabalho que não cabe em uma sessão: as etapas, o estado de cada uma e as decisões
-tomadas no caminho. Um plano é vivo — atualize-o enquanto trabalha e arquive-o quando
-terminar. Convenções em [`plans/README.md`](plans/README.md).
+tomadas no caminho. Um plano é vivo — atualize-o enquanto trabalha e remova-o quando
+terminar (o histórico do Git guarda o registro). Convenções em
+[`plans/README.md`](plans/README.md).
 
 ## Regras da pasta
 

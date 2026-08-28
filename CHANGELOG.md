@@ -17,6 +17,12 @@ release está documentado em
   `apps/core/tests/e2e/`. A auto-marcação (`e2e` + `django_db`) e o guard de build migraram
   para o `conftest.py` da raiz e valem para qualquer `tests/e2e/`; as fixtures comuns
   (`e2e_page`, `verified_user`, `login`) também são globais agora.
+- Plano concluído agora é removido em vez de arquivado — o registro fica no histórico do
+  Git e no PR, e decisão estrutural já vira ADR ([`docs/plans/README.md`](docs/plans/README.md)).
+
+### Removed
+
+- Planos já implementados `frontend-auth-styling` e `accounts-signup-name-field`.
 
 ## [1.0.0] - 2026-08-22
 

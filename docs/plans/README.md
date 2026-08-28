@@ -18,12 +18,12 @@ uma sessão não precisa de plano; o PR já a descreve.
 3. **Atualize o plano enquanto trabalha**, não no fim: marque a etapa concluída, anote o
    que mudou de rumo e por quê. Plano que só descreve a intenção original é pior que
    nenhum, porque a próxima sessão confia nele.
-4. Ao terminar, marque `Concluído` com a data. O arquivo fica no repositório: é o registro
-   de como o trabalho aconteceu.
+4. Ao terminar, o plano sai daqui — o registro de como o trabalho aconteceu é o histórico
+   do Git e o PR. Decisão estrutural que apareceu no caminho já virou ADR (ver abaixo).
 
 ## Ciclo de vida
 
-`Em andamento` → `Concluído` | `Abandonado`.
+`Em andamento` → `Concluído` (o arquivo é removido) | `Abandonado` (o arquivo fica).
 
 Plano abandonado fica, com o motivo em uma linha — evita que alguém recomece a mesma coisa
 sem saber por que parou.
@@ -39,5 +39,4 @@ sem saber por que parou.
 
 | Plano | Status | Início | Fim |
 | --- | --- | --- | --- |
-| [Estilizar o fluxo de autenticação do allauth](frontend-auth-styling.md) | Concluído | 2026-08-22 | 2026-08-22 |
-| [Corrigir o cadastro (HTTP 500 por falta de nome)](accounts-signup-name-field.md) | Concluído | 2026-08-22 | 2026-08-22 |
+| _nenhum plano ativo_ | | | |
