@@ -7,7 +7,8 @@
 | regra pura, value object, presenter | `apps/<app>/tests/unit/` | não |
 | model, API, view, task com efeito | `apps/<app>/tests/integration/` | sim |
 | comportamento que atravessa o projeto (i18n, storage) | `tests/` na raiz | depende |
-| fluxo no browser | `tests/e2e/` | sim, e build do frontend |
+| fluxo no browser preso a um app | `apps/<app>/tests/e2e/` | sim, e build do frontend |
+| fluxo no browser que cruza mais de um app | `tests/e2e/` na raiz | sim, e build do frontend |
 
 O espelhamento é intencional: `apps/core/tests/unit/domain/test_phone_number.py` testa
 `apps/core/domain/value_objects/phone_number.py`. Quem procura o teste de um arquivo acha
@@ -25,7 +26,13 @@ O `conftest.py` da raiz expõe, para qualquer teste:
 
 - `user` — usuário comum, já com `Profile`;
 - `superuser`;
-- `auth_client` — test client autenticado como `user`.
+- `auth_client` — test client autenticado como `user`;
+- `e2e_page` — `Page` do Playwright já apontando para o `live_server`;
+- `verified_user` — usuário com e-mail verificado no allauth (passa no login);
+- `login` — helper `login(page, live_server, user)` que autentica pelo formulário real.
+
+Os três últimos são de e2e mas ficam globais de propósito: servem tanto a `tests/e2e/`
+quanto a `apps/<app>/tests/e2e/`. São instanciados só quando um teste os pede.
 
 As factories ficam em `apps/<app>/tests/factories.py`. `UserFactory` passa pelo
 `create_user` do manager, não pelo `objects.create` do factory_boy: só ele faz o hash da
@@ -41,32 +48,44 @@ antes do Django estar configurado.
 uv run pytest                                   # config.settings.test, sem e2e
 uv run pytest --cov=apps --cov-report=term-missing
 uv run pytest apps/accounts -k profile
-uv run pytest -m e2e                            # só os ponta a ponta
+uv run pytest -m e2e                            # só os ponta a ponta (Chromium + WebKit)
 ```
 
 Com a stack em containers, o mesmo sem `uv run` — os binários estão no PATH da imagem:
-`docker compose exec app pytest`. Os e2e são a exceção: exigem o Chromium do Playwright,
+`docker compose exec app pytest`. Os e2e são a exceção: exigem os browsers do Playwright,
 que a imagem de dev não traz, então rodam na máquina.
 
 `addopts` traz `--reuse-db` (banco entre execuções), `--strict-markers` e
 `--strict-config` — marker novo tem de ser declarado no `pyproject.toml`, senão a suíte
-falha.
+falha. Traz também `--browser chromium --browser webkit`: os e2e rodam nos dois motores, o
+resto da suíte não pede a fixture `page` e ignora as flags.
 
 ## Testes ponta a ponta
 
-Rodam num Chromium real, via `pytest-playwright` e a fixture `live_server`. Ficam fora da
-execução padrão porque são lentos e exigem browser:
+Rodam em browser real via `pytest-playwright` e a fixture `live_server`. Ficam fora da
+execução padrão porque são lentos e exigem browser.
 
 ```bash
-uv run playwright install chromium   # uma vez
-bun run build                        # fora de DEBUG os templates leem o manifest
+uv run playwright install chromium webkit   # uma vez — webkit é o motor do Safari
+bun run build                               # fora de DEBUG os templates leem o manifest
 uv run pytest -m e2e
-uv run pytest -m e2e --headed --slowmo 500
+uv run pytest -m e2e --browser webkit --headed --slowmo 500
 ```
 
-Estar em `tests/e2e/` basta: um hook no `conftest.py` do pacote marca todo teste com `e2e`
-e `django_db`. Sem build do frontend a suíte é **pulada** com a mensagem do que rodar, em
-vez de falhar com arquivo não encontrado.
+**Dois motores, sempre.** Cada e2e roda em Chromium e em WebKit (o motor do Safari) — é o
+que `addopts` fixa e o que o CI instala. Um caso que só faz sentido num motor recebe
+`@pytest.mark.skip_browser("...")` ou `@pytest.mark.only_browser("...")`, com o porquê.
+
+**Onde o teste mora.** `tests/e2e/` na raiz é só para fluxo que atravessa mais de um app,
+ou para o que não é de nenhum app (o shell do projeto: layout, tema, login do admin). E2e
+preso a um app — renderização de um formulário, o fluxo de cadastro, o health check — vai
+para `apps/<app>/tests/e2e/`, espelhando o resto da suíte do app. Estar em qualquer
+`tests/e2e/` basta: um hook no `conftest.py` da raiz marca o teste com `e2e` e `django_db`,
+e checa o build. Fixtures de e2e comuns (`e2e_page`, `verified_user`, `login`) são globais,
+no `conftest.py` da raiz; o que só um app usa fica no `conftest.py` do `tests/` desse app.
+
+Sem build do frontend o teste é **pulado** com a mensagem do que rodar, em vez de falhar
+com arquivo não encontrado.
 
 **Prefira seletores por `name`, `id` ou papel ARIA a texto visível.** A interface é
 traduzida (`LANGUAGE_CODE = pt-BR`) e texto quebra o teste na próxima mudança de idioma.

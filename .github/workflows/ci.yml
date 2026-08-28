@@ -168,8 +168,9 @@ jobs:
         # os templates resolvem os assets pelo manifest do Vite fora de DEBUG
         run: bun run build
 
-      - name: instalar o browser
-        run: uv run playwright install --with-deps chromium
+      - name: instalar os browsers
+        # webkit = motor do Safari; `addopts` roda cada e2e nos dois
+        run: uv run playwright install --with-deps chromium webkit
 
       - name: pytest -m e2e
         run: uv run pytest -m e2e

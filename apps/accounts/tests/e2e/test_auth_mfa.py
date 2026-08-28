@@ -5,12 +5,12 @@ import hashlib
 import hmac
 import struct
 import time
+from collections.abc import Callable
 
 from playwright.sync_api import Page, expect
 from pytest_django.live_server_helper import LiveServer
 
 from apps.accounts.models import User
-from tests.e2e.conftest import login
 
 TOTP_ACTIVATE_URL = "/auth/2fa/totp/activate/"
 
@@ -31,7 +31,7 @@ def _totp_code(secret: str) -> str:
 
 
 def test_mfa_index_offers_to_activate_totp(
-    page: Page, live_server: LiveServer, verified_user: User
+    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
 ) -> None:
     login(page, live_server, verified_user)
 
@@ -41,7 +41,7 @@ def test_mfa_index_offers_to_activate_totp(
 
 
 def test_activating_totp_generates_recovery_codes(
-    page: Page, live_server: LiveServer, verified_user: User
+    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
 ) -> None:
     login(page, live_server, verified_user)
 

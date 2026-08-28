@@ -93,7 +93,7 @@ Depois de criar o repositório:
 ├── static/                     # STATICFILES_DIRS; recebe dist/ do build do Vite
 ├── public/                     # SERVESTATIC_ROOT: static/, media/, manifest.json, favicon.svg
 ├── tests/
-│   └── e2e/                    # testes ponta a ponta (Playwright)
+│   └── e2e/                    # e2e que cruzam apps (Playwright); e2e de um app só ficam em apps/<app>/tests/e2e/
 ├── locale/                     # catálogo global (templates/, config/)
 ├── docs/                       # padrões, ADRs, especificações e planos
 │   ├── standards/              # como se escreve código aqui
@@ -447,7 +447,8 @@ saber que o bucket responde, e com storage remoto significa uma ida à rede por 
 ## Testes e qualidade
 
 As factories ficam em `apps/<app>/tests/factories.py` e o `conftest.py` da raiz expõe
-`user`, `superuser` e `auth_client` para qualquer teste. `UserFactory` passa pelo
+`user`, `superuser` e `auth_client` para qualquer teste (mais `e2e_page`, `verified_user`
+e `login`, usados pelos e2e onde quer que morem). `UserFactory` passa pelo
 `create_user` do manager, não pelo `objects.create` padrão do factory_boy — só ele
 faz o hash da senha e cria o `Profile` associado.
 
@@ -504,20 +505,25 @@ orquestra, e o que tem regra (como o header CSRF do HTMX) vira módulo testável
 
 ### Testes ponta a ponta
 
-Os e2e vivem em `tests/e2e/` e rodam num Chromium real, via `pytest-playwright` e a
-fixture `live_server` do pytest-django. Como são lentos e exigem browser, ficam **fora da
-execução padrão** (`addopts` traz `-m "not e2e"`):
+Os e2e rodam em browser real, via `pytest-playwright` e a fixture `live_server` do
+pytest-django. Como são lentos e exigem browser, ficam **fora da execução padrão**
+(`addopts` traz `-m "not e2e"`):
 
 ```bash
-uv run playwright install chromium   # uma vez
-bun run build                        # os templates leem o manifest do Vite fora de DEBUG
-pytest -m e2e                        # só os e2e
-pytest -m e2e --headed --slowmo 500  # acompanhando no browser
+uv run playwright install chromium webkit   # uma vez — webkit é o motor do Safari
+bun run build                               # os templates leem o manifest do Vite fora de DEBUG
+pytest -m e2e                                # só os e2e, em Chromium e WebKit
+pytest -m e2e --browser webkit --headed --slowmo 500
 ```
 
-Estar em `tests/e2e/` já basta: um hook no `conftest.py` marca todo teste do pacote com
-`e2e` e `django_db`. Se o build do frontend não existir, a suíte é pulada com uma mensagem
-dizendo o que rodar, em vez de falhar com erro de arquivo não encontrado.
+Cada e2e roda em Chromium e em WebKit (Safari) — `addopts` traz
+`--browser chromium --browser webkit`, e o CI instala os dois.
+
+`tests/e2e/` na raiz é só para fluxo que cruza mais de um app; e2e preso a um app fica em
+`apps/<app>/tests/e2e/`. Estar em qualquer `tests/e2e/` já basta: um hook no `conftest.py`
+da raiz marca o teste com `e2e` e `django_db` e checa o build. Se o build do frontend não
+existir, o teste é pulado com uma mensagem dizendo o que rodar, em vez de falhar com erro
+de arquivo não encontrado.
 
 Prefira seletores por `name`, `id` ou papel ARIA a texto visível — a interface é traduzida
 (`LANGUAGE_CODE = pt-BR`) e textos quebram os testes a cada mudança de idioma.
@@ -548,7 +554,7 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
 | `frontend` | Biome, Stylelint (BEM), Vitest, `vite build` e a presença do manifest |
-| `e2e` | `pytest -m e2e` num Chromium real, com build do frontend; anexa `test-results/` se falhar |
+| `e2e` | `pytest -m e2e` em Chromium e WebKit (Safari) reais, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |
 
 ## Notas finais
