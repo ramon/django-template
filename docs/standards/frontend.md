@@ -138,10 +138,12 @@ templates/allauth/
 └── elements/*.html                  # button, field, form, alert, panel...
 ```
 
-Cada `elements/*.html` delega para o componente Cotton genérico correspondente em
-`apps/ui/` (`<c-ui.button>`, `<c-ui.field>`, `<c-ui.form>`...) — a lista completa
-de componentes e das templatetags de apoio está em `apps/ui/AGENTS.md`. Override
-de página individual só quando o `elements` padrão não cobre a marcação (ex.:
+Cada `elements/*.html` que tem componente correspondente em `apps/ui/` delega para ele
+(`<c-ui.button>`, `<c-ui.field>`, `<c-ui.form>`...) — a lista completa de componentes e
+das templatetags de apoio está em `apps/ui/AGENTS.md`. Os que não têm (`h1`/`h2`/`p`/
+`hr`, `img`, `details`, subelementos de tabela) estilizam a tag direto no arquivo — não
+vale criar um componente para "uma tag com uma classe" ([`components.md`](components.md#quando-algo-merece-ser-um-componente)).
+Override de página individual só quando o `elements` padrão não cobre a marcação (ex.:
 `templates/account/password_change.html`, que existe só porque o allauth deixa o
 link "Esqueceu a senha?" cru, fora de qualquer element, nesse template
 específico) — documente o motivo com um comentário no arquivo.

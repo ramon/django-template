@@ -10,6 +10,18 @@ Visão geral de front-end e a escolha entre HTMX/Stimulus/Alpine ficam em
 [`frontend.md`](frontend.md); os tokens do tema, na
 [0012](../adr/0012-tema-com-tokens-no-molde-do-material-design-3.md).
 
+## Quando algo merece ser um componente
+
+Um componente se paga quando tem **prop, variante, ou composição de slot** (`button`,
+`field`, `alert`, `panel`, `form`, `table`) — ou **reuso real** em mais de um call site.
+
+Uma tag com uma classe fixa e um único chamador **não** vira componente: a indireção do
+`<c-vars>` + parser do Cotton não compra nada. Foi o caso de `<c-ui.h1>`/`h2`/`p`/`hr` e
+dos subelementos de tabela (`thead`/`tr`/`td`…) — só o override de element do allauth os
+usava, então o estilo voltou para a própria tag (em `templates/allauth/elements/*.html`
+ou, no caso da tabela, num seletor de descendente do `<c-ui.table>`). O próprio
+`django-cotton-ui` não tem primitivo tipográfico nem `<c-*.tr>`.
+
 ## Onde moram e como se chamam
 
 ```text
