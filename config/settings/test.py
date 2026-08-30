@@ -12,6 +12,13 @@ DEBUG = False
 # que faca HTTP de verdade (o test client e os e2e).
 SECURE_SSL_REDIRECT = False
 
+# parts/security.py e parts/session.py marcam os cookies de CSRF e de sessao como
+# Secure fora de DEBUG. O live_server dos e2e serve HTTP puro: o Chromium abre
+# excecao para localhost e ainda os aceita, mas o WebKit nao -- descarta o cookie
+# e todo POST volta 403 (CSRF cookie not set). Em teste os cookies nao sao Secure.
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 # parts/debug.py instala o toolbar olhando a variavel de ambiente DEBUG, entao a
 # suite herdaria o .env de cada maquina: com DEBUG=True local e False no CI, os
 # mesmos testes rodam com middlewares diferentes. Em teste o toolbar nunca entra.
