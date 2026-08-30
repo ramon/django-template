@@ -1,6 +1,10 @@
-{% comment %}Tabela com rolagem horizontal no overflow. Use com <c-ui.thead>/<c-ui.tbody>/etc.{% endcomment %}
+{% comment %}
+Tabela: rola no overflow e estiliza os descendentes (thead/tbody/tr/th/td são HTML
+cru dentro do slot, não componentes). `<td align="right">` alinha a célula à direita.
+{% endcomment %}
 <c-vars class="" />
 
 <div class="overflow-x-auto">
-    <table {{ attrs }} class="w-full text-left text-sm {{ class }}">{{ slot }}</table>
+    <table {{ attrs }}
+           class="[&_thead]:border-outline-variant [&_thead]:text-on-surface-variant [&_tbody]:divide-outline-variant [&_td]:text-on-surface w-full border-collapse text-left text-sm [&_tbody]:divide-y [&_td]:px-3 [&_td]:py-2 [&_td[align=right]]:text-right [&_th]:px-3 [&_th]:py-2 [&_th]:font-medium [&_thead]:border-b [&_thead]:text-xs [&_thead]:font-semibold [&_thead]:tracking-wide [&_thead]:uppercase {{ class }}">{{ slot }}</table>
 </div>

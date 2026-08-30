@@ -153,30 +153,22 @@ class TestPanel:
         assert tag.count('class="') == 1
 
 
-class TestTypography:
-    def test_headings_and_paragraph_forward_class_and_attrs(self):
-        for tag_name, comp in [("h1", "h1"), ("h2", "h2"), ("p", "p")]:
-            el = opening_tag(
-                render(f'<c-ui.{comp} class="mb-2" id="x">t</c-ui.{comp}>'),
-                rf"<{tag_name}\b[^>]*>",
-            )
-            assert "mb-2" in el
-            assert 'id="x"' in el
-            assert el.count('class="') == 1
-
-    def test_hr_forwards_class(self):
-        assert "mt-8" in opening_tag(render('<c-ui.hr class="mt-8" />'), r"<hr\b[^>]*>")
-
-
 class TestTable:
-    def test_table_wraps_in_a_horizontal_scroll_container(self):
+    def test_wraps_in_a_horizontal_scroll_container(self):
         html = render("<c-ui.table><tbody></tbody></c-ui.table>")
         assert "overflow-x-auto" in html
 
-    def test_td_align_right(self):
-        tag = opening_tag(render('<c-ui.td align="right">v</c-ui.td>'), r"<td\b[^>]*>")
-        assert "text-right" in tag
+    def test_styles_descendants_and_right_aligns_marked_cells(self):
+        # thead/tbody/tr/th/td are plain HTML inside the slot, styled by the parent.
+        tag = opening_tag(render("<c-ui.table><tbody></tbody></c-ui.table>"), r"<table\b[^>]*>")
+        assert "[&_th]:px-3" in tag
+        assert "[&_td[align=right]]:text-right" in tag
 
-    def test_td_default_is_not_right_aligned(self):
-        tag = opening_tag(render("<c-ui.td>v</c-ui.td>"), r"<td\b[^>]*>")
-        assert "text-right" not in tag
+    def test_forwards_attrs_and_class(self):
+        tag = opening_tag(
+            render('<c-ui.table class="mt-4" data-x="1"><tbody></tbody></c-ui.table>'),
+            r"<table\b[^>]*>",
+        )
+        assert "mt-4" in tag
+        assert 'data-x="1"' in tag
+        assert tag.count('class="') == 1

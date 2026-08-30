@@ -37,10 +37,9 @@ precisam ser declarados aqui, só as props com comportamento próprio.
   token `success`/`warning` dedicado (ADR 0012).
 - **`<c-ui.badge>`** — `color` (`neutral` padrão, `primary`, `success`, `warning`,
   `danger`). Mesmo mapeamento de cor do `<c-ui.alert>`.
-- **`<c-ui.h1>` / `<c-ui.h2>` / `<c-ui.p>` / `<c-ui.hr>`** — tipografia base, sem
-  props próprias.
-- **Tabela**: `<c-ui.table>` (envolve em `overflow-x-auto`), `<c-ui.thead>`,
-  `<c-ui.tbody>`, `<c-ui.tr>`, `<c-ui.th>`, `<c-ui.td>` (prop `align="right"`).
+- **`<c-ui.table>`** — envolve em `overflow-x-auto` e estiliza `thead`/`tbody`/`tr`/`th`/
+  `td` descendentes (HTML cru dentro do slot, não componentes). `<td align="right">`
+  alinha a célula à direita.
 - **`<c-ui.provider_list>`** — `<ul>` para links de provedor social; cada item é um
   `<li>` de marcação livre do chamador (sem `<c-ui.provider>` — só um `<a>` simples,
   estilizado direto no override do allauth).

@@ -13,9 +13,11 @@ Para o vocabulário dos próprios componentes (variante, cor, severidade), veja
 
 - **Componentes de conteúdo**: `<c-ui.button>`, `<c-ui.button_group>`,
   `<c-ui.field>`, `<c-ui.form>`, `<c-ui.panel>`, `<c-ui.alert>`, `<c-ui.badge>`,
-  título/parágrafo/divisor (`<c-ui.h1>`, `<c-ui.h2>`, `<c-ui.p>`, `<c-ui.hr>`),
-  tabela (`<c-ui.table>` e afins) e `<c-ui.provider_list>` — todos em
-  `apps/ui/templates/components/ui/`.
+  `<c-ui.table>` e `<c-ui.provider_list>` — todos em
+  `apps/ui/templates/components/ui/`. Um componente entra aqui quando tem prop,
+  variante ou composição de slot; "uma tag com uma classe" fica no call site
+  (é por isso que título/parágrafo/divisor não são componentes — só o
+  `allauth/elements/{h1,h2,p,hr}.html` os usava, e agora estilizam a tag direto).
 - **Alvo do override de `django-allauth`**: `allauth/elements/*.html` e
   `allauth/layouts/*.html` (ver [ADR 0013](../../docs/adr/0013-customizacao-de-ui-do-allauth-via-elements-e-apps-ui.md))
   delegam para estes componentes, o que estiliza as ~80 páginas do allauth
