@@ -2,15 +2,16 @@
 
 Interface pública dos componentes Cotton genéricos, para consultar antes de abrir
 cada `.html`. Vocabulário de domínio em [`CONTEXT.md`](CONTEXT.md), visão geral
-humana em [`README.md`](README.md), convenções de template/CSS em
-[`docs/standards/frontend.md`](../../docs/standards/frontend.md).
+humana em [`README.md`](README.md). **Como se escreve um componente aqui:
+[`docs/standards/components.md`](../../docs/standards/components.md)** (ADR
+[0015](../../docs/adr/0015-convencao-de-autoria-de-componentes-cotton.md)).
 
 Atualize esta página no mesmo commit que adicionar um componente, mudar uma prop ou
 remover algo listado aqui.
 
-Todo componente aceita atributos HTML nativos extras via passthrough (`id`, `name`,
-`data-*`, `hx-*`, `aria-*`...) — não precisam ser declarados aqui, só as props com
-comportamento próprio.
+Todo componente aceita `class` (append no final da lista de classes) e atributos HTML
+nativos extras via passthrough (`id`, `name`, `data-*`, `hx-*`, `aria-*`...) — não
+precisam ser declarados aqui, só as props com comportamento próprio.
 
 ## Componentes — `apps.ui.templates.components.ui`
 
@@ -36,10 +37,9 @@ comportamento próprio.
   token `success`/`warning` dedicado (ADR 0012).
 - **`<c-ui.badge>`** — `color` (`neutral` padrão, `primary`, `success`, `warning`,
   `danger`). Mesmo mapeamento de cor do `<c-ui.alert>`.
-- **`<c-ui.h1>` / `<c-ui.h2>` / `<c-ui.p>` / `<c-ui.hr>`** — tipografia base, sem
-  props próprias.
-- **Tabela**: `<c-ui.table>` (envolve em `overflow-x-auto`), `<c-ui.thead>`,
-  `<c-ui.tbody>`, `<c-ui.tr>`, `<c-ui.th>`, `<c-ui.td>` (prop `align="right"`).
+- **`<c-ui.table>`** — envolve em `overflow-x-auto` e estiliza `thead`/`tbody`/`tr`/`th`/
+  `td` descendentes (HTML cru dentro do slot, não componentes). `<td align="right">`
+  alinha a célula à direita.
 - **`<c-ui.provider_list>`** — `<ul>` para links de provedor social; cada item é um
   `<li>` de marcação livre do chamador (sem `<c-ui.provider>` — só um `<a>` simples,
   estilizado direto no override do allauth).
@@ -68,3 +68,10 @@ Ficam em `frontend/controllers/` (não organizados por app, ver ADR 0013):
 
 - `password_visibility_controller.js` — alterna `<c-ui.field type="password">` entre
   oculto e visível.
+
+## Testes
+
+`apps/ui/tests/integration/test_components.py` renderiza cada componente contra o
+template real e assere prop → markup e passthrough de `{{ attrs }}`. O helper
+`render()`/`opening_tag()` fica em `apps/ui/tests/integration/cotton.py`. Componente
+novo entra com seu teste de contrato ([`components.md`](../../docs/standards/components.md)).

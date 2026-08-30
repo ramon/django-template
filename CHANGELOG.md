@@ -7,6 +7,32 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-30
+
+### Added
+
+- Convenção de autoria de componentes Cotton, no molde do `django-cotton-ui` (só os
+  padrões, sem o kit como dependência):
+  [ADR 0015](docs/adr/0015-convencao-de-autoria-de-componentes-cotton.md) e
+  [`docs/standards/components.md`](docs/standards/components.md) — `<c-vars>` com `class`,
+  variantes como dict, `{{ attrs }}` no controle que submete o valor, e teste de contrato
+  por componente em `apps/ui/tests/`.
+
+### Changed
+
+- Todos os `<c-ui.*>` aceitam `class` (aplicada no fim da lista) e abrem com um comentário
+  de cabeçalho; a escolha de estilo por variante virou dict + `|get_item` no lugar de
+  `{% if %}` aninhado no atributo `class`.
+- `<c-ui.table>` passa a estilizar `thead`/`tbody`/`tr`/`th`/`td` como descendentes; esses
+  deixaram de ser componentes, assim como `<c-ui.h1>`/`h2`/`p`/`hr` — "uma tag com uma
+  classe" fica no call site (nos overrides de `templates/allauth/elements/`).
+
+### Removed
+
+- Componentes `<c-ui.h1>`, `<c-ui.h2>`, `<c-ui.p>`, `<c-ui.hr>`, `<c-ui.thead>`,
+  `<c-ui.tbody>`, `<c-ui.tr>`, `<c-ui.th>` e `<c-ui.td>` — sem prop, variante nem reuso
+  fora do override de element do allauth.
+
 ## [1.0.1] - 2026-08-28
 
 ### Changed

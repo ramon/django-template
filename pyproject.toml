@@ -1,6 +1,6 @@
 [project]
 name = "django-template"
-version = "1.0.1"
+version = "1.1.0"
 description = "Base template for Django projects with Django"
 authors = [{name="Ramon", email="dev@ramon.dev.br"}]
 readme = "README.md"
@@ -211,6 +211,7 @@ no_implicit_reexport = false
 module = [
     "allauth.*",
     "django_celery_beat.*",
+    "django_cotton.*",
     "environ.*",
     "health_check.*",
     "phonenumbers.*",

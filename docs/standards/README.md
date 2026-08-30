@@ -7,7 +7,8 @@ resolvida — não ignorada.
 | Documento | Cobre |
 | --- | --- |
 | [`backend.md`](backend.md) | anatomia de um app, camadas, models, API, configuração, tasks, tipagem |
-| [`frontend.md`](frontend.md) | Vite e manifest, HTMX/Stimulus/Alpine, templates e Cotton, BEM |
+| [`frontend.md`](frontend.md) | Vite e manifest, HTMX/Stimulus/Alpine, templates, BEM |
+| [`components.md`](components.md) | como se escreve um componente Cotton: `<c-vars>`, `class`/`attrs`, variantes, slots, teste |
 | [`testing.md`](testing.md) | layout da suíte, fixtures, factories, e2e, o que testar |
 | [`i18n.md`](i18n.md) | catálogo por app, `makemessages`, precedência |
 | [`infra.md`](infra.md) | compose e os dois caminhos de dev, imagens, `Procfile`, variáveis, sondas |

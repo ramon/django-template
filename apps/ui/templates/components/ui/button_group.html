@@ -1,5 +1,7 @@
-<c-vars vertical />
+{% comment %}Agrupa botões do slot numa linha (padrão) ou coluna (`vertical`).{% endcomment %}
+<c-vars :vertical="False" class="" />
 
-<div {{ attrs }} class="{% if vertical %}flex flex-col gap-3{% else %}flex flex-wrap items-center gap-3{% endif %}">
+<div {{ attrs }}
+     class="flex gap-3 {% if vertical %}flex-col{% else %}flex-wrap items-center{% endif %} {{ class }}">
     {{ slot }}
 </div>
