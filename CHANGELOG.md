@@ -7,6 +7,25 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-28
+
+### Changed
+
+- Os testes e2e agora rodam em dois motores por padrão — Chromium e WebKit (Safari) —
+  via `--browser chromium --browser webkit` no `addopts`; o CI instala os dois.
+- `tests/e2e/` na raiz passa a ser só para fluxo que atravessa mais de um app (ou o shell
+  do projeto: layout, tema, admin); e2e preso a um app vive em `apps/<app>/tests/e2e/`. Os
+  e2e de auth foram para `apps/accounts/tests/e2e/` e os de home/health para
+  `apps/core/tests/e2e/`. A auto-marcação (`e2e` + `django_db`) e o guard de build migraram
+  para o `conftest.py` da raiz e valem para qualquer `tests/e2e/`; as fixtures comuns
+  (`e2e_page`, `verified_user`, `login`) também são globais agora.
+- Plano concluído agora é removido em vez de arquivado — o registro fica no histórico do
+  Git e no PR, e decisão estrutural já vira ADR ([`docs/plans/README.md`](docs/plans/README.md)).
+
+### Removed
+
+- Planos já implementados `frontend-auth-styling` e `accounts-signup-name-field`.
+
 ## [1.0.0] - 2026-08-22
 
 ### Security

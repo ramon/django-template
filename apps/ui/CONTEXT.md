@@ -20,8 +20,7 @@ _Avoid_: tema, cor
 **Severity** (alerta):
 Classificação de um `<c-ui.alert>` — `info`, `success`, `warning` ou `error`. Decide
 cor e ícone; não existe token de tema dedicado a `info`/`success`/`warning`, então o
-componente reaproveita `primary`/`secondary`/`tertiary` (ver
-`docs/plans/frontend-auth-styling.md`, tabela de decisões).
+componente reaproveita `primary`/`secondary`/`tertiary` (ADR 0012).
 _Avoid_: tipo de alerta, nível
 
 **Surface role** (painel, card):

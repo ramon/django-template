@@ -57,7 +57,7 @@ O `Dockerfile.dev` é um estágio só, com as dependências de dev e nada além:
 - **i18n** — não instala `gettext`, então `makemessages` e `compilemessages` falham lá
   dentro. Rode na máquina. (A imagem de produção instala, no estágio `assets`, porque
   compilar é passo de build.)
-- **e2e** — exigem o Chromium do Playwright, que a imagem não traz.
+- **e2e** — exigem os browsers do Playwright (Chromium e WebKit), que a imagem não traz.
 
 Acrescentar qualquer um dos dois à imagem de dev é uma decisão, não um detalhe: pesa no
 build de todo mundo. Se for fazer, registre o ADR.

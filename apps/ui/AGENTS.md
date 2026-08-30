@@ -32,9 +32,8 @@ comportamento próprio.
 - **`<c-ui.panel>`** — `title`. Slot default é o corpo; `<c-slot name="actions">`
   vira uma faixa de botões abaixo do corpo.
 - **`<c-ui.alert>`** — `severity` (`info` padrão, `success`, `warning`, `error`).
-  `success`/`warning` reaproveitam os tokens `secondary`/`tertiary` (ver
-  `docs/plans/frontend-auth-styling.md`, tabela de decisões — não existe token
-  `success`/`warning` dedicado, ADR 0012).
+  `success`/`warning` reaproveitam os tokens `secondary`/`tertiary` — não existe
+  token `success`/`warning` dedicado (ADR 0012).
 - **`<c-ui.badge>`** — `color` (`neutral` padrão, `primary`, `success`, `warning`,
   `danger`). Mesmo mapeamento de cor do `<c-ui.alert>`.
 - **`<c-ui.h1>` / `<c-ui.h2>` / `<c-ui.p>` / `<c-ui.hr>`** — tipografia base, sem

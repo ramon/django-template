@@ -1,13 +1,60 @@
 """Fixtures compartilhadas por toda a suite."""
 
+import os
 from collections.abc import Iterator
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
 from django.test import Client
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from playwright.sync_api import Page
+    from pytest_django.live_server_helper import LiveServer
+
     from apps.accounts.models import User
+
+
+def _is_e2e_path(path: Path) -> bool:
+    """
+    True para teste em qualquer `tests/e2e/` -- na raiz ou dentro de um app.
+
+    `tests/e2e/` na raiz guarda fluxo de browser que atravessa mais de um app;
+    fluxo preso a um unico app vive em `apps/<app>/tests/e2e/`. Os dois lugares
+    valem, e estar no diretorio ja define o que o teste e'.
+    """
+    parts = path.parts
+    return "e2e" in parts and "tests" in parts[: parts.index("e2e")]
+
+
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    """Marca todo teste sob um `tests/e2e/` como `e2e` e libera o banco."""
+    for item in items:
+        if _is_e2e_path(Path(str(item.fspath))):
+            item.add_marker(pytest.mark.e2e)
+            item.add_marker(pytest.mark.django_db)
+
+
+def pytest_runtest_setup(item: pytest.Item) -> None:
+    """Pre-condicoes dos e2e: ORM sincrono liberado e build do frontend presente."""
+    if "e2e" not in item.keywords:
+        return
+
+    # A API sincrona do Playwright mantem um event loop vivo na thread do teste, e
+    # o Django recusa ORM sincrono nesse contexto. Aqui e' seguro: o servidor roda
+    # noutra thread (live_server) e cada teste e' sequencial.
+    os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+
+    # Fora de DEBUG -- o caso dos settings de teste -- os templates resolvem CSS e
+    # JS pelo manifest do Vite. Sem o build, toda pagina quebraria com um erro de
+    # arquivo inexistente, dificil de ligar a' causa; pular diz o que rodar.
+    from apps.core.templatetags import vite
+
+    if not vite._manifest_path().exists():
+        pytest.skip("manifest do Vite ausente -- rode `bun run build` antes dos e2e")
+
 
 # manifest minimo, com a mesma forma que o Vite gera: chave = input relativo a' raiz.
 STUB_MANIFEST: dict[str, Any] = {
@@ -66,3 +113,58 @@ def auth_client(client: Client, user: User) -> Client:
     """Test client autenticado como `user`."""
     client.force_login(user)
     return client
+
+
+# --- Ponta a ponta -----------------------------------------------------------
+# Globais de proposito: servem tanto ao fluxo cross-app de `tests/e2e/` quanto
+# aos e2e de um app so (`apps/<app>/tests/e2e/`). Instanciadas so quando pedidas.
+
+# senha fixa (nao a do UserFactory) para os testes de login preenche-la
+# explicitamente no formulario.
+_VERIFIED_USER_PASSWORD = "senha-de-teste-123"  # nosec
+
+
+@pytest.fixture
+def e2e_page(page: Page, live_server: LiveServer) -> Iterator[Page]:
+    """
+    Page do Playwright ja apontando para o servidor de teste do Django.
+
+    `live_server` sobe a aplicacao numa porta real e serve os arquivos estaticos.
+    """
+    page.set_default_timeout(5_000)
+    page.goto(live_server.url)
+
+    yield page
+
+
+@pytest.fixture
+def verified_user(db: None) -> User:  # noqa: ARG001
+    """
+    Usuario com e-mail ja verificado no allauth (`EmailAddress.verified=True`).
+
+    `ACCOUNT_EMAIL_VERIFICATION = "mandatory"` bloqueia o login de quem nao tem
+    isso -- o `UserFactory` sozinho nao basta, porque `EmailAddress` e' um model
+    do allauth, sem relacao com o `User.objects.create_user` do projeto.
+    """
+    from allauth.account.models import EmailAddress
+
+    from apps.accounts.tests.factories import UserFactory
+
+    user = UserFactory.create(password=_VERIFIED_USER_PASSWORD)
+    EmailAddress.objects.create(user=user, email=user.email, verified=True, primary=True)
+    return user
+
+
+@pytest.fixture
+def login() -> Callable[[Page, LiveServer, User], None]:
+    """Helper que autentica `user` preenchendo o formulario real de login."""
+
+    def _login(page: Page, live_server: LiveServer, user: User) -> None:
+        page.goto(f"{live_server.url}/auth/login/")
+        page.locator("input[name='login']").fill(user.email)
+        page.locator("input[name='password']").fill(_VERIFIED_USER_PASSWORD)
+        # so' o botao "Entrar" -- o de passkey tambem e' type=submit, mas associado
+        # a outro <form> via o atributo HTML `form=` (vive fora do <form> de login).
+        page.locator("button[type='submit']:not([form])").click()
+
+    return _login

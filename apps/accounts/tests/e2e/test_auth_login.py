@@ -1,10 +1,11 @@
 """Login: renderização do formulário estilizado e autenticação real."""
 
+from collections.abc import Callable
+
 from playwright.sync_api import Page, expect
 from pytest_django.live_server_helper import LiveServer
 
 from apps.accounts.models import User
-from tests.e2e.conftest import login
 
 
 def test_login_page_renders(page: Page, live_server: LiveServer) -> None:
@@ -18,7 +19,7 @@ def test_login_page_renders(page: Page, live_server: LiveServer) -> None:
 
 
 def test_login_authenticates_a_verified_user(
-    page: Page, live_server: LiveServer, verified_user: User
+    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
 ) -> None:
     login(page, live_server, verified_user)
 

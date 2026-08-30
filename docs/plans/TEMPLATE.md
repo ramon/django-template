@@ -21,7 +21,8 @@ Cada etapa termina em algo verificável. Marque conforme avança.
 - [ ] **1. <etapa>** — <o que muda, em que arquivos> · verificação: <comando ou observação>
 - [ ] **2. <etapa>** — depende de 1 · verificação: <…>
 - [ ] **3. <etapa>** — <…>
-- [ ] **N. Fechamento** — `docs/` atualizada, checklist do PR limpo
+- [ ] **N. Fechamento** — `docs/` atualizada, checklist do PR limpo, este plano removido
+  (decisão estrutural já virou ADR)
 
 ## Estado atual
 

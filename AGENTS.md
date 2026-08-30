@@ -84,7 +84,7 @@ scaffolding, não patrimônio — a primeira feature real substitui:
 - **Página de exemplo**: `HomeView`, `ping` e `build_diagnostics` em `apps/core/views.py`,
   as rotas `home`/`ping` em `apps/core/urls.py`, `templates/pages/home.html` e
   `templates/pages/partials/ping.html`. Ao apagá-los, vão junto
-  `apps/core/tests/integration/test_home_view.py` e `tests/e2e/test_home.py`.
+  `apps/core/tests/integration/test_home_view.py` e `apps/core/tests/e2e/test_home.py`.
 - **Task de exemplo**: `echo` em `apps/core/tasks.py`, com
   `apps/core/tests/unit/test_tasks.py`.
 - **Controller de exemplo**: `frontend/controllers/hello_controller.js` e seu teste.
@@ -163,7 +163,7 @@ docker compose exec app pytest            # binários no PATH da imagem: sem `uv
 docker compose exec frontend bun run test
 ```
 
-**i18n e e2e não rodam no container de dev** — falta `gettext` e falta o Chromium do
+**i18n e e2e não rodam no container de dev** — falta `gettext` e faltam os browsers do
 Playwright. Esses dois são trabalho de máquina.
 
 ### Na máquina, com banco e cache em container
@@ -178,7 +178,8 @@ bun run dev                               # Vite com HMR na porta 8001
 uv run ruff check . --fix && uv run ruff format .
 uv run mypy apps tests                    # strict
 uv run pytest                             # usa config.settings.test
-uv run pytest -m e2e                      # fora do default; exige `bun run build`
+uv run playwright install chromium webkit # uma vez; webkit = motor do Safari
+uv run pytest -m e2e                      # fora do default; Chromium + WebKit; exige `bun run build`
 bun run lint && bun run test
 
 python manage.py makemessages             # idiomas de settings.LANGUAGES; sem flags,

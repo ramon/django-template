@@ -1,6 +1,6 @@
 [project]
 name = "django-template"
-version = "1.0.0"
+version = "1.0.1"
 description = "Base template for Django projects with Django"
 authors = [{name="Ramon", email="dev@ramon.dev.br"}]
 readme = "README.md"
@@ -137,9 +137,15 @@ addopts = [
     # e2e exigem browser e build do frontend; rode com `pytest -m e2e`
     "-m",
     "not e2e",
+    # cada e2e roda em Chromium e no WebKit (o motor do Safari); os demais testes
+    # nao pedem a fixture `page`, entao ignoram estas flags
+    "--browser",
+    "chromium",
+    "--browser",
+    "webkit",
 ]
 markers = [
-    "e2e: teste ponta a ponta, roda num browser real via Playwright",
+    "e2e: teste ponta a ponta, roda em Chromium e WebKit (Safari) via Playwright",
 ]
 
 [tool.mypy]

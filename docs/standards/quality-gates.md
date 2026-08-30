@@ -35,7 +35,8 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
 4. `bun run lint && bun run test:coverage`, se mexeu em JS/CSS
 5. `makemessages`/`makemigrations`, se o caso pede — são baratos, mas ficam por último
    porque só fazem sentido depois que o código estabilizou
-6. `pytest -m e2e`, por último — é o gate mais lento e o único que builda o frontend
+6. `pytest -m e2e`, por último — o gate mais lento (Chromium + WebKit) e o único que builda
+   o frontend
 
 ## Por que cada gate existe
 

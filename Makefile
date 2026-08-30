@@ -79,7 +79,8 @@ test: ## Suite pytest (config.settings.test)
 test-cov: ## Testes JS com o piso de cobertura de 90%
 	bun run test:coverage
 
-e2e: ## Builda o frontend e roda os testes e2e (Playwright)
+e2e: ## Builda o frontend e roda os e2e (Playwright, Chromium + WebKit/Safari)
+	uv run playwright install chromium webkit
 	bun run build
 	uv run pytest -m e2e
 

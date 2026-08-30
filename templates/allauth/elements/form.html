@@ -5,7 +5,7 @@
         allauth nunca renderiza form.non_field_errors em nenhum template upstream (nem
         no elements/form.html padrão) — sem isto, um erro não ligado a nenhum campo
         específico (ex.: "e-mail e/ou senha incorretos" no login) não aparecia em lugar
-        nenhum da página (ver docs/plans/frontend-auth-styling.md, etapa 7).
+        nenhum da página.
         {% endcomment %}
         {% if attrs.form.non_field_errors %}
             <c-ui.alert severity="error">
