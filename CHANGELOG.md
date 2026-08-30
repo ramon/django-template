@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-28
+
 ### Changed
 
 - Os testes e2e agora rodam em dois motores por padrão — Chromium e WebKit (Safari) —
