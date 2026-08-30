@@ -1,5 +1,3 @@
 {% load allauth %}
-<c-ui.td :attrs="attrs">
-    {% slot %}
-    {% endslot %}
-</c-ui.td>
+{# align chega como atributo HTML; o <c-ui.table> pai casa [&_td[align=right]]:text-right. #}
+<td {% if attrs.align %}align="{{ attrs.align }}"{% endif %}>{% slot %}{% endslot %}</td>

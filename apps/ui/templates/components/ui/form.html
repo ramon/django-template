@@ -1,9 +1,13 @@
-<c-vars method="post" action="" />
+{% comment %}
+<form> com espaçamento vertical. Slot default é o corpo; <c-slot name="actions"> vira
+uma faixa alinhada à direita abaixo dele.
+{% endcomment %}
+<c-vars method="post" action="" class="" />
 
 <form method="{{ method }}"
       {% if action %}action="{{ action }}"{% endif %}
       {{ attrs }}
-      class="space-y-4">
+      class="space-y-4 {{ class }}">
     {{ slot }}
     {% if actions %}
         <div class="flex flex-wrap items-center justify-end gap-3 pt-2">{{ actions }}</div>

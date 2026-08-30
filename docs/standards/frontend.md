@@ -114,9 +114,10 @@ incluem os dois.
 
 - Página herda de um componente de layout (`<c-layouts.app>`, `<c-layouts.guest>`), que por
   sua vez estende `templates/layouts/base.html`.
-- Componente Cotton é marcação reutilizável em `templates/components/`, com atributos como
-  props e `<c-slot name="...">` para conteúdo. Comportamento não vai no componente — vai
-  para Stimulus.
+- Componente Cotton é marcação reutilizável em `templates/components/` e
+  `apps/ui/templates/components/`, com atributos como props e `<c-slot name="...">` para
+  conteúdo. Comportamento não vai no componente — vai para Stimulus. **Como se escreve um
+  componente (contrato de `<c-vars>`, `class`/`attrs`, variantes, teste): [`components.md`](components.md).**
 - Fragmento simples e sem contrato pode continuar como `{% include %}`.
 - Texto visível é traduzível (`{% translate %}` / `{% blocktranslate %}`).
 
@@ -137,23 +138,19 @@ templates/allauth/
 └── elements/*.html                  # button, field, form, alert, panel...
 ```
 
-Cada `elements/*.html` delega para o componente Cotton genérico correspondente em
-`apps/ui/` (`<c-ui.button>`, `<c-ui.field>`, `<c-ui.form>`...) — a lista completa
-de componentes e das templatetags de apoio está em `apps/ui/AGENTS.md`. Override
-de página individual só quando o `elements` padrão não cobre a marcação (ex.:
+Cada `elements/*.html` que tem componente correspondente em `apps/ui/` delega para ele
+(`<c-ui.button>`, `<c-ui.field>`, `<c-ui.form>`...) — a lista completa de componentes e
+das templatetags de apoio está em `apps/ui/AGENTS.md`. Os que não têm (`h1`/`h2`/`p`/
+`hr`, `img`, `details`, subelementos de tabela) estilizam a tag direto no arquivo — não
+vale criar um componente para "uma tag com uma classe" ([`components.md`](components.md#quando-algo-merece-ser-um-componente)).
+Override de página individual só quando o `elements` padrão não cobre a marcação (ex.:
 `templates/account/password_change.html`, que existe só porque o allauth deixa o
 link "Esqueceu a senha?" cru, fora de qualquer element, nesse template
 específico) — documente o motivo com um comentário no arquivo.
 
-Duas armadilhas do django-cotton que custam tempo para descobrir:
-
-- **Sem block tag no atributo do componente.** `<c-x {% if %}...{% endif %} %>`
-  quebra o parser (`Invalid block tag ... expected 'endcotton'`) — vale para
-  `{% if %}`, `{% for %}` e `{% with %}`. Resolva fora, com `{% with %}`, e passe
-  o resultado pronto: `:attr="variavel"`.
-- **`:attr="..."` (dynamic binding) não aceita filtro.** `:attr="x|filtro"` falha
-  em silêncio — sem erro, o atributo simplesmente não é setado. Pré-compute com
-  `{% with x=x|filtro %}` e passe a variável já pronta.
+As armadilhas do parser do django-cotton que mais custam tempo (block tag e filtro em
+atributo de componente, comentário e `<c-vars>` multi-linha) estão em
+[`components.md`](components.md#armadilhas-do-parser-do-cotton).
 
 ## JS: estilo
 

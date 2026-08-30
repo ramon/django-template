@@ -1,1 +1,4 @@
-<ul {{ attrs }} class="flex flex-col gap-2">{{ slot }}</ul>
+{% comment %}<ul> para links de provedor social; cada <li> é marcação livre do chamador.{% endcomment %}
+<c-vars class="" />
+
+<ul {{ attrs }} class="flex flex-col gap-2 {{ class }}">{{ slot }}</ul>

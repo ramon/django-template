@@ -211,6 +211,7 @@ no_implicit_reexport = false
 module = [
     "allauth.*",
     "django_celery_beat.*",
+    "django_cotton.*",
     "environ.*",
     "health_check.*",
     "phonenumbers.*",

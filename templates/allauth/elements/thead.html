@@ -1,5 +1,3 @@
 {% load allauth %}
-<c-ui.thead>
-    {% slot %}
-    {% endslot %}
-</c-ui.thead>
+{# <thead> cru — o estilo vem do <c-ui.table> pai, via seletor de descendente. #}
+<thead>{% slot %}{% endslot %}</thead>
