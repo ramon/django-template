@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-30
+
 ### Added
 
 - Convenção de autoria de componentes Cotton, no molde do `django-cotton-ui` (só os
