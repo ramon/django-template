@@ -24,5 +24,7 @@ Para o vocabulário dos próprios componentes (variante, cor, severidade), veja
 ## Para quem for mexer aqui
 
 Referência da interface pública (props de cada componente) fica em
-[`AGENTS.md`](AGENTS.md). Convenções de template/CSS ficam em
-[`docs/standards/frontend.md`](../../docs/standards/frontend.md).
+[`AGENTS.md`](AGENTS.md). Como se escreve um componente Cotton — contrato de
+`<c-vars>`, `class`/`attrs`, variantes, teste — fica em
+[`docs/standards/components.md`](../../docs/standards/components.md); convenções gerais
+de template/CSS, em [`docs/standards/frontend.md`](../../docs/standards/frontend.md).

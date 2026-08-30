@@ -2,15 +2,16 @@
 
 Interface pública dos componentes Cotton genéricos, para consultar antes de abrir
 cada `.html`. Vocabulário de domínio em [`CONTEXT.md`](CONTEXT.md), visão geral
-humana em [`README.md`](README.md), convenções de template/CSS em
-[`docs/standards/frontend.md`](../../docs/standards/frontend.md).
+humana em [`README.md`](README.md). **Como se escreve um componente aqui:
+[`docs/standards/components.md`](../../docs/standards/components.md)** (ADR
+[0015](../../docs/adr/0015-convencao-de-autoria-de-componentes-cotton.md)).
 
 Atualize esta página no mesmo commit que adicionar um componente, mudar uma prop ou
 remover algo listado aqui.
 
-Todo componente aceita atributos HTML nativos extras via passthrough (`id`, `name`,
-`data-*`, `hx-*`, `aria-*`...) — não precisam ser declarados aqui, só as props com
-comportamento próprio.
+Todo componente aceita `class` (append no final da lista de classes) e atributos HTML
+nativos extras via passthrough (`id`, `name`, `data-*`, `hx-*`, `aria-*`...) — não
+precisam ser declarados aqui, só as props com comportamento próprio.
 
 ## Componentes — `apps.ui.templates.components.ui`
 
@@ -68,3 +69,10 @@ Ficam em `frontend/controllers/` (não organizados por app, ver ADR 0013):
 
 - `password_visibility_controller.js` — alterna `<c-ui.field type="password">` entre
   oculto e visível.
+
+## Testes
+
+`apps/ui/tests/integration/test_components.py` renderiza cada componente contra o
+template real e assere prop → markup e passthrough de `{{ attrs }}`. O helper
+`render()`/`opening_tag()` fica em `apps/ui/tests/integration/cotton.py`. Componente
+novo entra com seu teste de contrato ([`components.md`](../../docs/standards/components.md)).

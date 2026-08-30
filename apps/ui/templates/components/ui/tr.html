@@ -1,1 +1,4 @@
-<tr {{ attrs }}>{{ slot }}</tr>
+{% comment %}Linha de <c-ui.table>.{% endcomment %}
+<c-vars class="" />
+
+<tr {{ attrs }}{% if class %} class="{{ class }}"{% endif %}>{{ slot }}</tr>

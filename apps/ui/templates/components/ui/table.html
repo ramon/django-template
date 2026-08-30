@@ -1,3 +1,6 @@
+{% comment %}Tabela com rolagem horizontal no overflow. Use com <c-ui.thead>/<c-ui.tbody>/etc.{% endcomment %}
+<c-vars class="" />
+
 <div class="overflow-x-auto">
-    <table {{ attrs }} class="w-full text-left text-sm">{{ slot }}</table>
+    <table {{ attrs }} class="w-full text-left text-sm {{ class }}">{{ slot }}</table>
 </div>

@@ -1,1 +1,4 @@
-<th {{ attrs }} class="px-3 py-2 font-medium">{{ slot }}</th>
+{% comment %}Célula de cabeçalho de <c-ui.table>.{% endcomment %}
+<c-vars class="" />
+
+<th {{ attrs }} class="px-3 py-2 font-medium {{ class }}">{{ slot }}</th>

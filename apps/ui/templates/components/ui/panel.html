@@ -1,6 +1,11 @@
-<c-vars title="" />
+{% comment %}
+Bloco em superfície destacada (surface-container-low). `title` opcional; slot default é o
+corpo; <c-slot name="actions"> vira uma faixa de botões abaixo dele.
+{% endcomment %}
+<c-vars title="" class="" />
 
-<section {{ attrs }} class="border-outline-variant bg-surface-container-low rounded-xl border p-6">
+<section {{ attrs }}
+         class="border-outline-variant bg-surface-container-low rounded-xl border p-6 {{ class }}">
     {% if title %}
         <h2 class="text-on-surface mb-4 text-lg font-semibold">{{ title }}</h2>
     {% endif %}

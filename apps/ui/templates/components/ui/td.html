@@ -1,3 +1,4 @@
-<c-vars align="" />
+{% comment %}Célula de <c-ui.table>. `align="right"` alinha o conteúdo à direita.{% endcomment %}
+<c-vars align="" class="" />
 
-<td {{ attrs }} class="text-on-surface px-3 py-2{% if align == "right" %} text-right{% endif %}">{{ slot }}</td>
+<td {{ attrs }} class="text-on-surface px-3 py-2 {% if align == "right" %}text-right{% endif %} {{ class }}">{{ slot }}</td>
