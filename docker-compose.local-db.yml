@@ -1,0 +1,25 @@
+# Publica Postgres e Valkey no host, para o caminho "so banco e cache em
+# containers, app na maquina" (config.settings.development le DATABASE_URL /
+# CACHE_URL apontando para 127.0.0.1).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local-db.yml up -d database kv-database
+#
+# ou, mais curto:
+#
+#   make services
+#
+# NAO e' carregado pelo `docker compose up` da stack inteira -- so quando passado
+# com -f. Assim a stack em container nao reexpoe 5432/6379 no host.
+#
+# Se as portas colidirem com outra stack, defina POSTGRES_PORT / VALKEY_PORT no
+# .env e reflita a mesma porta em DATABASE_URL / CACHE_URL / SESSION_CACHE_URL /
+# CELERY_BROKER_URL.
+
+services:
+  database:
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+
+  kv-database:
+    ports:
+      - "127.0.0.1:${VALKEY_PORT:-6379}:6379"

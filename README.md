@@ -117,7 +117,8 @@ Depois de criar o repositório:
 ├── pyproject.toml / uv.lock
 ├── package.json / bun.lock
 ├── vite.config.mjs
-└── docker-compose.yml
+├── docker-compose.yml
+└── docker-compose.local-db.yml  # -f extra do `make services`: 5432/6379 no host
 ```
 
 ## Documentação
@@ -299,7 +300,7 @@ bun install      # frontend
 ### Serviços locais
 
 ```bash
-docker compose up -d database kv-database
+make services   # database + kv-database, com 5432/6379 publicados no host
 ```
 
 Para subir tudo dentro de containers, incluindo a aplicação, veja
@@ -340,10 +341,17 @@ Prometheus fica atrás de um profile para não entrar no `up` padrão:
 docker compose --profile observability up
 ```
 
+Só `app` (`APP_PORT`, 8000), `frontend` (`VITE_PORT`, 8001) e `prometheus`
+(`PROMETHEUS_PORT`, 9090) publicam porta no host, em `127.0.0.1`. Se outra stack Docker já
+usa uma delas, mude o número no `.env`. Banco e cache não expõem porta aqui — use
+`docker compose exec database psql -U user app`. Detalhes em
+[`docs/standards/infra.md`](docs/standards/infra.md#serviços-e-portas) e
+[ADR 0016](docs/adr/0016-portas-do-compose-internas-por-padrao.md).
+
 ### Sem Docker
 
 ```bash
-docker compose up -d database kv-database
+make services                  # database + kv-database, com 5432/6379 no host
 python manage.py migrate
 python manage.py runserver     # usa config.settings.development
 bun run dev                    # Vite com HMR na porta 8001

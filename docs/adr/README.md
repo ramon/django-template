@@ -61,3 +61,4 @@ ADRs novos continua de onde a lista abaixo termina.
 | [0013](0013-customizacao-de-ui-do-allauth-via-elements-e-apps-ui.md) | Customização de UI do allauth via override de elements/layouts, delegando para `apps/ui` | Aceito | 2026-08-22 |
 | [0014](0014-remover-fallback-de-avatar-para-o-gravatar.md) | Remover o fallback de avatar para o Gravatar | Aceito | 2026-08-22 |
 | [0015](0015-convencao-de-autoria-de-componentes-cotton.md) | Convenção de autoria de componentes Cotton, no molde do django-cotton-ui | Aceito | 2026-08-30 |
+| [0016](0016-portas-do-compose-internas-por-padrao.md) | Portas do compose internas por padrão | Aceito | 2026-09-01 |

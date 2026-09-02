@@ -7,6 +7,18 @@ release está documentado em
 
 ## [Unreleased]
 
+### Changed
+
+- `docker-compose.yml` não publica mais `5432`/`6379` no host: `database` e `kv-database`
+  só expõem porta com `make services` (que carrega o novo `docker-compose.local-db.yml`).
+  `app`, `frontend` e `prometheus` publicam presos a `127.0.0.1` e com a porta vinda do
+  `.env` — `APP_PORT`, `VITE_PORT`, `PROMETHEUS_PORT` (mais `POSTGRES_PORT`/`VALKEY_PORT`
+  e `COMPOSE_PROJECT_NAME`), para conviver com outra stack Docker sem `port is already
+  allocated`. [ADR 0016](docs/adr/0016-portas-do-compose-internas-por-padrao.md) e
+  [`docs/standards/infra.md`](docs/standards/infra.md#serviços-e-portas).
+- `make services` agora sobe banco e cache com `-f docker-compose.yml -f
+  docker-compose.local-db.yml`; `docker compose up -d database` cru não publica porta.
+
 ## [1.1.0] - 2026-08-30
 
 ### Added
