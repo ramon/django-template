@@ -170,7 +170,7 @@ Playwright. Esses dois são trabalho de máquina.
 
 ```bash
 uv sync && bun install
-docker compose up -d database kv-database
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml up -d database kv-database  # = make services; publica 5432/6379
 python manage.py migrate
 python manage.py runserver                # usa config.settings.development
 bun run dev                               # Vite com HMR na porta 8001

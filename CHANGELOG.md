@@ -7,6 +7,20 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-02
+
+### Changed
+
+- `docker-compose.yml` não publica mais `5432`/`6379` no host: `database` e `kv-database`
+  só expõem porta com `make services` (que carrega o novo `docker-compose.local-db.yml`).
+  `app`, `frontend` e `prometheus` publicam presos a `127.0.0.1` e com a porta vinda do
+  `.env` — `APP_PORT`, `VITE_PORT`, `PROMETHEUS_PORT` (mais `POSTGRES_PORT`/`VALKEY_PORT`
+  e `COMPOSE_PROJECT_NAME`), para conviver com outra stack Docker sem `port is already
+  allocated`. [ADR 0016](docs/adr/0016-portas-do-compose-internas-por-padrao.md) e
+  [`docs/standards/infra.md`](docs/standards/infra.md#serviços-e-portas).
+- `make services` agora sobe banco e cache com `-f docker-compose.yml -f
+  docker-compose.local-db.yml`; `docker compose up -d database` cru não publica porta.
+
 ## [1.1.0] - 2026-08-30
 
 ### Added
@@ -101,7 +115,10 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/ramon/django-template/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/ramon/django-template/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/ramon/django-template/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ramon/django-template/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/ramon/django-template/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ramon/django-template/releases/tag/v0.1.0

@@ -7,6 +7,13 @@
 # fica atras de um profile para nao entrar no `up` padrao:
 #
 #   docker compose --profile observability up
+#
+# Portas: so `app`, `frontend` e `prometheus` publicam no host, presas a
+# 127.0.0.1 e com a porta configuravel por env (APP_PORT, VITE_PORT,
+# PROMETHEUS_PORT) para conviver com outras stacks. `database` e `kv-database`
+# nao publicam nada -- de dentro do compose os servicos se acham pelo nome, e do
+# host o acesso e' por `docker compose exec`. Para expor 5432/6379 no host (rodar
+# a app na maquina), use `make services`, que carrega docker-compose.local-db.yml.
 
 x-app: &app
   build:
@@ -32,7 +39,7 @@ services:
   app:
     <<: *app
     ports:
-      - "8000:8000"
+      - "127.0.0.1:${APP_PORT:-8000}:8000"
     command: >
       sh -c "python manage.py migrate --noinput &&
              python manage.py runserver 0.0.0.0:8000"
@@ -49,7 +56,7 @@ services:
     image: oven/bun:1-alpine
     working_dir: /app
     ports:
-      - "8001:8001"
+      - "127.0.0.1:${VITE_PORT:-8001}:8001"
     volumes:
       - .:/app
       # volume proprio: os binarios nativos instalados aqui (musl) nao sao os
@@ -59,8 +66,6 @@ services:
 
   kv-database:
     image: valkey/valkey:9-alpine
-    ports:
-      - "6379:6379"
     volumes:
       - kv-data:/data
     healthcheck:
@@ -76,8 +81,6 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=user
       - POSTGRES_DB=app
-    ports:
-      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql
     healthcheck:
@@ -91,7 +94,7 @@ services:
     # linha LTS do Prometheus 3.x
     image: prom/prometheus:v3.14.0
     ports:
-      - "9090:9090"
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
     volumes:
       - ./tools/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
