@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-02
+
 ### Changed
 
 - `docker-compose.yml` não publica mais `5432`/`6379` no host: `database` e `kv-database`
@@ -113,7 +115,10 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/ramon/django-template/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/ramon/django-template/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/ramon/django-template/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ramon/django-template/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/ramon/django-template/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ramon/django-template/releases/tag/v0.1.0
