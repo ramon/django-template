@@ -38,8 +38,8 @@ logs: ## Segue os logs do worker (task na fila)
 
 ## So banco e cache em containers, resto na maquina --------------------------
 
-services: ## Sobe so banco e cache, para rodar app e worker na maquina
-	docker compose up -d database kv-database
+services: ## Sobe so banco e cache, com as portas publicadas no host, para rodar app e worker na maquina
+	docker compose -f docker-compose.yml -f docker-compose.local-db.yml up -d database kv-database
 
 runserver: ## Django runserver na maquina (config.settings.development)
 	uv run python manage.py runserver

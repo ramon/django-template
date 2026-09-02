@@ -41,11 +41,15 @@ docker compose logs -f worker              # ver a task cair na fila
 
 ```bash
 uv sync && bun install
-docker compose up -d database kv-database
+make services                              # database + kv-database, com 5432/6379 no host
 python manage.py migrate
 python manage.py runserver                 # usa config.settings.development
 bun run dev                                # Vite com HMR na porta 8001
 ```
+
+`make services` sobe os dois com `-f docker-compose.yml -f docker-compose.local-db.yml` —
+é esse segundo arquivo que publica `5432`/`6379` no host, e ele **não** entra no `docker
+compose up` da stack inteira. `docker compose up -d database` cru não expõe porta nenhuma.
 
 O resto dos comandos com `uv run` — ver [`testing.md`](testing.md) e
 [`git.md`](git.md#o-que-o-ci-verifica).
@@ -64,15 +68,29 @@ build de todo mundo. Se for fazer, registre o ADR.
 
 ## Serviços e portas
 
-| Serviço | Porta | Imagem | Papel |
-| --- | --- | --- | --- |
-| `app` | 8000 | `Dockerfile.dev` | migra e sobe o `runserver` |
-| `frontend` | 8001 | `oven/bun` | dev server do Vite, com HMR |
-| `worker` | — | `Dockerfile.dev` | worker do Celery |
-| `beat` | — | `Dockerfile.dev` | scheduler do Celery |
-| `database` | 5432 | `postgres:18-alpine` | com healthcheck; `app` espera por ele |
-| `kv-database` | 6379 | `valkey:9-alpine` | cache, sessão e broker (DBs 0, 1 e 2) |
-| `prometheus` | 9090 | `prom/prometheus` | atrás do profile `observability` |
+| Serviço | Porta interna | Publica no host | Imagem | Papel |
+| --- | --- | --- | --- | --- |
+| `app` | 8000 | `127.0.0.1:${APP_PORT:-8000}` | `Dockerfile.dev` | migra e sobe o `runserver` |
+| `frontend` | 8001 | `127.0.0.1:${VITE_PORT:-8001}` | `oven/bun` | dev server do Vite, com HMR |
+| `worker` | — | — | `Dockerfile.dev` | worker do Celery |
+| `beat` | — | — | `Dockerfile.dev` | scheduler do Celery |
+| `database` | 5432 | só via `make services` (`${POSTGRES_PORT:-5432}`) | `postgres:18-alpine` | com healthcheck; `app` espera por ele |
+| `kv-database` | 6379 | só via `make services` (`${VALKEY_PORT:-6379}`) | `valkey:9-alpine` | cache, sessão e broker (DBs 0, 1 e 2) |
+| `prometheus` | 9090 | `127.0.0.1:${PROMETHEUS_PORT:-9090}` | `prom/prometheus` | atrás do profile `observability` |
+
+Só `app`, `frontend` e `prometheus` publicam porta no `docker-compose.yml`, presos a
+`127.0.0.1` e com a porta vinda do `.env` (default = valor de sempre). `database` e
+`kv-database` não publicam nada — de dentro do compose os serviços se acham pelo nome, e
+do host o acesso é `docker compose exec database psql -U user app` /
+`docker compose exec kv-database valkey-cli`. Para expor `5432`/`6379` no host (caminho da
+app na máquina), `make services` carrega o `docker-compose.local-db.yml` — ver
+[ADR 0016](../adr/0016-portas-do-compose-internas-por-padrao.md).
+
+**Colisão de porta** (outra stack Docker no ar): mude o número no `.env` — `APP_PORT`,
+`VITE_PORT`, `PROMETHEUS_PORT`, `POSTGRES_PORT`, `VALKEY_PORT` — e, para `POSTGRES_PORT`/
+`VALKEY_PORT`, reflita a mesma porta em `DATABASE_URL`/`CACHE_URL`/`SESSION_CACHE_URL`/
+`CELERY_BROKER_URL`. `COMPOSE_PROJECT_NAME` no `.env` separa os nomes de container/rede/
+volume entre clones.
 
 O bloco `x-app` concentra build, `env_file` e volumes dos três serviços de Python, e
 sobrescreve `DATABASE_URL`, `CACHE_URL`, `SESSION_CACHE_URL` e `CELERY_BROKER_URL` — dentro
@@ -106,6 +124,12 @@ em `config/settings/parts/`); com `APP_`, `FEATURE_` ou `INTEGRATION_`, é confi
 aplicação (`pydantic-settings`, em `config/app_settings/`) — ver
 [`backend.md`](backend.md#configuração). `SECRET_KEY` é a única sem default: o boot falha
 sem ela, de propósito.
+
+`APP_PORT`, `VITE_PORT`, `PROMETHEUS_PORT`, `POSTGRES_PORT`, `VALKEY_PORT` e
+`COMPOSE_PROJECT_NAME` são lidas pelo `docker compose`, não pelo Django (o
+`pydantic-settings` ignora extras, então `APP_PORT` não conflita com o prefixo `APP_`).
+Servem para conviver com outra stack Docker — ver
+[ADR 0016](../adr/0016-portas-do-compose-internas-por-padrao.md).
 
 ## Imagens
 
