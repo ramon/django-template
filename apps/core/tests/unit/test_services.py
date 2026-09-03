@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import pytest
 from django.core.exceptions import ValidationError
 
@@ -50,3 +52,17 @@ def test_get_errors_handles_empty_error_list():
     error = ValidationError([])
     result = get_errors(error)
     assert result == []
+
+
+def test_get_errors_falls_back_to_str_without_a_messages_attribute():
+    """
+    Test get_errors function with an error_list item that has no `messages`
+    attribute -- every real `ValidationError` has one, but `get_errors` only
+    duck-types on `error_list`, so any object shaped like it works.
+    """
+
+    class _FakeValidationError:
+        error_list: ClassVar = ["a plain string error"]
+
+    result = get_errors(_FakeValidationError())  # type: ignore[arg-type]
+    assert result == ["a plain string error"]

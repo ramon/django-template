@@ -9,6 +9,12 @@ def test_from_full_name():
     assert person_name.last == "Doe"
 
 
+def test_str_returns_the_full_name():
+    """Tests that str() on a PersonName returns the full name."""
+    person_name = PersonName(first="John", last="Doe")
+    assert str(person_name) == "John Doe"
+
+
 def test_full_property():
     """Tests the full property of PersonName."""
     person_name = PersonName(first="John", last="Doe")
