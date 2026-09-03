@@ -13,7 +13,7 @@ exato de cada gate, nos dois caminhos de desenvolvimento (máquina/container), e
 
 | Mudou... | Gates além de lint/typecheck/testes |
 | --- | --- |
-| Qualquer `.py` de produção | lint (`ruff`), typecheck (`mypy apps tests`), testes (`pytest`) — sempre, é a base |
+| Qualquer `.py` de produção | lint (`ruff`), typecheck (`mypy apps tests`), testes (`pytest --cov=apps --cov-branch`, piso de 90% linhas / 85% branches) — sempre, é a base |
 | `models.py` ou algo que gera migration | + `makemigrations --check --dry-run` limpo |
 | String traduzível nova ou alterada (`_()`, `gettext_lazy`, `{% trans %}`) | + `makemessages` rodado e `.po` versionado no commit |
 | JS, CSS ou template com classe nova | + `bun run lint && bun run test:coverage`; classe CSS em BEM; piso de cobertura de 90% em `frontend/**/*.js` |
@@ -31,7 +31,8 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
 
 1. `ruff check` / `ruff format --check`
 2. `mypy apps tests`
-3. `pytest` (unit primeiro se estiver depurando; a suíte completa antes de reportar)
+3. `pytest` (unit primeiro se estiver depurando; a suíte completa, com `--cov=apps
+   --cov-branch`, antes de reportar)
 4. `bun run lint && bun run test:coverage`, se mexeu em JS/CSS
 5. `makemessages`/`makemigrations`, se o caso pede — são baratos, mas ficam por último
    porque só fazem sentido depois que o código estabilizou
@@ -52,6 +53,10 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
   (`entries/**`, `controllers/index.js`). `bun run test:coverage` falha abaixo do piso —
   é o mesmo comando que o job `frontend` roda no CI. Ver
   [`testing.md#cobertura-de-js`](testing.md#cobertura-de-js).
+- **cobertura de Python**: piso de 90% de linhas e 85% de branches sobre o total agregado
+  de `apps/`, avaliados em separado por um hook em `conftest.py` (`--cov-fail-under` do
+  pytest-cov só teria um número combinado). Só roda com `--cov`; `uv run pytest` sozinho
+  não afere isso. Ver [`testing.md#cobertura-de-python`](testing.md#cobertura-de-python).
 - **i18n**: o CI compara o diff dos `.po`; string nova sem `makemessages` no mesmo commit
   quebra o job mesmo com o texto certo no código, porque o catálogo não bate com a fonte.
 - **migrations**: `makemigrations --check --dry-run` falha se o model mudou sem gerar

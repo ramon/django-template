@@ -31,7 +31,10 @@ def _totp_code(secret: str) -> str:
 
 
 def test_mfa_index_offers_to_activate_totp(
-    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
+    page: Page,
+    live_server: LiveServer,
+    verified_user: User,
+    login: Callable[[Page, LiveServer, User], None],
 ) -> None:
     login(page, live_server, verified_user)
 
@@ -41,7 +44,10 @@ def test_mfa_index_offers_to_activate_totp(
 
 
 def test_activating_totp_generates_recovery_codes(
-    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
+    page: Page,
+    live_server: LiveServer,
+    verified_user: User,
+    login: Callable[[Page, LiveServer, User], None],
 ) -> None:
     login(page, live_server, verified_user)
 
