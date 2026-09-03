@@ -46,7 +46,7 @@ antes do Django estar configurado.
 
 ```bash
 uv run pytest                                   # config.settings.test, sem e2e
-uv run pytest --cov=apps --cov-report=term-missing
+uv run pytest --cov=apps --cov-branch --cov-report=term-missing
 uv run pytest apps/accounts -k profile
 uv run pytest -m e2e                            # só os ponta a ponta (Chromium + WebKit)
 ```
@@ -59,6 +59,24 @@ que a imagem de dev não traz, então rodam na máquina.
 `--strict-config` — marker novo tem de ser declarado no `pyproject.toml`, senão a suíte
 falha. Traz também `--browser chromium --browser webkit`: os e2e rodam nos dois motores, o
 resto da suíte não pede a fixture `page` e ignora as flags.
+
+### Cobertura de Python
+
+```bash
+uv run pytest --cov=apps --cov-branch --cov-report=term-missing   # = make test-cov
+```
+
+Piso de 90% de linhas e 85% de branches, avaliados em separado sobre o total agregado de
+`apps/` — não arquivo a arquivo, o mesmo espírito do `coverage.thresholds` do
+`vitest.config.mjs` (ver [Cobertura de JS](#cobertura-de-js)).
+
+`--cov-fail-under` do pytest-cov não serve aqui: ele compara um número só, que o
+coverage.py calcula como média ponderada de linha e branch juntos — dá pra passar com
+85% combinado tendo branch coverage bem abaixo disso. Por isso o piso é um hook
+`pytest_sessionfinish` no `conftest.py` da raiz: ele só age quando a sessão rodou com
+`--cov` (então `uv run pytest` sozinho não afere nada), lê o mesmo `Coverage` que o
+`--cov` já populou e falha a sessão se `percent_statements_covered` ou
+`percent_branches_covered` caírem abaixo do piso.
 
 ## Testes ponta a ponta
 

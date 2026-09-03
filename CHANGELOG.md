@@ -7,6 +7,15 @@ release está documentado em
 
 ## [Unreleased]
 
+### Added
+
+- Pytest agora falha abaixo de 90% de cobertura de linhas e 85% de branches em `apps/`,
+  avaliados em separado por um hook em `conftest.py` (`--cov-fail-under` do pytest-cov só
+  teria um número combinado, que mistura linha e branch numa média ponderada). `make
+  test-cov` roda `pytest --cov=apps --cov-branch --cov-report=term-missing` junto do `bun
+  run test:coverage`; mesmo comando no CI. Ver
+  [`docs/standards/testing.md#cobertura-de-python`](docs/standards/testing.md#cobertura-de-python).
+
 ## [1.1.1] - 2026-09-02
 
 ### Changed

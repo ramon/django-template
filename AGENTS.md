@@ -221,6 +221,12 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
    de dev** — o job `docker` do CI verifica. Mesma regra para a paridade
    `Procfile` ↔ `docker-compose.yml`: processo novo entra nos dois
    ([`infra.md`](docs/standards/infra.md)).
+10. **Cobertura de teste em Python tem piso de 90% de linhas e 85% de branches**,
+    avaliados em separado sobre o total agregado de `apps/`. Só é aferido com `--cov`
+    (`uv run pytest --cov=apps --cov-branch --cov-report=term-missing`, = `make
+    test-cov`); `uv run pytest` sozinho não roda essa checagem. O piso é um hook
+    `pytest_sessionfinish` em `conftest.py`, não `--cov-fail-under` — ver
+    [`testing.md#cobertura-de-python`](docs/standards/testing.md#cobertura-de-python).
 
 ## Estilo
 
@@ -258,7 +264,9 @@ Na máquina, com `uv run`; via Docker, com `docker compose exec app` e sem o `uv
 
 - [ ] `uv run ruff check . && uv run ruff format --check .`
 - [ ] `uv run mypy apps tests`
-- [ ] `uv run pytest` (e `-m e2e` se a mudança chega ao browser)
+- [ ] `uv run pytest --cov=apps --cov-branch --cov-report=term-missing` (= `make
+      test-cov`; piso de 90% linhas / 85% branches), e `-m e2e` se a mudança chega ao
+      browser
 - [ ] `bun run lint && bun run test:coverage`, se mexeu em JS ou CSS
 - [ ] `makemessages` / `makemigrations`, se o caso pede
 - [ ] `docs/` atualizada: ADR para decisão nova, padrão revisado se a convenção mudou

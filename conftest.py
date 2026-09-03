@@ -1,5 +1,8 @@
 """Fixtures compartilhadas por toda a suite."""
 
+import contextlib
+import io
+import json
 import os
 from collections.abc import Iterator
 from pathlib import Path
@@ -54,6 +57,59 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
 
     if not vite._manifest_path().exists():
         pytest.skip("manifest do Vite ausente -- rode `bun run build` antes dos e2e")
+
+
+# Pisos de cobertura em `apps/`, no mesmo espirito do `coverage.thresholds` do
+# vitest.config.mjs -- linhas e branches avaliados em separado, sobre o total
+# agregado do projeto (nao arquivo a arquivo: modulo fino como `core/tasks.py`
+# nao precisa carregar o piso sozinho).
+COVERAGE_FLOORS = {
+    "percent_statements_covered": ("linhas", 90.0),
+    "percent_branches_covered": ("branches", 85.0),
+}
+
+
+def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:  # noqa: ARG001
+    """
+    Falha a suite se a cobertura global cair abaixo do piso, linha e branch em separado.
+
+    `--cov-fail-under` do pytest-cov compara um numero so, que mistura linha e
+    branch numa media ponderada pelo total de cada (ver `coverage.results.Numbers`) --
+    nao da pra expressar "90% de linha E 85% de branch" com ele. Aqui lemos o mesmo
+    `Coverage` que o pytest-cov ja rodou nesta sessao (via `--cov`) e comparamos os
+    dois percentuais que o proprio relatorio json do coverage.py calcula em separado,
+    sem rodar `coverage` de novo por fora do pytest.
+    """
+    config = session.config
+    cov_plugin = config.pluginmanager.get_plugin("_cov")
+    if cov_plugin is None or cov_plugin.cov_controller is None:
+        return  # rodou sem --cov (ex.: `make test` local, iteracao rapida)
+
+    # `outfile` do coverage.py so aceita path (ou "-" para stdout, ver
+    # `coverage.report_core.render_report`) -- nao da pra passar um StringIO direto.
+    report = io.StringIO()
+    with contextlib.redirect_stdout(report):
+        cov_plugin.cov_controller.cov.json_report(outfile="-", ignore_errors=True)
+    totals = json.loads(report.getvalue())["totals"]
+
+    failures = [
+        f"cobertura de {label} abaixo do piso: {totals[key]:.2f}% < {floor}%"
+        for key, (label, floor) in COVERAGE_FLOORS.items()
+        if totals[key] < floor
+    ]
+    if not failures:
+        return
+
+    reporter = config.pluginmanager.get_plugin("terminalreporter")
+    if reporter is not None:
+        reporter.write_sep("-", "cobertura abaixo do piso", red=True, bold=True)
+        for line in failures:
+            reporter.write_line(line, red=True, bold=True)
+
+    # `session.exitstatus` ainda esta' mutavel neste hook -- e' o mesmo mecanismo
+    # que o proprio pytest-cov usa (via `session.testsfailed`) para forcar o
+    # EXIT_TESTSFAILED sem lançar excecao no meio da sessao.
+    session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
 
 # manifest minimo, com a mesma forma que o Vite gera: chave = input relativo a' raiz.
