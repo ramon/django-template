@@ -16,16 +16,16 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@tailwindcss/vite": "^4.3.3",
-    "alpinejs": "^3.16.2",
+    "alpinejs": "^3.17.0",
     "htmx.org": "^2.0.10",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
+    "@biomejs/biome": "^2.5.11",
     "@vitest/coverage-v8": "^4.1.11",
-    "happy-dom": "^20.11.6",
-    "rustywind": "^0.27.0",
+    "happy-dom": "^20.12.0",
+    "rustywind": "^0.28.0",
     "stylelint": "^17.14.1",
     "vitest": "^4.1.11"
   },
