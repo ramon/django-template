@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-03
+
 ### Added
 
 - Pytest agora falha abaixo de 90% de cobertura de linhas e 85% de branches em `apps/`,
