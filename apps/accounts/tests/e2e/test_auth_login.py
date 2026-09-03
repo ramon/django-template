@@ -19,7 +19,10 @@ def test_login_page_renders(page: Page, live_server: LiveServer) -> None:
 
 
 def test_login_authenticates_a_verified_user(
-    page: Page, live_server: LiveServer, verified_user: User, login: Callable[..., None]
+    page: Page,
+    live_server: LiveServer,
+    verified_user: User,
+    login: Callable[[Page, LiveServer, User], None],
 ) -> None:
     login(page, live_server, verified_user)
 

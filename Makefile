@@ -76,7 +76,8 @@ typecheck: ## MyPy strict em apps e tests
 test: ## Suite pytest (config.settings.test)
 	uv run pytest
 
-test-cov: ## Testes JS com o piso de cobertura de 90%
+test-cov: ## Pytest (90% linhas / 85% branch) e testes JS (piso de 90%)
+	uv run pytest --cov=apps --cov-branch --cov-report=term-missing
 	bun run test:coverage
 
 e2e: ## Builda o frontend e roda os e2e (Playwright, Chromium + WebKit/Safari)

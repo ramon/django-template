@@ -37,3 +37,7 @@ def test_save_rejects_a_duplicate_document() -> None:
 
     with pytest.raises(ValidationError):
         other_user.profile.save()
+
+
+def test_str_returns_the_users_full_name(user: User) -> None:
+    assert str(user.profile) == user.name.full

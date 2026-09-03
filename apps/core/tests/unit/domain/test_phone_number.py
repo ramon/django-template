@@ -72,3 +72,18 @@ def test_invalid_phone_number():
     """
     with pytest.raises(ValidationError):
         PhoneNumber(root="invalid_phone")
+
+
+def test_computed_fields_fall_back_when_parsing_never_ran():
+    """
+    `parse_number` always sets `_parsed_number` on success, so the `if not
+    self._parsed_number` guard in each computed field is normally unreachable
+    -- force it to prove the fallback values.
+    """
+    phone_number = PhoneNumber(root="+5511987654321")
+    object.__setattr__(phone_number, "_parsed_number", None)
+
+    assert phone_number.international is None
+    assert phone_number.national is None
+    assert phone_number.e164 == "+5511987654321"
+    assert phone_number.country_code is None

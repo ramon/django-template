@@ -9,6 +9,11 @@ omit =
     tests.py
     test_*.py
     *_tests.py
+    # handle() chama gettext/msgmerge de verdade e mexe nos .po versionados; ja e'
+    # coberto pelo step dedicado do CI (`makemessages` + `git diff --exit-code`),
+    # nao pelo pytest.
+    apps/core/management/commands/makemessages.py
+    apps/core/management/commands/compilemessages.py
 
 [report]
 
