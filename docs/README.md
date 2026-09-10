@@ -51,10 +51,11 @@ terminar (o histórico do Git guarda o registro). Convenções em
 
 ## Regras da pasta
 
-- **O que está aqui foi herdado da base e vale por padrão.** `standards/` e os ADRs
-  0001–0006 vieram do `django-template`: descrevem como este projeto funciona hoje, não
-  uma sugestão. Divergir é legítimo — desde que a divergência seja registrada (ADR novo, ou
-  padrão atualizado) no mesmo commit que a introduz.
+- **O que está aqui foi herdado da base e vale por padrão.** `standards/` e os ADRs da
+  faixa `0001`–`1000` vieram do `django-template`: descrevem como este projeto funciona
+  hoje, não uma sugestão. Divergir é legítimo — desde que a divergência seja registrada
+  (ADR novo, na faixa `1001`+, ou padrão atualizado) no mesmo commit que a introduz. Ver
+  [faixas de numeração](adr/README.md#faixas-de-numeração).
 - **Uma fonte por fato.** Setup, comandos e stack ficam no `README.md` da raiz; daqui a
   gente linka. Duplicar cria duas versões que divergem.
 - **Documento desatualizado é pior que documento ausente**, porque agentes tratam o que
