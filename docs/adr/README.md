@@ -20,7 +20,8 @@ correção de bug, ou preferência de formatação (isso é `standards/`).
 ## Como escrever
 
 1. Copie [`0000-template.md`](0000-template.md) para `NNNN-titulo-em-kebab-case.md`,
-   com o próximo número livre.
+   com o próximo número livre **da faixa deste repositório** (ver
+   [Faixas de numeração](#faixas-de-numeração)).
 2. O título é a decisão, não o assunto: `usar-vite-como-pipeline-de-assets`, não
    `sobre-assets`.
 3. Preencha **Contexto** (as forças em jogo), **Decisão** (no presente: "usamos X"),
@@ -35,12 +36,29 @@ Um ADR aceito não é editado para mudar a decisão — só para corrigir erro o
 o link do substituto. Mudou a decisão? ADR novo, e o antigo passa a
 `Substituído por NNNN`.
 
-## ADRs herdados da base
+## Faixas de numeração
 
-Os ADRs 0001–0006 vêm do `django-template` e descrevem decisões que este projeto herdou
-prontas. Valem como qualquer outro: **para contrariar um deles, escreva um ADR novo que o
-substitua** — não edite o antigo, e não deixe o código divergir em silêncio. A numeração de
-ADRs novos continua de onde a lista abaixo termina.
+O número do ADR diz de quem é a decisão:
+
+| Faixa | De quem | Quem numera nela |
+| --- | --- | --- |
+| `0001`–`1000` | `django-template`, a base | só o próprio template |
+| `1001` em diante | o projeto derivado | só o projeto |
+
+**Num projeto gerado a partir da base, o primeiro ADR próprio é o `1001`** — não o número
+seguinte ao último ADR herdado. A faixa vazia no meio é deliberada: a base continua
+escrevendo ADR depois que o projeto nasceu, e sem a reserva o ADR `0018` da base colidiria
+com o `0018` que o projeto escreveu sozinho — dois arquivos diferentes, mesmo número, um
+sobrescrevendo o outro na primeira atualização da base.
+
+Os ADRs da faixa da base descrevem decisões que este projeto herdou prontas, e valem como
+qualquer outro: **para contrariar um deles, escreva um ADR novo — na faixa do projeto —
+que o substitua**. Não edite o antigo, e não deixe o código divergir em silêncio. O
+`Substituído por NNNN` do herdado é a única edição permitida nele, e aponta para o
+`1NNN` que o substituiu.
+
+Nada muda no formato: o nome do arquivo continua `NNNN-titulo-em-kebab-case.md`, com
+quatro dígitos (`1001-usar-x-para-y.md`), e o índice abaixo é único, em ordem numérica.
 
 ## Índice
 
@@ -62,3 +80,4 @@ ADRs novos continua de onde a lista abaixo termina.
 | [0014](0014-remover-fallback-de-avatar-para-o-gravatar.md) | Remover o fallback de avatar para o Gravatar | Aceito | 2026-08-22 |
 | [0015](0015-convencao-de-autoria-de-componentes-cotton.md) | Convenção de autoria de componentes Cotton, no molde do django-cotton-ui | Aceito | 2026-08-30 |
 | [0016](0016-portas-do-compose-internas-por-padrao.md) | Portas do compose internas por padrão | Aceito | 2026-09-01 |
+| [0017](0017-fronteira-de-acoes-de-agente-no-github.md) | Fronteira de ações de agente no GitHub | Aceito | 2026-09-10 |

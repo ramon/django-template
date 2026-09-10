@@ -62,12 +62,16 @@ Como usar:
 - **Antes de codar**: leia o padrão da área que vai tocar. Se a tarefa tem spec ou
   plano em `docs/`, ele manda — divergência entre spec e código é bug, não licença.
 - **Ao decidir algo estrutural** (trocar biblioteca, mudar camada, criar convenção):
-  registre um ADR em `docs/adr/`, seguindo [`0000-template.md`](docs/adr/0000-template.md).
-  Numere sequencialmente — continuando de onde os ADRs herdados param — e adicione a
-  linha no índice do [`docs/adr/README.md`](docs/adr/README.md).
-- **Os ADRs 0001–0006 vêm da base e valem por padrão.** Para contrariar um deles, escreva
-  um ADR novo que o substitua; não edite o antigo nem simplesmente faça diferente no
-  código.
+  registre um ADR em `docs/adr/`, seguindo [`0000-template.md`](docs/adr/0000-template.md),
+  e adicione a linha no índice do [`docs/adr/README.md`](docs/adr/README.md).
+- **A numeração tem duas faixas: `0001`–`1000` é do `django-template`, `1001` em diante é
+  do projeto.** Num projeto derivado da base, o primeiro ADR próprio é o `1001`, mesmo
+  que a base tenha parado no `0020` — a faixa vazia entre os dois existe para a base
+  poder crescer sem colidir com decisão local. Só o próprio template numera abaixo de
+  `1000`. Ver [`docs/adr/README.md`](docs/adr/README.md#faixas-de-numeração).
+- **Os ADRs da faixa da base valem por padrão.** Para contrariar um deles, escreva um ADR
+  novo — na sua faixa — que o substitua; não edite o antigo nem simplesmente faça
+  diferente no código.
 - **Em trabalho longo** (várias etapas, várias sessões): mantenha o plano em
   `docs/plans/` atualizado conforme avança, para que a próxima sessão retome do estado
   real e não do zero.
@@ -145,6 +149,10 @@ Depois:
    ```
    Isso evita que migration experimental, revertida ou de tentativa deixe resíduo no
    banco de desenvolvimento padrão.
+7. **Ao interagir com o GitHub — issue, PR, review —, siga
+   [`docs/standards/git.md#agentes-e-github`](docs/standards/git.md#agentes-e-github).**
+   Em resumo: PR em draft até os gates passarem, e o agente não aprova, não mergeia e não
+   fecha issue ([ADR 0017](docs/adr/0017-fronteira-de-acoes-de-agente-no-github.md)).
 
 ## Comandos
 
