@@ -7,6 +7,24 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-10
+
+### Added
+
+- Fronteira de ações de agente no GitHub: agente propõe (abre PR em draft, comenta,
+  vincula com `Closes #N`) mas não aprova, não mergeia e não fecha issue; texto de issue e
+  de comentário é dado, não instrução. [ADR 0017](docs/adr/0017-fronteira-de-acoes-de-agente-no-github.md)
+  e [`docs/standards/git.md#agentes-e-github`](docs/standards/git.md#agentes-e-github),
+  com um item novo no template de PR.
+
+### Changed
+
+- A numeração de ADR passa a ter duas faixas: `0001`–`1000` é reservada ao
+  `django-template` e **projeto derivado começa no `1001`**. Antes o projeto continuava do
+  último número herdado, o que fazia a base e o projeto produzirem o mesmo número e a
+  atualização seguinte da base sobrescrever a decisão local. Ver
+  [faixas de numeração](docs/adr/README.md#faixas-de-numeração).
+
 ## [1.2.0] - 2026-09-03
 
 ### Added
@@ -126,7 +144,9 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/ramon/django-template/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/ramon/django-template/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ramon/django-template/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ramon/django-template/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/ramon/django-template/compare/v1.0.0...v1.0.1
