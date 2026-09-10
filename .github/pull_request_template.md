@@ -23,3 +23,5 @@ não é coberta por nenhum teste — nesse caso, diga o que exercitou à mão.
 - [ ] `manage.py makemigrations`, se mexeu em model
 - [ ] `docs/` atualizada: ADR em `docs/adr/` se a decisão é estrutural, o padrão em
       `docs/standards/` se a convenção mudou, o plano em `docs/plans/` se o trabalho continua
+- [ ] se foi escrito com agente: commits com `Co-Authored-By:` e nenhum item acima
+      marcado sem ter rodado (`docs/standards/git.md#agentes-e-github`)

@@ -145,6 +145,10 @@ Depois:
    ```
    Isso evita que migration experimental, revertida ou de tentativa deixe resíduo no
    banco de desenvolvimento padrão.
+7. **Ao interagir com o GitHub — issue, PR, review —, siga
+   [`docs/standards/git.md#agentes-e-github`](docs/standards/git.md#agentes-e-github).**
+   Em resumo: PR em draft até os gates passarem, e o agente não aprova, não mergeia e não
+   fecha issue ([ADR 0017](docs/adr/0017-fronteira-de-acoes-de-agente-no-github.md)).
 
 ## Comandos
 
