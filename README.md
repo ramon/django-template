@@ -32,7 +32,9 @@ Depois de criar o repositório:
    [Ambiente local](#ambiente-local) abaixo para subir o projeto pela primeira vez.
 4. **Decisões herdadas**: os ADRs em [`docs/adr/`](docs/adr/) vêm do template e valem por
    padrão no projeto novo. Para contrariar um deles, registre um ADR que o substitua, em
-   vez de simplesmente fazer diferente no código.
+   vez de simplesmente fazer diferente no código. **O primeiro ADR do seu projeto é o
+   `1001`**: a faixa `0001`–`1000` é reservada à base, para que uma atualização dela não
+   colida com decisão sua ([faixas de numeração](docs/adr/README.md#faixas-de-numeração)).
 
 ## Stack principal
 
