@@ -7,6 +7,17 @@ release está documentado em
 
 ## [Unreleased]
 
+### Changed
+
+- `make test-cov` passa a ser um alvo agregador de `make test-cov-py` (pytest com `--cov`)
+  e `make test-cov-js` (`bun run test:coverage`), para rodar a cobertura de um lado só sem
+  pagar a do outro. `make check` deixa de rodar `test` e `test-cov` em sequência — a suíte
+  Python rodava duas vezes — e agora é `lint typecheck test-cov`.
+- `docs/standards/testing.md`, `quality-gates.md` e o checklist do `AGENTS.md` passam a
+  apontar `make test-cov-py` onde diziam `make test-cov` (a equivalência estava errada: o
+  alvo também roda os testes de JS) e a recomendar `make e2e`, que garante o `bun run
+  build` antes — sem ele o e2e é pulado, não falha.
+
 ## [1.2.1] - 2026-09-10
 
 ### Added
