@@ -3,7 +3,8 @@
 .PHONY: help \
 	setup services up up-d down build logs migrate makemigrations superuser \
 	runserver vite \
-	lint lint-fix format typecheck test test-cov e2e messages check \
+	lint lint-fix format typecheck test test-cov test-cov-py test-cov-js \
+	e2e messages check \
 	dexec dtest dlint dtypecheck dtest-js dshell \
 	prod-image prod-run prod-migrate
 
@@ -76,8 +77,12 @@ typecheck: ## MyPy strict em apps e tests
 test: ## Suite pytest (config.settings.test)
 	uv run pytest
 
-test-cov: ## Pytest (90% linhas / 85% branch) e testes JS (piso de 90%)
+test-cov: test-cov-py test-cov-js ## Cobertura dos dois lados (Python e JS)
+
+test-cov-py: ## Pytest com cobertura (piso de 90% linhas / 85% branch)
 	uv run pytest --cov=apps --cov-branch --cov-report=term-missing
+
+test-cov-js: ## Testes JS com cobertura (piso de 90%)
 	bun run test:coverage
 
 e2e: ## Builda o frontend e roda os e2e (Playwright, Chromium + WebKit/Safari)
@@ -85,7 +90,7 @@ e2e: ## Builda o frontend e roda os e2e (Playwright, Chromium + WebKit/Safari)
 	bun run build
 	uv run pytest -m e2e
 
-check: lint typecheck test test-cov ## Roda os gates rapidos, na ordem recomendada
+check: lint typecheck test-cov ## Roda os gates rapidos, na ordem recomendada
 
 ## Dentro dos containers (binarios ja no PATH; sem uv run) -------------------
 

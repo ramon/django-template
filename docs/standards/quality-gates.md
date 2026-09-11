@@ -33,11 +33,16 @@ Do mais rápido e mais informativo ao mais lento, para falhar cedo:
 2. `mypy apps tests`
 3. `pytest` (unit primeiro se estiver depurando; a suíte completa, com `--cov=apps
    --cov-branch`, antes de reportar)
-4. `bun run lint && bun run test:coverage`, se mexeu em JS/CSS
+4. `bun run lint && bun run test:coverage` (= `bun run lint` + `make test-cov-js`), se
+   mexeu em JS/CSS
 5. `makemessages`/`makemigrations`, se o caso pede — são baratos, mas ficam por último
    porque só fazem sentido depois que o código estabilizou
 6. `pytest -m e2e`, por último — o gate mais lento (Chromium + WebKit) e o único que builda
-   o frontend
+   o frontend; prefira `make e2e`, que roda o `bun run build` antes (sem ele o e2e é
+   pulado, não falha)
+
+Os passos 1–3 estão encadeados em `make check` (`lint typecheck test-cov`), que já inclui
+a cobertura de JS.
 
 ## Por que cada gate existe
 
