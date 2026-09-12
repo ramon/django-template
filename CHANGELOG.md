@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-09-12
+
 ### Changed
 
 - `make test-cov` passa a ser um alvo agregador de `make test-cov-py` (pytest com `--cov`)
