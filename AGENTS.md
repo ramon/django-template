@@ -232,7 +232,7 @@ e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
 10. **Cobertura de teste em Python tem piso de 90% de linhas e 85% de branches**,
     avaliados em separado sobre o total agregado de `apps/`. Só é aferido com `--cov`
     (`uv run pytest --cov=apps --cov-branch --cov-report=term-missing`, = `make
-    test-cov`); `uv run pytest` sozinho não roda essa checagem. O piso é um hook
+    test-cov-py`); `uv run pytest` sozinho não roda essa checagem. O piso é um hook
     `pytest_sessionfinish` em `conftest.py`, não `--cov-fail-under` — ver
     [`testing.md#cobertura-de-python`](docs/standards/testing.md#cobertura-de-python).
 
@@ -273,9 +273,11 @@ Na máquina, com `uv run`; via Docker, com `docker compose exec app` e sem o `uv
 - [ ] `uv run ruff check . && uv run ruff format --check .`
 - [ ] `uv run mypy apps tests`
 - [ ] `uv run pytest --cov=apps --cov-branch --cov-report=term-missing` (= `make
-      test-cov`; piso de 90% linhas / 85% branches), e `-m e2e` se a mudança chega ao
-      browser
-- [ ] `bun run lint && bun run test:coverage`, se mexeu em JS ou CSS
+      test-cov-py`; piso de 90% linhas / 85% branches)
+- [ ] `bun run lint && bun run test:coverage` (= `bun run lint` + `make test-cov-js`), se
+      mexeu em JS ou CSS
+- [ ] `make e2e`, se a mudança chega ao browser — o alvo builda o frontend antes, que é o
+      passo cuja falta faz o e2e ser **pulado** em vez de falhar
 - [ ] `makemessages` / `makemigrations`, se o caso pede
 - [ ] `docs/` atualizada: ADR para decisão nova, padrão revisado se a convenção mudou
 - [ ] relate o que rodou e o que viu, não o que deveria funcionar

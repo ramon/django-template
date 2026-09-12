@@ -45,11 +45,17 @@ antes do Django estar configurado.
 ## Rodar
 
 ```bash
-uv run pytest                                   # config.settings.test, sem e2e
-uv run pytest --cov=apps --cov-branch --cov-report=term-missing
+uv run pytest                                   # = make test; config.settings.test, sem e2e
+uv run pytest --cov=apps --cov-branch --cov-report=term-missing   # = make test-cov-py
 uv run pytest apps/accounts -k profile
-uv run pytest -m e2e                            # só os ponta a ponta (Chromium + WebKit)
+uv run pytest -m e2e                            # = make e2e (que builda antes)
 ```
+
+Os alvos do `Makefile` são atalhos para exatamente esses comandos — `make test-cov` roda
+os dois lados (`test-cov-py` + `test-cov-js`), e `make check` encadeia `lint typecheck
+test-cov`. Para variar (um path, `-k`, um marker), use o comando cru: é o que o CI roda.
+Um caso em que o alvo é melhor que o comando cru é o e2e — `make e2e` garante o `bun run
+build` antes, cuja falta faz o teste ser pulado em vez de falhar.
 
 Com a stack em containers, o mesmo sem `uv run` — os binários estão no PATH da imagem:
 `docker compose exec app pytest`. Os e2e são a exceção: exigem os browsers do Playwright,
@@ -63,7 +69,7 @@ resto da suíte não pede a fixture `page` e ignora as flags.
 ### Cobertura de Python
 
 ```bash
-uv run pytest --cov=apps --cov-branch --cov-report=term-missing   # = make test-cov
+uv run pytest --cov=apps --cov-branch --cov-report=term-missing   # = make test-cov-py
 ```
 
 Piso de 90% de linhas e 85% de branches, avaliados em separado sobre o total agregado de
@@ -113,7 +119,7 @@ traduzida (`LANGUAGE_CODE = pt-BR`) e texto quebra o teste na próxima mudança 
 ```bash
 bun run test            # vitest run
 bun run test:watch
-bun run test:coverage   # v8, com o piso do vitest.config.mjs
+bun run test:coverage   # = make test-cov-js; v8, com o piso do vitest.config.mjs
 ```
 
 Teste ao lado do código, em `*.test.js`, com `happy-dom`. Módulo em `frontend/lib/` é
