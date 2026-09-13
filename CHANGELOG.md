@@ -7,6 +7,15 @@ release está documentado em
 
 ## [Unreleased]
 
+### Fixed
+
+- `{% vite_css %}` não emitia, em produção, o CSS de chunks importados pela entrada. Com
+  mais de um entrypoint o Rollup move o código comum — e o CSS que ele importa — para um
+  chunk compartilhado, e o estilo sumia só em produção. A tag agora segue `imports`
+  recursivamente (sem repetir chunk nem arquivo, e à prova de ciclo), emite o CSS das
+  dependências antes do da entrada, e `{% vite_js %}` passa a emitir `modulepreload` para
+  os chunks importados, como no guia de backend integration do Vite.
+
 ## [1.2.2] - 2026-09-12
 
 ### Changed
