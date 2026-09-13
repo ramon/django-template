@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-13
+
 ### Fixed
 
 - `{% vite_css %}` não emitia, em produção, o CSS de chunks importados pela entrada. Com
@@ -175,7 +177,9 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ramon/django-template/compare/v1.2.2...v1.3.0
+[1.2.2]: https://github.com/ramon/django-template/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/ramon/django-template/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ramon/django-template/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ramon/django-template/compare/v1.1.0...v1.1.1
