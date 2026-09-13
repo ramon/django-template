@@ -65,7 +65,9 @@ remover algo listado aqui.
 - `{% vite_css entry %}`, `{% vite_js entry %}`, `{% vite_asset entry %}` — injetam
   os assets do Vite (dev server em `DEBUG`, manifest de build em produção). `entry` é
   o caminho do input relativo à raiz do projeto (ex.: `frontend/entries/app.js`), a
-  mesma chave usada em `vite.config.mjs`.
+  mesma chave usada em `vite.config.mjs`. Em `DEBUG` os assets vêm de
+  `settings.VITE_DEV_SERVER_URL` (derivada de `VITE_PORT`); em produção a tag segue os
+  `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados.
 
 ## Tasks — `apps.core.tasks` (Celery, autodiscover)
 

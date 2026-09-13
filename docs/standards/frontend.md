@@ -36,7 +36,8 @@ relativo à raiz do projeto**, que é a chave que o Vite grava no manifest:
 {% vite_js 'frontend/entries/app.js' %}
 ```
 
-A mesma string vale em desenvolvimento (dev server em `:8001`) e em produção (manifest em
+A mesma string vale em desenvolvimento (dev server em `settings.VITE_DEV_SERVER_URL`, que
+segue `VITE_PORT` — 8001 por padrão) e em produção (manifest em
 `static/dist/.vite/manifest.json`). Entrypoint novo entra em `vite.config.mjs`, em
 `build.rollupOptions.input`, e é referenciado pelo caminho — nunca pelo nome do bundle.
 

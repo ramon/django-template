@@ -44,7 +44,7 @@ uv sync && bun install
 make services                              # database + kv-database, com 5432/6379 no host
 python manage.py migrate
 python manage.py runserver                 # usa config.settings.development
-bun run dev                                # Vite com HMR na porta 8001
+bun run dev                                # Vite com HMR na porta VITE_PORT (8001)
 ```
 
 `make services` sobe os dois com `-f docker-compose.yml -f docker-compose.local-db.yml` —
@@ -71,7 +71,7 @@ build de todo mundo. Se for fazer, registre o ADR.
 | Serviço | Porta interna | Publica no host | Imagem | Papel |
 | --- | --- | --- | --- | --- |
 | `app` | 8000 | `127.0.0.1:${APP_PORT:-8000}` | `Dockerfile.dev` | migra e sobe o `runserver` |
-| `frontend` | 8001 | `127.0.0.1:${VITE_PORT:-8001}` | `oven/bun` | dev server do Vite, com HMR |
+| `frontend` | `${VITE_PORT:-8001}` | `127.0.0.1:${VITE_PORT:-8001}` | `oven/bun` | dev server do Vite, com HMR |
 | `worker` | — | — | `Dockerfile.dev` | worker do Celery |
 | `beat` | — | — | `Dockerfile.dev` | scheduler do Celery |
 | `database` | 5432 | só via `make services` (`${POSTGRES_PORT:-5432}`) | `postgres:18-alpine` | com healthcheck; `app` espera por ele |
@@ -126,10 +126,20 @@ aplicação (`pydantic-settings`, em `config/app_settings/`) — ver
 sem ela, de propósito.
 
 `APP_PORT`, `VITE_PORT`, `PROMETHEUS_PORT`, `POSTGRES_PORT`, `VALKEY_PORT` e
-`COMPOSE_PROJECT_NAME` são lidas pelo `docker compose`, não pelo Django (o
-`pydantic-settings` ignora extras, então `APP_PORT` não conflita com o prefixo `APP_`).
-Servem para conviver com outra stack Docker — ver
-[ADR 0016](../adr/0016-portas-do-compose-internas-por-padrao.md).
+`COMPOSE_PROJECT_NAME` são lidas pelo `docker compose` (o `pydantic-settings` ignora
+extras, então `APP_PORT` não conflita com o prefixo `APP_`). Servem para conviver com
+outra stack Docker — ver [ADR 0016](../adr/0016-portas-do-compose-internas-por-padrao.md).
+
+Duas delas também são lidas fora do compose, para que a porta exista num lugar só:
+
+- `VITE_PORT` — o `vite.config.mjs` escuta nela (`server.port`, e o container do
+  `frontend` publica a mesma porta dos dois lados), e `config/settings/parts/vite.py`
+  monta com ela `VITE_DEV_SERVER_URL`, a URL que `{% vite_js %}` entrega ao browser.
+  `VITE_DEV_SERVER_URL` pode ser definida direto quando o dev server não está em
+  `127.0.0.1`.
+- `APP_PORT` — o `vite.config.mjs` libera CORS para `localhost` e `127.0.0.1` nessa
+  porta. No caminho sem Docker, `runserver` sobe em 8000 independente dela: quem roda o
+  Django em outra porta ajusta `APP_PORT` no `.env` para o CORS acompanhar.
 
 ## Imagens
 

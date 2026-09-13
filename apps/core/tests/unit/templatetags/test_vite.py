@@ -135,3 +135,17 @@ def test_vite_asset_emits_all_css_before_the_script():
     script = html.index("<script")
     assert html.index(_href("assets/shared-abc.css")) < script
     assert html.index(_href("assets/widgets-def.css")) < script
+
+
+def test_vite_js_uses_the_configured_dev_server_url(settings):
+    settings.DEBUG = True
+    settings.VITE_DEV_SERVER_URL = "http://127.0.0.1:9123"
+
+    html = vite.vite_js("frontend/entries/app.js")
+
+    assert '<script type="module" src="http://127.0.0.1:9123/@vite/client"></script>' in html
+    assert (
+        '<script type="module" src="http://127.0.0.1:9123/frontend/entries/app.js"></script>'
+        in html
+    )
+    assert "8001" not in html

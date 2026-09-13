@@ -27,6 +27,9 @@ x-app: &app
     CACHE_URL: redis://kv-database:6379/0
     SESSION_CACHE_URL: redis://kv-database:6379/1
     CELERY_BROKER_URL: redis://kv-database:6379/2
+    # a URL do dev server que a tag do Vite entrega ao browser; repassada para valer
+    # tambem quando VITE_PORT vem do shell, nao do .env
+    VITE_PORT: ${VITE_PORT:-8001}
   volumes:
     - .:/app
   depends_on:
@@ -56,7 +59,12 @@ services:
     image: oven/bun:1-alpine
     working_dir: /app
     ports:
-      - "127.0.0.1:${VITE_PORT:-8001}:8001"
+      # mesma porta dos dois lados: o vite.config.mjs escuta em VITE_PORT, e a URL que
+      # o browser recebe da tag (e o HMR) usa esse numero
+      - "127.0.0.1:${VITE_PORT:-8001}:${VITE_PORT:-8001}"
+    environment:
+      VITE_PORT: ${VITE_PORT:-8001}
+      APP_PORT: ${APP_PORT:-8000}
     volumes:
       - .:/app
       # volume proprio: os binarios nativos instalados aqui (musl) nao sao os

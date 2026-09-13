@@ -10,8 +10,6 @@ from django.utils.safestring import SafeString, mark_safe
 
 register = template.Library()
 
-VITE_DEV_SERVER_URL = "http://127.0.0.1:8001"
-
 
 def _manifest_path() -> Path:
     """
@@ -100,7 +98,8 @@ def _render_dev_js(entry: str) -> str:
 
     This function generates HTML script tags necessary for loading the specified
     JavaScript entry file in a development environment. It includes a tag for the
-    Vite development server client and another for the specified entry file.
+    Vite development server client and another for the specified entry file, both
+    served from `settings.VITE_DEV_SERVER_URL`.
 
     Args:
         entry: The path to the entry JavaScript file.
@@ -109,9 +108,10 @@ def _render_dev_js(entry: str) -> str:
         str: The HTML string containing the script tags for the development
         JavaScript files.
     """
+    dev_server_url = settings.VITE_DEV_SERVER_URL.rstrip("/")
     return (
-        f'<script type="module" src="{VITE_DEV_SERVER_URL}/@vite/client"></script>'
-        f'<script type="module" src="{VITE_DEV_SERVER_URL}/{entry}"></script>'
+        f'<script type="module" src="{dev_server_url}/@vite/client"></script>'
+        f'<script type="module" src="{dev_server_url}/{entry}"></script>'
     )
 
 
