@@ -10,8 +10,6 @@ from django.utils.safestring import SafeString, mark_safe
 
 register = template.Library()
 
-VITE_DEV_SERVER_URL = "http://127.0.0.1:8001"
-
 
 def _manifest_path() -> Path:
     """
@@ -100,7 +98,8 @@ def _render_dev_js(entry: str) -> str:
 
     This function generates HTML script tags necessary for loading the specified
     JavaScript entry file in a development environment. It includes a tag for the
-    Vite development server client and another for the specified entry file.
+    Vite development server client and another for the specified entry file, both
+    served from `settings.VITE_DEV_SERVER_URL`.
 
     Args:
         entry: The path to the entry JavaScript file.
@@ -109,29 +108,67 @@ def _render_dev_js(entry: str) -> str:
         str: The HTML string containing the script tags for the development
         JavaScript files.
     """
+    dev_server_url = settings.VITE_DEV_SERVER_URL.rstrip("/")
     return (
-        f'<script type="module" src="{VITE_DEV_SERVER_URL}/@vite/client"></script>'
-        f'<script type="module" src="{VITE_DEV_SERVER_URL}/{entry}"></script>'
+        f'<script type="module" src="{dev_server_url}/@vite/client"></script>'
+        f'<script type="module" src="{dev_server_url}/{entry}"></script>'
     )
+
+
+def _imported_chunks(entry: str) -> list[dict[str, Any]]:
+    """
+    Collects the chunks an entry imports statically, directly or not.
+
+    With more than one entrypoint Rollup moves shared code to its own chunk, and
+    the CSS that code imports goes with it: the manifest lists that CSS on the
+    shared chunk, not on the entry. Following `imports` is how the backend
+    integration guide recovers it. `dynamicImports` are left out, since those
+    load on demand.
+
+    Args:
+        entry: The manifest key of the entry chunk.
+
+    Returns:
+        list[dict[str, Any]]: Each imported chunk once, dependencies before the
+        chunks that import them -- the order Vite uses in the HTML it builds.
+
+    Raises:
+        KeyError: If `entry` or one of the imported keys is not in the manifest.
+    """
+    # a propria entrada entra em `seen` para um ciclo que volte a ela nao a repetir
+    seen = {entry}
+    chunks: list[dict[str, Any]] = []
+
+    def visit(chunk: dict[str, Any]) -> None:
+        for key in chunk.get("imports", []):
+            if key in seen:
+                continue
+            seen.add(key)
+            imported = _get_chunk(key)
+            visit(imported)
+            chunks.append(imported)
+
+    visit(_get_chunk(entry))
+    return chunks
 
 
 def _render_prod_css(entry: str) -> str:
     """
     Renders the production CSS links for a given entry.
 
-    This function takes an entry key, retrieves the corresponding CSS files,
-    and formats them into HTML link tags referencing the static path of the
-    production CSS files.
+    Includes the CSS of every chunk the entry imports, not only the entry's own:
+    CSS pulled in by shared code lives on the shared chunk.
 
     Args:
         entry: The key representing the entry for which CSS files are rendered.
 
     Returns:
         A string containing the HTML link tags for the CSS files of the given
-        entry.
+        entry, each file once, dependencies first.
     """
-    chunk = _get_chunk(entry)
-    css_files: list[str] = chunk.get("css", [])
+    chunks = [*_imported_chunks(entry), _get_chunk(entry)]
+    # dois chunks podem apontar para o mesmo arquivo de CSS; dict.fromkeys preserva a ordem
+    css_files = dict.fromkeys(css_file for chunk in chunks for css_file in chunk.get("css", []))
 
     return "".join(
         f'<link rel="stylesheet" href="{static(f"dist/{css_file}")}" />' for css_file in css_files
@@ -140,21 +177,25 @@ def _render_prod_css(entry: str) -> str:
 
 def _render_prod_js(entry: str) -> str:
     """
-    Renders the production JavaScript script tag for a given entry.
+    Renders the production JavaScript tags for a given entry.
 
-    The function takes an entry identifier, retrieves the associated chunk file,
-    and generates a string containing an HTML script tag for including the
-    specified JavaScript file in production mode.
+    Emits the entry's module script followed by a `modulepreload` link for each
+    imported chunk, so the browser fetches them in parallel instead of
+    discovering them one import at a time.
 
     Args:
         entry: The identifier of the JavaScript module to render.
 
     Returns:
-        A string containing the HTML script tag for the specified JavaScript entry.
+        A string containing the script tag for the entry and the preload links
+        for its imported chunks.
     """
-    chunk = _get_chunk(entry)
-    src = static(f"dist/{chunk['file']}")
-    return f'<script type="module" src="{src}"></script>'
+    src = static(f"dist/{_get_chunk(entry)['file']}")
+    preloads = "".join(
+        f'<link rel="modulepreload" href="{static(f"dist/{chunk['file']}")}" />'
+        for chunk in _imported_chunks(entry)
+    )
+    return f'<script type="module" src="{src}"></script>{preloads}'
 
 
 @register.simple_tag

@@ -181,7 +181,7 @@ uv sync && bun install
 docker compose -f docker-compose.yml -f docker-compose.local-db.yml up -d database kv-database  # = make services; publica 5432/6379
 python manage.py migrate
 python manage.py runserver                # usa config.settings.development
-bun run dev                               # Vite com HMR na porta 8001
+bun run dev                               # Vite com HMR na porta VITE_PORT (8001)
 
 uv run ruff check . --fix && uv run ruff format .
 uv run mypy apps tests                    # strict

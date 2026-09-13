@@ -7,6 +7,24 @@ release está documentado em
 
 ## [Unreleased]
 
+### Fixed
+
+- `{% vite_css %}` não emitia, em produção, o CSS de chunks importados pela entrada. Com
+  mais de um entrypoint o Rollup move o código comum — e o CSS que ele importa — para um
+  chunk compartilhado, e o estilo sumia só em produção. A tag agora segue `imports`
+  recursivamente (sem repetir chunk nem arquivo, e à prova de ciclo), emite o CSS das
+  dependências antes do da entrada, e `{% vite_js %}` passa a emitir `modulepreload` para
+  os chunks importados, como no guia de backend integration do Vite.
+- A URL do dev server do Vite estava fixa em `http://127.0.0.1:8001` na templatetag:
+  trocar `VITE_PORT` no `.env` mudava a porta publicada pelo compose, mas o browser
+  continuava pedindo os assets na 8001. A URL agora vem de
+  `settings.VITE_DEV_SERVER_URL` (novo `config/settings/parts/vite.py`), derivada de
+  `VITE_PORT` e sobrescrevível pela própria `VITE_DEV_SERVER_URL`; o `vite.config.mjs`
+  escuta em `VITE_PORT` e o serviço `frontend` publica a mesma porta dos dois lados.
+- O CORS do dev server estava fixo em `http://localhost:8000`, ignorando `APP_PORT`.
+  Agora libera `localhost` e `127.0.0.1` na porta de `APP_PORT` — `127.0.0.1` também,
+  porque é o endereço que o `runserver` anuncia e o CORS o recusava.
+
 ## [1.2.2] - 2026-09-12
 
 ### Changed
