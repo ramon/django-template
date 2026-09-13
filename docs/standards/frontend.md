@@ -36,9 +36,19 @@ relativo à raiz do projeto**, que é a chave que o Vite grava no manifest:
 {% vite_js 'frontend/entries/app.js' %}
 ```
 
-A mesma string vale em desenvolvimento (dev server em `:8001`) e em produção (manifest em
+A mesma string vale em desenvolvimento (dev server em `settings.VITE_DEV_SERVER_URL`, que
+segue `VITE_PORT` — 8001 por padrão) e em produção (manifest em
 `static/dist/.vite/manifest.json`). Entrypoint novo entra em `vite.config.mjs`, em
 `build.rollupOptions.input`, e é referenciado pelo caminho — nunca pelo nome do bundle.
+
+Em produção a tag segue o campo `imports` do manifest, como manda o guia de
+[backend integration](https://vite.dev/guide/backend-integration): com mais de um
+entrypoint, o código comum vai para um chunk compartilhado e o CSS que ele importa vai
+junto, listado no chunk compartilhado e não no de entrada. `{% vite_css %}` emite o CSS da
+entrada e de todos os chunks importados (cada arquivo uma vez, dependências antes), e
+`{% vite_js %}` emite um `modulepreload` para cada chunk importado. Em desenvolvimento
+nada disso aparece — o Vite injeta o CSS pelo JS —, então CSS que some só em produção é
+sintoma de chunk compartilhado ignorado.
 
 Fora de `DEBUG`, renderizar template exige manifest. Por isso a suíte injeta um stub
 (`conftest.py`) e os e2e rodam depois de `bun run build`.

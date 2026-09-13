@@ -11,6 +11,7 @@ from .parts.database import *
 from .parts.cache import *
 from .parts.session import *
 from .parts.storage import *
+from .parts.vite import *
 from .parts.logging import *
 from .parts.templates import *
 from .parts.cotton import *

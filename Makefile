@@ -45,7 +45,7 @@ services: ## Sobe so banco e cache, com as portas publicadas no host, para rodar
 runserver: ## Django runserver na maquina (config.settings.development)
 	uv run python manage.py runserver
 
-vite: ## Vite com HMR na porta 8001
+vite: ## Vite com HMR na porta VITE_PORT (8001)
 	bun run dev
 
 migrate: ## Aplica migrations

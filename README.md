@@ -345,7 +345,8 @@ docker compose --profile observability up
 
 Só `app` (`APP_PORT`, 8000), `frontend` (`VITE_PORT`, 8001) e `prometheus`
 (`PROMETHEUS_PORT`, 9090) publicam porta no host, em `127.0.0.1`. Se outra stack Docker já
-usa uma delas, mude o número no `.env`. Banco e cache não expõem porta aqui — use
+usa uma delas, mude o número no `.env` — `VITE_PORT` e `APP_PORT` também chegam ao
+`vite.config.mjs` e à URL do dev server que o Django entrega ao browser. Banco e cache não expõem porta aqui — use
 `docker compose exec database psql -U user app`. Detalhes em
 [`docs/standards/infra.md`](docs/standards/infra.md#serviços-e-portas) e
 [ADR 0016](docs/adr/0016-portas-do-compose-internas-por-padrao.md).
@@ -356,7 +357,7 @@ usa uma delas, mude o número no `.env`. Banco e cache não expõem porta aqui �
 make services                  # database + kv-database, com 5432/6379 no host
 python manage.py migrate
 python manage.py runserver     # usa config.settings.development
-bun run dev                    # Vite com HMR na porta 8001
+bun run dev                    # Vite com HMR na porta VITE_PORT (8001)
 ```
 
 O Django serve HTML e endpoints; o Vite serve os assets com HMR.
