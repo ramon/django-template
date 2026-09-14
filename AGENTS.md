@@ -201,6 +201,25 @@ projeto (`apps/core/management/commands/`) — nenhum dos dois precisa de `--ign
 de comando; sem eles, o `compilemessages` nativo recompilaria os ~1300 catálogos do `.venv`
 e o que viesse de `node_modules` ([`i18n.md`](docs/standards/i18n.md)).
 
+### Dependências
+
+`uv.lock` e `bun.lock` são saída do resolvedor: **toda mudança de dependência passa pelo
+comando da ferramenta**, que grava o manifesto e o lock juntos e coerentes. O lock editado
+à mão pode ficar com versão, hash ou árvore que o resolvedor nunca produziria. O CI instala
+com `uv sync --locked` e `bun install --frozen-lockfile`, que falham quando o lock não bate
+com o manifesto — mas um lock alterado à mão que ainda satisfaz o manifesto passa pelos
+dois, então o comando é a única garantia.
+
+| Para | Python (`pyproject.toml` + `uv.lock`) | JS (`package.json` + `bun.lock`) |
+| --- | --- | --- |
+| adicionar | `uv add <pacote>` (`--dev`, `--optional s3`) | `bun add <pacote>` (`--dev`) |
+| remover | `uv remove <pacote>` | `bun remove <pacote>` |
+| atualizar | `uv lock --upgrade-package <pacote>` | `bun update <pacote>` |
+| conflito no lock | resolva o `pyproject.toml`, fique com um dos lados do lock e rode `uv lock` | resolva o `package.json`, fique com um dos lados do lock e rode `bun install` |
+
+Mudou o `pyproject.toml` ou o `package.json` por outro motivo (versão do release, extra)?
+Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
+
 ## Regras que quebram o CI se ignoradas
 
 1. **A ordem dos imports em `config/settings/base.py` é semântica.** Os parts mutam
