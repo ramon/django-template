@@ -7,6 +7,20 @@ release está documentado em
 
 ## [Unreleased]
 
+### Changed
+
+- A convenção BEM no CSS passa a ser validada pelo Biome, com o plugin GritQL
+  `frontend/styles/bem.grit`, e o Stylelint sai do projeto — dependência,
+  `.stylelintrc.json`, script `lint:css` e hook de pre-commit. As regras são as mesmas
+  (classe em `bloco[__elemento][--modificador]` e keyframes em kebab-case). O script
+  `lint:js` vira `lint:biome`, porque sempre cobriu CSS e JSON também.
+
+### Fixed
+
+- Aninhamento com sufixo do Sass (`.card { &__title {} }`) era aceito pelo Stylelint, mas em
+  CSS nativo compila para `__title.card`, um seletor que não casa com nada. O Biome o
+  rejeita (`noUnknownTypeSelector`), e o `bem.test.js` agora cobre o caso.
+
 ## [1.3.0] - 2026-09-13
 
 ### Fixed

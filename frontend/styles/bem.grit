@@ -1,0 +1,17 @@
+language css
+
+// Grupos nao capturantes (?:...) de proposito: com grupos comuns o Grit tenta ligar
+// cada captura a uma variavel e a regex deixa de casar -- o plugin fica mudo.
+or {
+  CssClassSelector(name = $name) where {
+    not $name <: r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z][a-z0-9]*(?:-[a-z0-9]+)*)?(?:--[a-z][a-z0-9]*(?:-[a-z0-9]+)*)?$",
+    register_diagnostic(
+      span = $name,
+      message = "Classe fora do padrao BEM: bloco[__elemento][--modificador], tudo em kebab-case (ex.: card, card__title, card--featured, card__title--muted)"
+    )
+  },
+  CssKeyframesAtRule(name = $name) where {
+    not $name <: r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+    register_diagnostic(span = $name, message = "Nome de keyframes deve ser kebab-case")
+  }
+}

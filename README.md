@@ -61,7 +61,7 @@ Depois de criar o repositório:
 - Alpine.js para microestado local, quando um controller Stimulus seria demais.
 - Vite para bundling e dev server.
 - Bun para instalar dependências e executar o pipeline frontend.
-- Biome para lint e formatação de JS/CSS; Stylelint para a convenção BEM.
+- Biome para lint e formatação de JS/CSS, e para a convenção BEM (plugin GritQL).
 - Vitest + happy-dom para testes.
 
 ## Estrutura do projeto
@@ -478,10 +478,9 @@ Biome cobre lint e formatação de JS e CSS num binário só, como o Ruff faz no
 testes rodam em Vitest com `happy-dom`, ao lado do código em `*.test.js`:
 
 ```bash
-bun run lint          # biome + stylelint
-bun run lint:js       # só biome
-bun run lint:css      # só a convenção BEM
-bun run lint:fix      # corrige o que é automatizável nos dois
+bun run lint          # biome (inclui a convenção BEM) + ordem das classes do Tailwind
+bun run lint:biome    # só biome
+bun run lint:fix      # corrige o que é automatizável
 bun run format        # só formatação
 bun run test          # vitest run
 bun run test:watch    # vitest em watch
@@ -490,7 +489,7 @@ bun run test:coverage # cobertura v8
 
 #### Convenção BEM no CSS
 
-Classes CSS seguem BEM, validado pelo Stylelint (`.stylelintrc.json`):
+Classes CSS seguem BEM, validado pelo Biome com o plugin `frontend/styles/bem.grit`:
 
 ```
 bloco[__elemento][--modificador]     tudo em kebab-case
@@ -501,12 +500,12 @@ bloco[__elemento][--modificador]     tudo em kebab-case
 
 Rejeita `PascalCase`, `camelCase`, `_underscore` simples, elemento aninhado
 (`.card__title__deep`) e modificador duplicado. A convenção é coberta por testes em
-`frontend/styles/bem.test.js`, que rodam contra o `.stylelintrc.json` real — mudar a regra
-sem atualizar o teste quebra o CI.
+`frontend/styles/bem.test.js`, que roda o Biome com o `biome.json` e o plugin reais — mudar
+a regra sem atualizar o teste quebra o CI.
 
-Formatação e nomenclatura ficam em ferramentas distintas de propósito: um formatter reescreve
-espaçamento e não tem como julgar nomes; o Biome cuida do formato, o Stylelint da convenção.
-Como o Tailwind é utility-first, a regra vale para o CSS próprio do projeto — as utilitárias
+O Biome não tem regra nativa para padrão de nome de classe; o plugin GritQL a acrescenta sem
+uma segunda ferramenta de lint. Aninhamento com sufixo do Sass (`.card { &__title {} }`) é
+rejeitado: em CSS nativo ele compila para `__title.card`, não para `.card__title`. Como o Tailwind é utility-first, a regra vale para o CSS próprio do projeto — as utilitárias
 aplicadas no HTML não passam por aqui.
 
 O pre-commit roda o Biome nos arquivos JS/CSS/JSON alterados, junto do Ruff nos Python.
@@ -540,7 +539,7 @@ Prefira seletores por `name`, `id` ou papel ARIA a texto visível — a interfac
 (`LANGUAGE_CODE = pt-BR`) e textos quebram os testes a cada mudança de idioma.
 
 Instale os hooks de pre-commit uma vez com `pre-commit install`. Eles rodam, a cada commit:
-Ruff (`check --fix` e `format`), Biome, o Stylelint da convenção BEM e as verificações de
+Ruff (`check --fix` e `format`), Biome (com a convenção BEM) e as verificações de
 higiene — newline final, espaço em branco à direita, fim de linha LF e sintaxe de YAML,
 TOML e JSON.
 
@@ -564,7 +563,7 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 |-----|--------------|
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
-| `frontend` | Biome, Stylelint (BEM), Vitest, `vite build` e a presença do manifest |
+| `frontend` | Biome (com o plugin de BEM), Vitest, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` em Chromium e WebKit (Safari) reais, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |
 

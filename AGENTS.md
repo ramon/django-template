@@ -238,7 +238,7 @@ Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
    `Any` nem `type: ignore` sem comentário ao lado dizendo o porquê — é o padrão dos
    silenciamentos que já existem no `pyproject.toml`.
 6. **Classe CSS segue BEM** (`bloco__elemento--modificador`, kebab-case), validado pelo
-   Stylelint e coberto por `frontend/styles/bem.test.js`. Mudar a regra sem atualizar o
+   plugin do Biome em `frontend/styles/bem.grit` e coberto por `frontend/styles/bem.test.js`. Mudar a regra sem atualizar o
    teste quebra o CI.
 7. **A chave do `{% vite_css %}`/`{% vite_js %}` é o caminho do input relativo à raiz**
    (`frontend/entries/app.js`), não o nome do bundle. Entrypoint novo entra em

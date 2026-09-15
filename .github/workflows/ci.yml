@@ -116,7 +116,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
-      - name: lint (biome em js/css, stylelint para BEM)
+      - name: lint (biome em js/css, com o plugin de BEM)
         run: bun run lint
 
       - name: vitest com cobertura
