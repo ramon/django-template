@@ -63,6 +63,8 @@ bun.lockb
 .vite
 # saida do `vite build` (outDir), dentro de STATICFILES_DIRS
 static/dist/
+# CSS temporario do frontend/styles/bem.test.js, apagado ao fim da suite
+frontend/.bem-test-*/
 
 # Vitest
 coverage/

@@ -79,7 +79,7 @@ esse gancho quebra todo `x-data` que venha de swap.
 ## CSS
 
 Tailwind é utility-first e as utilitárias vão no HTML. O CSS próprio do projeto segue
-**BEM**, validado pelo Stylelint:
+**BEM**, validado pelo Biome:
 
 ```text
 bloco[__elemento][--modificador]      tudo em kebab-case
@@ -88,12 +88,14 @@ bloco[__elemento][--modificador]      tudo em kebab-case
 ```
 
 Rejeitados: `PascalCase`, `camelCase`, `_underscore`, elemento aninhado
-(`.card__title__deep`) e modificador duplicado. A regra vive em `.stylelintrc.json` e é
-coberta por `frontend/styles/bem.test.js`, que roda contra o arquivo real — mudar a regra
-sem atualizar o teste quebra o CI.
+(`.card__title__deep`) e modificador duplicado. A regra vive no plugin GritQL
+`frontend/styles/bem.grit`, ligado em `biome.json`, e é coberta por
+`frontend/styles/bem.test.js`, que roda o Biome com a configuração real — mudar a regra sem
+atualizar o teste quebra o CI.
 
-Formatação e nomenclatura são ferramentas distintas de propósito: o Biome cuida do formato
-(JS, CSS, JSON), o Stylelint da convenção de nomes.
+Escreva o seletor BEM completo (`.card__title {}`), sem montá-lo com sufixo do Sass
+(`.card { &__title {} }`): em CSS nativo o sufixo compila para `__title.card`, um seletor que não casa com
+nada, e o Biome o rejeita (`noUnknownTypeSelector`).
 
 ### Tema: tokens semânticos e dark mode
 
