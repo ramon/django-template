@@ -7,6 +7,8 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-15
+
 ### Changed
 
 - A convenção BEM no CSS passa a ser validada pelo Biome, com o plugin GritQL
@@ -191,7 +193,8 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/ramon/django-template/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ramon/django-template/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/ramon/django-template/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/ramon/django-template/compare/v1.2.0...v1.2.1
