@@ -23,7 +23,7 @@ jobs:
       - uses: astral-sh/setup-uv@v10.0.1
         with:
           enable-cache: true
-      - run: uv sync --frozen
+      - run: uv sync --locked
       - name: ruff check
         run: uv run ruff check --output-format=github .
       - name: ruff format
@@ -62,7 +62,7 @@ jobs:
       - uses: astral-sh/setup-uv@v10.0.1
         with:
           enable-cache: true
-      - run: uv sync --frozen
+      - run: uv sync --locked
 
       - name: django check (development)
         run: uv run python manage.py check
@@ -116,7 +116,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
-      - name: lint (biome em js/css, stylelint para BEM)
+      - name: lint (biome em js/css, com o plugin de BEM)
         run: bun run lint
 
       - name: vitest com cobertura
@@ -161,7 +161,7 @@ jobs:
         with:
           enable-cache: true
       - uses: oven-sh/setup-bun@v2
-      - run: uv sync --frozen
+      - run: uv sync --locked
       - run: bun install --frozen-lockfile
 
       - name: build do frontend
@@ -273,5 +273,5 @@ jobs:
       - uses: astral-sh/setup-uv@v10.0.1
         with:
           enable-cache: true
-      - run: uv sync --frozen
+      - run: uv sync --locked
       - run: uv run mypy apps tests

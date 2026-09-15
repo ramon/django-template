@@ -177,8 +177,8 @@ Instale uma vez:
 pre-commit install
 ```
 
-A cada commit roda: Ruff (`check --fix` e `format`), Biome nos JS/CSS/JSON alterados, o
-Stylelint da convenção BEM e a higiene de arquivo — newline final, espaço à direita, fim
+A cada commit roda: Ruff (`check --fix` e `format`), Biome nos JS/CSS/JSON alterados (com
+a convenção BEM) e a higiene de arquivo — newline final, espaço à direita, fim
 de linha LF e sintaxe de YAML, TOML e JSON.
 
 Dois detalhes deliberados no `.pre-commit-config.yaml`:
@@ -197,7 +197,7 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 | --- | --- |
 | `lint` | `ruff check` e `ruff format --check` |
 | `test` | `manage.py check` nos três cenários, migrations em dia, catálogos em dia, `pytest` com cobertura contra Postgres e Valkey |
-| `frontend` | Biome, Stylelint (BEM), Vitest com o piso de cobertura, `vite build` e a presença do manifest |
+| `frontend` | Biome (com o plugin de BEM), Vitest com o piso de cobertura, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` num Chromium real; anexa `test-results/` se falhar |
 | `docker` | build da imagem de produção, ausência de ferramenta de build e de dependência de dev, e a imagem subindo e respondendo `/health/` |
 | `typecheck` | `mypy apps tests` em modo strict |

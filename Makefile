@@ -63,7 +63,7 @@ messages: ## Extrai e compila catalogos de traducao (nao roda no container de de
 
 ## Quality gates, na maquina -------------------------------------------------
 
-lint: ## Ruff (check + format --check) e Biome/Stylelint
+lint: ## Ruff (check + format --check), Biome e rustywind
 	uv run ruff check . && uv run ruff format --check .
 	bun run lint
 
