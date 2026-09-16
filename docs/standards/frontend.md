@@ -46,7 +46,19 @@ Em produção a tag segue o campo `imports` do manifest, como manda o guia de
 entrypoint, o código comum vai para um chunk compartilhado e o CSS que ele importa vai
 junto, listado no chunk compartilhado e não no de entrada. `{% vite_css %}` emite o CSS da
 entrada e de todos os chunks importados (cada arquivo uma vez, dependências antes), e
-`{% vite_js %}` emite um `modulepreload` para cada chunk importado. Em desenvolvimento
+`{% vite_js %}` emite um `modulepreload` para cada chunk importado.
+
+O `modulepreload` só adianta alguma coisa se a URL dele for a mesma que o `import` do
+chunk pede. Os chunks se importam pelo nome que o Vite gerou (`./shared-Ab12Cd34.js`), então
+a saída de `dist/` é publicada com esse nome, sem o hash do Django:
+`ViteManifestStaticFilesStorage` (`apps/core/storage.py`) a deixa de fora do re-hash, e
+`add_vite_cache_headers` (`config/settings/parts/storage.py`) a serve como `immutable`. Com
+o hash do Django, o browser baixaria cada chunk duas vezes — um nome para o preload, outro
+para o import. Ver [ADR 0018](../adr/0018-saida-do-vite-publicada-sem-o-hash-do-django.md).
+Mudar o padrão de nome do Vite (`build.rollupOptions.output`) exige rever a regex desses
+cabeçalhos.
+
+Em desenvolvimento
 nada disso aparece — o Vite injeta o CSS pelo JS —, então CSS que some só em produção é
 sintoma de chunk compartilhado ignorado.
 

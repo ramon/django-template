@@ -1,6 +1,6 @@
 # 0002. Vite como pipeline de assets, em modo backend integration
 
-- **Status**: Aceito
+- **Status**: Aceito — o parágrafo sobre o storage de estáticos (URLs "com hash") foi substituído por [0018](0018-saida-do-vite-publicada-sem-o-hash-do-django.md)
 - **Data**: 2026-08-18
 - **Relacionados**: 0003, `docs/standards/frontend.md`
 
