@@ -7,6 +7,7 @@ from collections.abc import Iterator
 import pytest
 
 import config.settings.parts.vite as vite_part
+from config.settings.parts.paths import STATIC_DIR
 
 
 @pytest.fixture(autouse=True)
@@ -48,3 +49,10 @@ def test_explicit_dev_server_url_wins_over_vite_port(monkeypatch: pytest.MonkeyP
     importlib.reload(vite_part)
 
     assert vite_part.VITE_DEV_SERVER_URL == "http://vite.localhost:9000"
+
+
+def test_manifest_defaults_to_the_vite_build_output() -> None:
+    importlib.reload(vite_part)
+
+    assert vite_part.VITE_MANIFEST_PATH == STATIC_DIR / "dist" / ".vite" / "manifest.json"
+    assert vite_part.VITE_MANIFEST_LOADER == "apps.core.templatetags.vite.read_manifest_file"

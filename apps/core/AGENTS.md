@@ -70,6 +70,10 @@ remover algo listado aqui.
   `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados, com o
   nome de arquivo que o manifest do Vite registra (o storage abaixo não re-hasheia
   `dist/`).
+- `read_manifest_file() -> dict[str, Any]` — loader padrão do manifest do Vite: lê
+  `settings.VITE_MANIFEST_PATH`. Para ler de outro lugar, aponte
+  `settings.VITE_MANIFEST_LOADER` para outra função sem argumentos com o mesmo retorno;
+  a tag a chama uma vez por processo.
 
 ## Storage de estáticos — `apps.core.storage`
 

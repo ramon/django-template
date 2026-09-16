@@ -7,6 +7,15 @@ release está documentado em
 
 ## [Unreleased]
 
+### Added
+
+- O manifest do Vite pode ser lido de outro lugar. `settings.VITE_MANIFEST_PATH` troca o
+  arquivo (padrão: `static/dist/.vite/manifest.json`), e `settings.VITE_MANIFEST_LOADER`
+  aceita o caminho pontilhado de uma função sem argumentos que devolve o manifest já
+  parseado, para quando ele não está no disco (bucket, CDN). O padrão é
+  `apps.core.templatetags.vite.read_manifest_file`. A tag continua chamando o loader uma
+  vez por processo.
+
 ### Fixed
 
 - Em produção, cada chunk JS importado era baixado duas vezes. O storage de estáticos

@@ -1,4 +1,5 @@
 import json
+from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -6,6 +7,7 @@ from typing import Any
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
+from django.utils.module_loading import import_string
 from django.utils.safestring import SafeString, mark_safe
 
 register = template.Library()
@@ -13,39 +15,59 @@ register = template.Library()
 
 def _manifest_path() -> Path:
     """
-    Retrieves the path to the Vite manifest file.
-
-    The function constructs and returns the path to the Vite manifest file,
-    which is located in the "static/dist/.vite" directory relative to the
-    project's base directory.
+    Retrieves the path of the Vite manifest file.
 
     Returns:
-        Path: A `Path` object pointing to the Vite manifest file.
+        Path: `settings.VITE_MANIFEST_PATH`, by default the manifest `bun run build`
+        writes to `static/dist/.vite/`.
     """
-    return settings.BASE_DIR / "static" / "dist" / ".vite" / "manifest.json"
+    return Path(settings.VITE_MANIFEST_PATH)
 
 
-@lru_cache(maxsize=1)
-def _load_manifest() -> dict[str, Any]:
+def read_manifest_file() -> dict[str, Any]:
     """
-    Loads and caches a JSON manifest file.
+    Reads the Vite manifest from `settings.VITE_MANIFEST_PATH`.
 
-    This function is designed to read and parse a JSON manifest file from a predefined
-    path. The function utilizes an LRU cache with a maximum size of 1 to ensure the
-    manifest is only loaded and parsed once during the application's lifecycle, unless
-    the cache is explicitly cleared. This improves performance by avoiding redundant
-    disk I/O and parsing operations.
+    The default `VITE_MANIFEST_LOADER`. A replacement takes no arguments and
+    returns the parsed manifest in the same shape.
 
     Returns:
-        dict[str, Any]: The parsed JSON content of the manifest file.
+        dict[str, Any]: The parsed manifest.
 
     Raises:
         JSONDecodeError: If the file's contents cannot be parsed into a valid JSON object.
         FileNotFoundError: If the manifest file does not exist at the expected location.
     """
-    manifest_path = _manifest_path()
-    manifest: dict[str, Any] = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest: dict[str, Any] = json.loads(_manifest_path().read_text(encoding="utf-8"))
     return manifest
+
+
+def _read_manifest() -> dict[str, Any]:
+    """
+    Loads the manifest with the function named in `settings.VITE_MANIFEST_LOADER`.
+
+    Returns:
+        dict[str, Any]: The manifest the loader returns.
+
+    Raises:
+        ImportError: If `VITE_MANIFEST_LOADER` is not an importable dotted path.
+    """
+    loader: Callable[[], dict[str, Any]] = import_string(settings.VITE_MANIFEST_LOADER)
+    return loader()
+
+
+@lru_cache(maxsize=1)
+def _load_manifest() -> dict[str, Any]:
+    """
+    Loads the Vite manifest once per process.
+
+    The manifest only changes with a new build, which comes with a new deploy, and
+    a loader that reads from a bucket would otherwise cost a round trip per render.
+
+    Returns:
+        dict[str, Any]: The manifest returned by the configured loader.
+    """
+    return _read_manifest()
 
 
 def _get_chunk(entry: str) -> dict[str, Any]:
