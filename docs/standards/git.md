@@ -162,12 +162,51 @@ também tenha `feat` e `fix`:
 
 ### Processo de release
 
-Dentro de `release/X.Y.Z` (ou `hotfix/X.Y.Z`):
+Dentro de `release/X.Y.Z` (ou `hotfix/X.Y.Z`, que pula o passo 1):
 
-1. Mover as entradas de `## [Unreleased]` para uma seção nova `## [X.Y.Z] - AAAA-MM-DD`.
-2. Bumpar `project.version` em `pyproject.toml` para `X.Y.Z`.
-3. Commitar as duas mudanças juntas: `chore(release): bump version to X.Y.Z`.
-4. Merge em `master`, tag `vX.Y.Z` na cabeça de `master`, merge de volta em `develop`.
+1. **Atualizar as dependências dentro das faixas declaradas** — ver
+   [Atualização de dependências antes do release](#atualização-de-dependências-antes-do-release).
+2. Mover as entradas de `## [Unreleased]` para uma seção nova `## [X.Y.Z] - AAAA-MM-DD`, e
+   acrescentar o link de comparação `[X.Y.Z]` no rodapé do arquivo.
+3. Bumpar `project.version` em `pyproject.toml` para `X.Y.Z` e rodar `uv lock`.
+4. Commitar as três mudanças juntas: `chore(release): bump version to X.Y.Z`.
+5. Merge em `master`, tag `vX.Y.Z` na cabeça de `master`, merge de volta em `develop`.
+
+O hotfix pula a atualização porque existe para sair rápido com uma correção, e dependência
+nova é mudança que ele não pediu.
+
+### Atualização de dependências antes do release
+
+O Dependabot abre PR semanal, mas PR aberto não é dependência atualizada: sem esta etapa, um
+release sai com o lock de quando alguém lembrou de mergear o último. Todo release carrega as
+versões mais novas que as faixas do `pyproject.toml` e do `package.json` permitem.
+
+1. Na `release/X.Y.Z`, rode `make deps-upgrade`:
+   ```bash
+   uv lock --upgrade && uv sync   # Python: tudo, dentro das faixas do pyproject.toml
+   bun update                     # JS: idem, dentro das faixas do package.json
+   ```
+   Nenhum dos dois atravessa faixa declarada — `django>=6.0,<6.1` continua em 6.0.x.
+   `bun update --latest` e editar faixa à mão ficam fora daqui.
+2. Leia o diff dos locks (`git diff --stat uv.lock bun.lock` e os pacotes que mudaram de
+   minor). Minor com changelog de quebra merece a leitura antes dos gates, não depois.
+3. Rode os gates inteiros de [`quality-gates.md`](quality-gates.md), **inclusive `make e2e`
+   e `make prod-image`**: dependência muda o que vai para a imagem, e o release é o último
+   ponto antes de `master`.
+4. Commit próprio, antes do bump: `build(deps): atualizar dependências para o X.Y.Z`. Entrada
+   no changelog só se houver efeito visível — `Security` para correção de vulnerabilidade
+   conhecida, `Changed` para comportamento que muda; atualização silenciosa não gera entrada.
+
+**Se um pacote quebra algo**, ele não é corrigido no release. Volte os locks
+(`git checkout -- uv.lock bun.lock`), atualize pacote a pacote com
+`uv lock --upgrade-package <pacote>` e `bun update <pacote>`, deixando o problemático na
+versão anterior, e abra uma `feature/` para a adaptação. O mesmo vale para **subir uma
+faixa** (major, ou `django<6.1` → `<6.2`): é tarefa própria, com leitura de changelog e,
+se estrutural, ADR — nunca um efeito colateral do release.
+
+Os PRs do Dependabot que a atualização tornou redundantes são fechados por ele mesmo quando
+a versão já está no lock de `develop`. Fechar os que sobrarem é do humano
+([ADR 0017](../adr/0017-fronteira-de-acoes-de-agente-no-github.md)).
 
 ## Pre-commit
 

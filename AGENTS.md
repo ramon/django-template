@@ -217,6 +217,10 @@ dois, então o comando é a única garantia.
 | atualizar | `uv lock --upgrade-package <pacote>` | `bun update <pacote>` |
 | conflito no lock | resolva o `pyproject.toml`, fique com um dos lados do lock e rode `uv lock` | resolva o `package.json`, fique com um dos lados do lock e rode `bun install` |
 
+Todo release começa atualizando as dependências dentro das faixas declaradas
+(`make deps-upgrade`), com gates completos antes do bump — o roteiro está em
+[`git.md#atualização-de-dependências-antes-do-release`](docs/standards/git.md#atualização-de-dependências-antes-do-release).
+
 Mudou o `pyproject.toml` ou o `package.json` por outro motivo (versão do release, extra)?
 Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
 
