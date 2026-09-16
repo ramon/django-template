@@ -7,6 +7,13 @@ release está documentado em
 
 ## [Unreleased]
 
+### Added
+
+- `make deps-upgrade` atualiza as dependências Python (`uv lock --upgrade`) e JS
+  (`bun update`) dentro das faixas declaradas. O processo de release
+  (`docs/standards/git.md`) passa a começar por essa atualização, com os gates completos
+  (inclusive e2e e imagem de produção) antes do bump de versão.
+
 ## [1.4.0] - 2026-09-16
 
 ### Added

@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help \
-	setup services up up-d down build logs migrate makemigrations superuser \
+	setup deps-upgrade services up up-d down build logs migrate makemigrations superuser \
 	runserver vite \
 	lint lint-fix format typecheck test test-cov test-cov-py test-cov-js \
 	e2e messages check \
@@ -19,6 +19,10 @@ help: ## Lista os comandos disponiveis
 setup: ## Prepara o .env e instala dependencias Python e JS na maquina
 	test -f .env || cp .env.example .env
 	uv sync && bun install
+
+deps-upgrade: ## Atualiza dependencias Python e JS dentro das faixas declaradas (passo do release)
+	uv lock --upgrade && uv sync
+	bun update
 
 ## Stack inteira em containers ----------------------------------------------
 
