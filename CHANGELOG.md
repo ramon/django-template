@@ -7,6 +7,29 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-16
+
+### Added
+
+- O manifest do Vite pode ser lido de outro lugar. `settings.VITE_MANIFEST_PATH` troca o
+  arquivo (padrão: `static/dist/.vite/manifest.json`), e `settings.VITE_MANIFEST_LOADER`
+  aceita o caminho pontilhado de uma função sem argumentos que devolve o manifest já
+  parseado, para quando ele não está no disco (bucket, CDN). O padrão é
+  `apps.core.templatetags.vite.read_manifest_file`. A tag continua chamando o loader uma
+  vez por processo.
+
+### Fixed
+
+- Em produção, cada chunk JS importado era baixado duas vezes. O storage de estáticos
+  acrescentava o hash do Django ao nome que o Vite já versiona, e o `{% static %}` devolvia
+  esse outro nome: o `modulepreload` baixava uma cópia, e o `import` dentro dos chunks
+  baixava a outra, esta com `max-age=60`. O novo `apps.core.storage.ViteManifestStaticFilesStorage`
+  publica `dist/` com o nome e o conteúdo que o Vite gerou, sem cópias com hash e sem
+  reescrever o `url()` dos CSS de `dist/`. Os arquivos versionados pelo Vite saem com
+  `Cache-Control: max-age=315360000, public, immutable` via
+  `SERVESTATIC_ADD_HEADERS_FUNCTION`. O resto dos estáticos continua com o hash do Django
+  ([ADR 0018](docs/adr/0018-saida-do-vite-publicada-sem-o-hash-do-django.md)).
+
 ## [1.3.1] - 2026-09-15
 
 ### Changed
@@ -193,7 +216,8 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/ramon/django-template/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/ramon/django-template/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ramon/django-template/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/ramon/django-template/compare/v1.2.1...v1.2.2
