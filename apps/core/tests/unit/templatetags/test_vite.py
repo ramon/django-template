@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from django.templatetags.static import static
 
@@ -28,7 +30,7 @@ def test_vite_asset_combines_css_and_js():
 # Two entrypoints sharing code, the shape Rollup produces as soon as there is more
 # than one input: the common module -- and the CSS it imports -- moves to a shared
 # chunk, and the manifest lists that CSS there, not on the entries.
-MULTI_ENTRY_MANIFEST = {
+MULTI_ENTRY_MANIFEST: dict[str, dict[str, Any]] = {
     "frontend/entries/app.js": {
         "file": "assets/app-a1.js",
         "src": "frontend/entries/app.js",
@@ -149,3 +151,43 @@ def test_vite_js_uses_the_configured_dev_server_url(settings):
         in html
     )
     assert "8001" not in html
+
+
+@pytest.fixture
+def collected_multi_entry(collect_static):
+    """The files of `MULTI_ENTRY_MANIFEST`, collected by the production storage."""
+    files = {
+        f"dist/{file}": "/* built by vite */"
+        for chunk in MULTI_ENTRY_MANIFEST.values()
+        for file in [chunk["file"], *chunk.get("css", [])]
+    }
+    return collect_static(files)
+
+
+@pytest.mark.usefixtures("multi_entry_manifest", "collected_multi_entry")
+def test_vite_js_requests_chunks_by_the_name_in_the_vite_manifest():
+    """The chunks import each other by the name Vite wrote. A preload or entry URL
+    under any other name is a second module: the browser downloads it twice."""
+    html = vite.vite_js("frontend/entries/admin.js")
+
+    assert '<script type="module" src="/static/dist/assets/admin-b2.js"></script>' in html
+    for file in ("assets/shared-abc.js", "assets/widgets-def.js"):
+        assert f'<link rel="modulepreload" href="/static/dist/{file}" />' in html
+
+
+@pytest.mark.usefixtures("multi_entry_manifest", "collected_multi_entry")
+def test_vite_css_requests_files_by_the_name_in_the_vite_manifest():
+    html = vite.vite_css("frontend/entries/admin.js")
+
+    assert 'href="/static/dist/assets/shared-abc.css"' in html
+
+
+@pytest.mark.usefixtures("multi_entry_manifest")
+def test_vite_js_keeps_vite_names_when_static_url_is_a_cdn(collect_static, settings):
+    settings.STATIC_URL = "https://cdn.example.com/static/"
+    collect_static({"dist/assets/app-a1.js": "", "dist/assets/shared-abc.js": ""})
+
+    html = vite.vite_js("frontend/entries/app.js")
+
+    assert 'src="https://cdn.example.com/static/dist/assets/app-a1.js"' in html
+    assert 'href="https://cdn.example.com/static/dist/assets/shared-abc.js"' in html
