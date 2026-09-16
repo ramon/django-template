@@ -67,7 +67,18 @@ remover algo listado aqui.
   o caminho do input relativo à raiz do projeto (ex.: `frontend/entries/app.js`), a
   mesma chave usada em `vite.config.mjs`. Em `DEBUG` os assets vêm de
   `settings.VITE_DEV_SERVER_URL` (derivada de `VITE_PORT`); em produção a tag segue os
-  `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados.
+  `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados, com o
+  nome de arquivo que o manifest do Vite registra (o storage abaixo não re-hasheia
+  `dist/`).
+
+## Storage de estáticos — `apps.core.storage`
+
+- `ViteManifestStaticFilesStorage` — backend de `STORAGES["staticfiles"]`: o
+  `CompressedManifestStaticFilesStorage` do ServeStatic, mas com `dist/` (saída do Vite)
+  fora do hash e da reescrita de `url()` do Django; os demais estáticos seguem com hash.
+  Os arquivos versionados do Vite ganham `immutable` por
+  `config.settings.parts.storage.add_vite_cache_headers`
+  (`SERVESTATIC_ADD_HEADERS_FUNCTION`).
 
 ## Tasks — `apps.core.tasks` (Celery, autodiscover)
 

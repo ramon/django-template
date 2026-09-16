@@ -231,8 +231,9 @@ o `Dockerfile` a executa no estágio `assets`, e o job `test` do CI antes do pyt
 ## Frontend: Vite + Bun
 
 O build sai em `static/dist/`, que está dentro de `STATICFILES_DIRS` — assim o
-`collectstatic` leva os assets para `public/static/` e o `{% static %}` resolve as URLs com
-hash.
+`collectstatic` leva os assets para `public/static/`. O que está em `dist/` mantém o nome
+que o Vite gerou, já versionado pelo conteúdo; o resto recebe o hash do Django
+([ADR 0018](docs/adr/0018-saida-do-vite-publicada-sem-o-hash-do-django.md)).
 
 As template tags ficam em `apps/core/templatetags/vite.py` e expõem `{% vite_css %}`,
 `{% vite_js %}` e `{% vite_asset %}`. **O argumento é a chave do manifest**, que o Vite gera

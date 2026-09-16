@@ -103,7 +103,7 @@ COPY --from=assets --chown=app:app /app/locale    ./locale/
 
 # O unico pedaco do build do Vite que e' lido em runtime: {% vite_js %} resolve a
 # entrada por aqui. Os bundles em si ja foram publicados em public/static/ pelo
-# collectstatic, com hash no nome.
+# collectstatic, com o nome que o Vite deu (ver ADR 0018).
 COPY --from=frontend --chown=app:app /build/static/dist/.vite ./static/dist/.vite
 
 USER app

@@ -7,6 +7,18 @@ release está documentado em
 
 ## [Unreleased]
 
+### Fixed
+
+- Em produção, cada chunk JS importado era baixado duas vezes. O storage de estáticos
+  acrescentava o hash do Django ao nome que o Vite já versiona, e o `{% static %}` devolvia
+  esse outro nome: o `modulepreload` baixava uma cópia, e o `import` dentro dos chunks
+  baixava a outra, esta com `max-age=60`. O novo `apps.core.storage.ViteManifestStaticFilesStorage`
+  publica `dist/` com o nome e o conteúdo que o Vite gerou, sem cópias com hash e sem
+  reescrever o `url()` dos CSS de `dist/`. Os arquivos versionados pelo Vite saem com
+  `Cache-Control: max-age=315360000, public, immutable` via
+  `SERVESTATIC_ADD_HEADERS_FUNCTION`. O resto dos estáticos continua com o hash do Django
+  ([ADR 0018](docs/adr/0018-saida-do-vite-publicada-sem-o-hash-do-django.md)).
+
 ## [1.3.1] - 2026-09-15
 
 ### Changed
