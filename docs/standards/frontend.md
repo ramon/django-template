@@ -50,6 +50,18 @@ entrada e de todos os chunks importados (cada arquivo uma vez, dependências ant
 nada disso aparece — o Vite injeta o CSS pelo JS —, então CSS que some só em produção é
 sintoma de chunk compartilhado ignorado.
 
+Fora de `DEBUG`, a tag lê o manifest uma vez por processo, pela função em
+`settings.VITE_MANIFEST_LOADER`. A padrão, `apps.core.templatetags.vite.read_manifest_file`,
+lê o arquivo em `settings.VITE_MANIFEST_PATH` (`static/dist/.vite/manifest.json`). Quando o
+manifest não estiver no disco da aplicação, por exemplo publicado num bucket junto dos
+assets, aponte `VITE_MANIFEST_LOADER` para uma função sem argumentos que o busque e devolva
+o `dict` já parseado:
+
+```python
+# config/settings/parts/vite.py
+VITE_MANIFEST_LOADER = "apps.core.vite_manifest.load_from_bucket"
+```
+
 Fora de `DEBUG`, renderizar template exige manifest. Por isso a suíte injeta um stub
 (`conftest.py`) e os e2e rodam depois de `bun run build`.
 

@@ -68,6 +68,10 @@ remover algo listado aqui.
   mesma chave usada em `vite.config.mjs`. Em `DEBUG` os assets vêm de
   `settings.VITE_DEV_SERVER_URL` (derivada de `VITE_PORT`); em produção a tag segue os
   `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados.
+- `read_manifest_file() -> dict[str, Any]` — loader padrão do manifest do Vite: lê
+  `settings.VITE_MANIFEST_PATH`. Para ler de outro lugar, aponte
+  `settings.VITE_MANIFEST_LOADER` para outra função sem argumentos com o mesmo retorno;
+  a tag a chama uma vez por processo.
 
 ## Tasks — `apps.core.tasks` (Celery, autodiscover)
 

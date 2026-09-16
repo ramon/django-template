@@ -1,3 +1,6 @@
+import json
+from functools import lru_cache
+
 import pytest
 from django.templatetags.static import static
 
@@ -149,3 +152,60 @@ def test_vite_js_uses_the_configured_dev_server_url(settings):
         in html
     )
     assert "8001" not in html
+
+
+REMOTE_MANIFEST = {
+    "frontend/entries/app.js": {"file": "assets/app-remote.js", "src": "frontend/entries/app.js"},
+}
+remote_calls: list[None] = []
+
+
+def load_remote_manifest():
+    """Stands in for a loader that fetches the manifest from a bucket or a CDN."""
+    remote_calls.append(None)
+    return REMOTE_MANIFEST
+
+
+@pytest.fixture
+def configured_manifest(monkeypatch):
+    """
+    Loads the manifest the way production does, from the configured loader.
+
+    The session stub in the root conftest replaces `_load_manifest` when there is
+    no build, and the real one caches across tests; a fresh cache over the
+    uncached reader sidesteps both.
+    """
+    remote_calls.clear()
+    monkeypatch.setattr(vite, "_load_manifest", lru_cache(maxsize=1)(vite._read_manifest))
+
+
+@pytest.mark.usefixtures("configured_manifest")
+def test_default_loader_reads_the_file_at_vite_manifest_path(settings, tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(REMOTE_MANIFEST), encoding="utf-8")
+    settings.VITE_MANIFEST_PATH = manifest
+
+    html = vite.vite_js("frontend/entries/app.js")
+
+    assert f'src="{static("dist/assets/app-remote.js")}"' in html
+
+
+@pytest.mark.usefixtures("configured_manifest")
+def test_vite_manifest_loader_replaces_the_file(settings, tmp_path):
+    settings.VITE_MANIFEST_PATH = tmp_path / "does-not-exist.json"
+    settings.VITE_MANIFEST_LOADER = f"{__name__}.load_remote_manifest"
+
+    html = vite.vite_js("frontend/entries/app.js")
+
+    assert f'src="{static("dist/assets/app-remote.js")}"' in html
+
+
+@pytest.mark.usefixtures("configured_manifest")
+def test_vite_manifest_loader_runs_once_per_process(settings):
+    """A remote loader means a network round trip; it must not happen per render."""
+    settings.VITE_MANIFEST_LOADER = f"{__name__}.load_remote_manifest"
+
+    vite.vite_js("frontend/entries/app.js")
+    vite.vite_css("frontend/entries/app.js")
+
+    assert len(remote_calls) == 1
