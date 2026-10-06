@@ -220,7 +220,7 @@ dois, então o comando é a única garantia.
 Mudou o `pyproject.toml` ou o `package.json` por outro motivo (versão do release, extra)?
 Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
 
-## Regras que quebram o CI se ignoradas
+## Regras de validação
 
 1. **A ordem dos imports em `config/settings/base.py` é semântica.** Os parts mutam
    `INSTALLED_APPS`/`MIDDLEWARE` em sequência; o arquivo é `# ruff: noqa: I001` de
@@ -248,7 +248,7 @@ Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
    de dev** — o job `docker` do CI verifica. Mesma regra para a paridade
    `Procfile` ↔ `docker-compose.yml`: processo novo entra nos dois
    ([`infra.md`](docs/standards/infra.md)).
-10. **Cobertura de teste em Python tem piso de 90% de linhas e 85% de branches**,
+10. **A validação local de cobertura em Python tem piso de 90% de linhas e 85% de branches**,
     avaliados em separado sobre o total agregado de `apps/`. Só é aferido com `--cov`
     (`uv run pytest --cov=apps --cov-branch --cov-report=term-missing`, = `make
     test-cov-py`); `uv run pytest` sozinho não roda essa checagem. O piso é um hook

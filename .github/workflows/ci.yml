@@ -29,7 +29,22 @@ jobs:
       - name: ruff format
         run: uv run ruff format --check .
 
-  test:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - name: gettext
+        run: command -v msgfmt >/dev/null || (sudo apt-get update && sudo apt-get install -y gettext)
+      - name: compilar catalogos
+        run: uv run python manage.py compilemessages
+      - name: pytest sem banco
+        run: uv run pytest -n 2 -m 'not database and not e2e'
+
+  integration:
     runs-on: ubuntu-latest
     services:
       # espelham docker-compose.yml
@@ -106,8 +121,8 @@ jobs:
       - name: compilar catalogos
         run: uv run python manage.py compilemessages
 
-      - name: pytest
-        run: uv run pytest --cov=apps --cov-branch --cov-report=term-missing
+      - name: pytest com banco por worker
+        run: uv run pytest -n 2 -m 'database and not e2e'
 
   frontend:
     runs-on: ubuntu-latest
@@ -119,8 +134,8 @@ jobs:
       - name: lint (biome em js/css, com o plugin de BEM)
         run: bun run lint
 
-      - name: vitest com cobertura
-        run: bun run test:coverage
+      - name: vitest
+        run: bun run test
 
       - name: vite build
         run: bun run build
@@ -173,7 +188,7 @@ jobs:
         run: uv run playwright install --with-deps chromium webkit
 
       - name: pytest -m e2e
-        run: uv run pytest -m e2e
+        run: uv run pytest -n 2 -m e2e
 
       - if: failure()
         uses: actions/upload-artifact@v7
