@@ -15,10 +15,11 @@ não é coberta por nenhum teste — nesse caso, diga o que exercitou à mão.
 
 ## Checklist
 
-- [ ] `uv run pytest` (e `pytest -m e2e`, se a mudança chega ao browser)
+- [ ] `uv run pytest --cov=apps --cov-branch --cov-report=term-missing`, se mexeu em Python de produção
+- [ ] `make e2e`, se a mudança chega ao browser
 - [ ] `uv run ruff check . && uv run ruff format --check .`
 - [ ] `uv run mypy apps tests conftest.py`
-- [ ] `bun run lint && bun run test`, se mexeu em JS ou CSS
+- [ ] `bun run lint && bun run test:coverage`, se mexeu em JS, CSS ou template com classe nova
 - [ ] `manage.py makemessages`, se acrescentou string traduzível
 - [ ] `manage.py makemigrations`, se mexeu em model
 - [ ] `docs/` atualizada: ADR em `docs/adr/` se a decisão é estrutural, o padrão em
