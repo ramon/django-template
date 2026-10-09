@@ -570,7 +570,7 @@ continuam disponíveis.
 | `unit` | testes sem banco em dois workers, com catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |
 | `frontend` | Biome (com o plugin de BEM), Vitest, `vite build` e a presença do manifest |
-| `e2e` | `pytest -n 2 -m e2e` em Chromium e WebKit (Safari) reais, com build do frontend; anexa `test-results/` se falhar |
+| `e2e` | `pytest -m e2e` em Chromium e WebKit (Safari) reais, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |
 
 ## Notas finais

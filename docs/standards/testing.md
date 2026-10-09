@@ -86,8 +86,9 @@ coverage.py calcula como média ponderada de linha e branch juntos — dá pra p
 
 ## Paralelismo e seleção no CI
 
-O CI separa testes sem banco, com banco e e2e em jobs independentes, com dois workers
-`pytest-xdist` por job. As seleções são `not database and not e2e`,
+O CI separa testes sem banco, com banco e e2e em jobs independentes. Os dois primeiros
+rodam com dois workers `pytest-xdist`; o e2e roda num processo só, porque o custo de setup
+por worker superou o ganho (ver o ADR). As seleções são `not database and not e2e`,
 `database and not e2e` e `e2e`: todo teste coletado pertence a exatamente uma suíte,
 inclusive os testes transversais em `tests/`.
 
@@ -107,7 +108,7 @@ Sessões locais simultâneas contra o mesmo PostgreSQL precisam de nomes de banc
 o sufixo por worker não distingue duas sessões independentes. No CI, integração e e2e
 têm serviços PostgreSQL próprios.
 
-Os workers de e2e têm diretórios de artefatos separados sob `test-results/`. Cache local,
+Rodando o e2e com `-n`, cada worker tem um diretório de artefatos separado sob `test-results/`. Cache local,
 media temporária e portas dinâmicas do `live_server` também ficam isolados por processo.
 O CI executa testes Python e JS sem cobertura; os comandos locais de cobertura e seus
 pisos continuam disponíveis. Ver [ADR 0019](../adr/0019-separar-suites-de-teste-no-ci.md).

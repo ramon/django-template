@@ -13,11 +13,14 @@ de representar a suíte completa se fosse aferida separadamente em cada job.
 
 ## Decisão
 
-Executamos três jobs independentes, cada um com dois workers do pytest-xdist. Selecionamos
-por necessidade de banco e pela marca e2e, incluindo fixtures transitivas. O pytest-django
-cria um banco por worker no PostgreSQL do job; artefatos de browser ficam separados por
-worker. O CI roda testes Python e JavaScript sem validação de cobertura. Mantemos os
-comandos locais e os pisos de cobertura existentes.
+Executamos três jobs independentes. Os jobs sem banco e com banco usam dois workers do
+pytest-xdist; o e2e roda num processo só, porque na primeira medição os dois workers o
+deixaram mais lento (2m17 contra 1m54); a causa provável é o setup repetido por worker
+(migrations e browsers). Selecionamos por necessidade de banco e pela marca e2e, incluindo
+fixtures transitivas. O pytest-django cria um banco por worker no PostgreSQL do job;
+artefatos de browser ficam separados por worker quando o e2e roda com `-n`. O CI roda
+testes Python e JavaScript sem validação de cobertura. Mantemos os comandos locais e os
+pisos de cobertura existentes.
 
 ## Consequências
 

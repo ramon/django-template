@@ -199,7 +199,7 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 | `unit` | testes sem banco, com dois workers e catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |
 | `frontend` | Biome (com o plugin de BEM), Vitest sem cobertura, `vite build` e a presença do manifest |
-| `e2e` | `pytest -n 2 -m e2e` em Chromium e WebKit reais; anexa `test-results/` se falhar |
+| `e2e` | `pytest -m e2e` em Chromium e WebKit reais; anexa `test-results/` se falhar |
 | `docker` | build da imagem de produção, ausência de ferramenta de build e de dependência de dev, e a imagem subindo e respondendo `/health/` |
 | `typecheck` | `mypy apps tests` em modo strict |
 
