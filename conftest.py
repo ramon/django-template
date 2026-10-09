@@ -20,6 +20,13 @@ if TYPE_CHECKING:
     from apps.accounts.models import User
 
 
+def pytest_configure(config: pytest.Config) -> None:
+    """Keep Playwright artifacts separate for each parallel worker."""
+    worker_id = getattr(config, "workerinput", {}).get("workerid")
+    if worker_id:
+        config.option.output = str(Path(config.getoption("--output")) / worker_id)
+
+
 def _is_e2e_path(path: Path) -> bool:
     """
     True para teste em qualquer `tests/e2e/` -- na raiz ou dentro de um app.
@@ -33,11 +40,23 @@ def _is_e2e_path(path: Path) -> bool:
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
-    """Marca todo teste sob um `tests/e2e/` como `e2e` e libera o banco."""
+    """Classify tests by browser and database requirements for suite selection."""
+    database_fixtures = {
+        "db",
+        "transactional_db",
+        "django_db_reset_sequences",
+        "django_db_serialized_rollback",
+        "django_db_setup",
+        "live_server",
+    }
     for item in items:
         if _is_e2e_path(Path(str(item.fspath))):
             item.add_marker(pytest.mark.e2e)
             item.add_marker(pytest.mark.django_db)
+        if item.get_closest_marker("django_db") or database_fixtures.intersection(
+            getattr(item, "fixturenames", ())
+        ):
+            item.add_marker(pytest.mark.database)
 
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
@@ -81,6 +100,9 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:  # n
     sem rodar `coverage` de novo por fora do pytest.
     """
     config = session.config
+    # Os workers entregam dados ao controller; o piso usa apenas o total combinado.
+    if hasattr(config, "workerinput"):
+        return
     cov_plugin = config.pluginmanager.get_plugin("_cov")
     if cov_plugin is None or cov_plugin.cov_controller is None:
         return  # rodou sem --cov (ex.: `make test` local, iteracao rapida)

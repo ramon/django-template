@@ -84,6 +84,35 @@ coverage.py calcula como média ponderada de linha e branch juntos — dá pra p
 `--cov` já populou e falha a sessão se `percent_statements_covered` ou
 `percent_branches_covered` caírem abaixo do piso.
 
+## Paralelismo e seleção no CI
+
+O CI separa testes sem banco, com banco e e2e em jobs independentes. Os dois primeiros
+rodam com dois workers `pytest-xdist`; o e2e roda num processo só, porque o tempo do job é
+dominado pelo setup e o paralelismo não o encurta (ver o ADR). As seleções são `not
+database and not e2e`, `database and not e2e` e `e2e`: todo teste coletado pertence a
+exatamente uma suíte, inclusive os testes transversais em `tests/`.
+
+O hook de coleta adiciona `database` quando encontra `django_db` ou uma fixture de
+banco, incluindo dependências indiretas como `user` → `db`. A seleção segue a necessidade
+de banco, mesmo quando o diretório diz outra coisa. Teste que libera banco manualmente
+com `django_db_blocker` ou solicita uma fixture dinamicamente deve declarar
+`@pytest.mark.database`, pois esse acesso não aparece na lista estática de fixtures.
+
+Cada worker que usa banco recebe um banco próprio do pytest-django (`test_app_gw0`,
+`test_app_gw1` no CI), no mesmo serviço PostgreSQL. Testes comuns fazem rollback;
+`transactional_db`, `django_db(transaction=True)` e `live_server` fazem `flush` apenas
+no banco do worker. Não sobrescreva as fixtures de sufixo para compartilhar banco.
+`--reuse-db` mantém os bancos entre execuções locais, mas não impede a limpeza por teste.
+Após mudar o schema, use `--create-db` para recriá-los.
+Sessões locais simultâneas contra o mesmo PostgreSQL precisam de nomes de banco distintos;
+o sufixo por worker não distingue duas sessões independentes. No CI, integração e e2e
+têm serviços PostgreSQL próprios.
+
+Rodando o e2e com `-n`, cada worker tem um diretório de artefatos separado sob `test-results/`. Cache local,
+media temporária e portas dinâmicas do `live_server` também ficam isolados por processo.
+O CI executa testes Python e JS sem cobertura; os comandos locais de cobertura e seus
+pisos continuam disponíveis. Ver [ADR 0019](../adr/0019-separar-suites-de-teste-no-ci.md).
+
 ## Testes ponta a ponta
 
 Rodam em browser real via `pytest-playwright` e a fixture `live_server`. Ficam fora da
@@ -128,8 +157,8 @@ testado direto; controller Stimulus é testado montando o DOM mínimo que ele es
 ### Cobertura de JS
 
 `vitest.config.mjs` define `coverage.thresholds` em 90% (linhas, statements, funções e
-branches) sobre `frontend/**/*.js`. `bun run test:coverage` falha se cair abaixo — é o
-mesmo comando que o job `frontend` do CI roda.
+branches) sobre `frontend/**/*.js`. `bun run test:coverage` falha se cair abaixo.
+Esse gate é local; o job `frontend` do CI roda `bun run test` sem cobertura.
 
 Ficam fora do `include`/`exclude` do relatório os arquivos que só ligam e não decidem:
 `frontend/entries/**` e `frontend/controllers/index.js` (o `Application.start()` e o
