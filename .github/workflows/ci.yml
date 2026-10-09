@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
       - run: uv sync --locked
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
       - run: uv sync --locked
@@ -74,7 +74,7 @@ jobs:
       SESSION_CACHE_URL: redis://127.0.0.1:6379/1
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
       - run: uv sync --locked
@@ -172,7 +172,7 @@ jobs:
       SESSION_CACHE_URL: redis://127.0.0.1:6379/1
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
       - uses: oven-sh/setup-bun@v2
@@ -285,7 +285,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
       - run: uv sync --locked
