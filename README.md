@@ -226,7 +226,7 @@ ganha de tudo; entre apps, quem vem **antes** em `INSTALLED_APPS` ganha. Na prá
 precisar cravar um texto, o lugar é o catálogo da raiz.
 
 Os `.po` são versionados; os `.mo`, não (`.gitignore`). A compilação é passo de build —
-o `Dockerfile` a executa no estágio `assets`, e o job `test` do CI antes do pytest.
+o `Dockerfile` a executa no estágio `assets`, e os jobs `unit` e `integration` do CI antes do pytest.
 
 ## Frontend: Vite + Bun
 
@@ -467,6 +467,8 @@ faz o hash da senha e cria o `Profile` associado.
 ```bash
 pytest                                  # usa config.settings.test
 pytest --cov=apps --cov-report=term-missing
+pytest -n 2 -m 'not database and not e2e' # suíte sem banco, como no CI
+pytest -n 2 -m 'database and not e2e'     # suíte com banco por worker
 
 ruff check . --fix
 ruff format .
@@ -558,12 +560,15 @@ django-stubs mas não define `__class_getitem__`, então parametrizá-lo quebra 
 
 ## CI
 
-`.github/workflows/ci.yml` roda em push para `master` e em pull requests:
+`.github/workflows/ci.yml` roda em push para `master` e `develop` e em pull requests.
+Os jobs de testes executam sem validação de cobertura; os comandos locais de cobertura
+continuam disponíveis.
 
 | Job | O que valida |
 |-----|--------------|
 | `lint` | `ruff check` e `ruff format --check` |
-| `test` | `manage.py check` nos três cenários, migrations em dia e `pytest` com cobertura, contra Postgres e Valkey |
+| `unit` | testes sem banco em dois workers, com catálogos compilados |
+| `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |
 | `frontend` | Biome (com o plugin de BEM), Vitest, `vite build` e a presença do manifest |
 | `e2e` | `pytest -m e2e` em Chromium e WebKit (Safari) reais, com build do frontend; anexa `test-results/` se falhar |
 | `typecheck` | `mypy apps tests` em modo strict |

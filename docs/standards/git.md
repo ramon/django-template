@@ -86,7 +86,7 @@ gh pr create --draft --base develop --fill
 ```
 
 *Ready* só depois de rodar a lista de [`quality-gates.md`](quality-gates.md) na máquina.
-Abrir *ready* e deixar o CI descobrir o lint queima os seis jobs (incluindo e2e num
+Abrir *ready* e deixar o CI descobrir o lint queima os jobs (incluindo e2e num
 browser real e o build da imagem de produção) e chama o revisor cedo demais.
 
 O ponto em que agente mais escorrega aqui é a cobertura: o piso de 90% linhas / 85%
@@ -196,9 +196,10 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 | Job | O que valida |
 | --- | --- |
 | `lint` | `ruff check` e `ruff format --check` |
-| `test` | `manage.py check` nos três cenários, migrations em dia, catálogos em dia, `pytest` com cobertura contra Postgres e Valkey |
-| `frontend` | Biome (com o plugin de BEM), Vitest com o piso de cobertura, `vite build` e a presença do manifest |
-| `e2e` | `pytest -m e2e` num Chromium real; anexa `test-results/` se falhar |
+| `unit` | testes sem banco, com dois workers e catálogos compilados |
+| `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |
+| `frontend` | Biome (com o plugin de BEM), Vitest sem cobertura, `vite build` e a presença do manifest |
+| `e2e` | `pytest -m e2e` em Chromium e WebKit reais; anexa `test-results/` se falhar |
 | `docker` | build da imagem de produção, ausência de ferramenta de build e de dependência de dev, e a imagem subindo e respondendo `/health/` |
 | `typecheck` | `mypy apps tests` em modo strict |
 

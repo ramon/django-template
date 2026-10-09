@@ -1,7 +1,7 @@
 # Padrões: quality gates
 
 Um gate aqui é uma checagem local que precisa passar antes de reportar uma tarefa como
-concluída ou abrir um PR. Cada gate espelha um job do CI
+concluída ou abrir um PR. Os gates de cobertura são locais; os demais espelham jobs do CI
 ([`git.md#o-que-o-ci-verifica`](git.md#o-que-o-ci-verifica)) — rodar antes localmente evita
 descobrir a falha só depois do push.
 
@@ -56,7 +56,7 @@ a cobertura de JS.
 - **cobertura de JS**: `vitest.config.mjs` exige 90% (linhas, statements, funções,
   branches) em `frontend/**/*.js`, exceto o que só orquestra
   (`entries/**`, `controllers/index.js`). `bun run test:coverage` falha abaixo do piso —
-  é o mesmo comando que o job `frontend` roda no CI. Ver
+  é um gate local; o CI roda os testes sem cobertura. Ver
   [`testing.md#cobertura-de-js`](testing.md#cobertura-de-js).
 - **cobertura de Python**: piso de 90% de linhas e 85% de branches sobre o total agregado
   de `apps/`, avaliados em separado por um hook em `conftest.py` (`--cov-fail-under` do
