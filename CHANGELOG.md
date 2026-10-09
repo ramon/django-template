@@ -7,6 +7,24 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-10-09
+
+### Changed
+
+- O CI separa as suítes Python por necessidade de banco: testes sem banco e com banco
+  rodam em dois workers, com banco isolado por worker. Os testes e2e continuam em um
+  processo, com Chromium e WebKit. A seleção considera markers e dependências indiretas
+  de fixtures, incluindo testes transversais em `tests/`
+  ([ADR 0019](docs/adr/0019-separar-suites-de-teste-no-ci.md)).
+- Os testes do CI rodam sem cobertura; os pisos locais continuam em 90% de linhas e 85%
+  de branches para Python e 90% para JS. O checklist do PR passa a exigir os comandos
+  com cobertura e `make e2e`, que garante o build do frontend antes dos testes.
+
+### Fixed
+
+- A suíte ignora o aviso de depreciação de `asyncio.iscoroutinefunction` emitido pelo
+  middleware do `django-guid`, enquanto a dependência ainda usa essa função.
+
 ## [1.4.0] - 2026-09-16
 
 ### Added
@@ -216,7 +234,8 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/ramon/django-template/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/ramon/django-template/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/ramon/django-template/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ramon/django-template/compare/v1.2.2...v1.3.0
