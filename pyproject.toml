@@ -149,6 +149,11 @@ markers = [
     "e2e: teste ponta a ponta, roda em Chromium e WebKit (Safari) via Playwright",
     "database: teste que usa banco, inferido de django_db e fixtures; marque acessos manuais",
 ]
+filterwarnings = [
+    # django-guid 3.6.1 (a mais recente) ainda chama asyncio.iscoroutinefunction no
+    # guid_middleware; remova quando uma versao nova trocar por inspect.iscoroutinefunction
+    "ignore:'asyncio.iscoroutinefunction' is deprecated:DeprecationWarning:django_guid.middleware",
+]
 
 [tool.mypy]
 python_version = "3.14"
