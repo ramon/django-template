@@ -87,10 +87,10 @@ coverage.py calcula como média ponderada de linha e branch juntos — dá pra p
 ## Paralelismo e seleção no CI
 
 O CI separa testes sem banco, com banco e e2e em jobs independentes. Os dois primeiros
-rodam com dois workers `pytest-xdist`; o e2e roda num processo só, porque o custo de setup
-por worker superou o ganho (ver o ADR). As seleções são `not database and not e2e`,
-`database and not e2e` e `e2e`: todo teste coletado pertence a exatamente uma suíte,
-inclusive os testes transversais em `tests/`.
+rodam com dois workers `pytest-xdist`; o e2e roda num processo só, porque o tempo do job é
+dominado pelo setup e o paralelismo não o encurta (ver o ADR). As seleções são `not
+database and not e2e`, `database and not e2e` e `e2e`: todo teste coletado pertence a
+exatamente uma suíte, inclusive os testes transversais em `tests/`.
 
 O hook de coleta adiciona `database` quando encontra `django_db` ou uma fixture de
 banco, incluindo dependências indiretas como `user` → `db`. A seleção segue a necessidade
