@@ -254,6 +254,9 @@ Rode `uv lock` ou `bun install` no mesmo commit, para o lock acompanhar.
     test-cov-py`); `uv run pytest` sozinho não roda essa checagem. O piso é um hook
     `pytest_sessionfinish` em `conftest.py`, não `--cov-fail-under` — ver
     [`testing.md#cobertura-de-python`](docs/standards/testing.md#cobertura-de-python).
+11. **Teste que depende de i18n usa o idioma padrão de `settings.LANGUAGE_CODE`.**
+    Ative esse idioma e derive o texto esperado pela chave de tradução. Para testes
+    de catálogo e browser, siga [`testing.md#idioma-nos-testes`](docs/standards/testing.md#idioma-nos-testes).
 
 ## Estilo
 
