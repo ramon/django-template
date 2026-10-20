@@ -141,7 +141,27 @@ Sem build do frontend o teste é **pulado** com a mensagem do que rodar, em vez 
 com arquivo não encontrado.
 
 **Prefira seletores por `name`, `id` ou papel ARIA a texto visível.** A interface é
-traduzida (`LANGUAGE_CODE = pt-BR`) e texto quebra o teste na próxima mudança de idioma.
+traduzida e texto literal quebra o teste na próxima mudança de idioma.
+
+## Idioma nos testes
+
+Todo teste que depende de i18n usa o idioma padrão configurado em
+`settings.LANGUAGE_CODE`. Em Python, envolva a execução e a asserção em
+`translation.override(settings.LANGUAGE_CODE)` e obtenha o texto esperado com
+`gettext`/`pgettext` a partir da chave original. Assim, uma mudança do idioma padrão
+mantém o teste válido, sem traduções literais ou códigos de idioma fixos no teste.
+
+No browser, mantenha os seletores estáveis descritos acima. Se o teste precisar
+verificar conteúdo traduzido, configure o locale do contexto do Playwright com
+`settings.LANGUAGE_CODE` para que o `Accept-Language` use o mesmo idioma, e resolva
+o texto esperado sob esse idioma no Python.
+
+Testes que inspecionam arquivos de catálogo usam `translation.to_locale(settings.LANGUAGE_CODE)`
+para selecionar o catálogo padrão. Verificações estruturais de todos os catálogos
+continuam cobrindo `settings.LANGUAGES`; as chaves `msgid`/`msgctxt` são dados do contrato.
+Para verificar a descoberta do catálogo em runtime, compare a tradução do Django com
+o catálogo compilado lido diretamente, no idioma padrão. Compile os catálogos antes
+da execução para que esse teste não seja pulado.
 
 ## Frontend
 

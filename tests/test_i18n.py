@@ -1,5 +1,6 @@
 """The catalogs: where they live and the form they're written in."""
 
+from gettext import GNUTranslations
 from pathlib import Path
 
 import pytest
@@ -10,8 +11,11 @@ from django.utils.translation import pgettext
 from apps.core.management.commands.makemessages import Command as MakeMessages
 
 CATALOGS = sorted(MakeMessages.project_catalogs())
-ROOT = Path(settings.BASE_DIR) / "locale" / "pt_BR" / "LC_MESSAGES" / "django.po"
-ACCOUNTS = Path(settings.BASE_DIR) / "apps/accounts/locale/pt_BR/LC_MESSAGES/django.po"
+DEFAULT_LOCALE = translation.to_locale(settings.LANGUAGE_CODE)
+ROOT = Path(settings.BASE_DIR) / "locale" / DEFAULT_LOCALE / "LC_MESSAGES" / "django.po"
+ACCOUNTS = (
+    Path(settings.BASE_DIR) / "apps/accounts/locale" / DEFAULT_LOCALE / "LC_MESSAGES" / "django.po"
+)
 
 
 def test_a_catalog_exists_for_every_declared_language() -> None:
@@ -54,11 +58,14 @@ def test_the_command_defaults_to_no_location_and_no_obsolete() -> None:
 
 
 def test_app_translation_resolves_at_runtime() -> None:
-    if not ACCOUNTS.with_suffix(".mo").exists():
-        pytest.skip("catálogo não compilado; rode `manage.py compilemessages`")
+    compiled_catalog = ACCOUNTS.with_suffix(".mo")
+    if not compiled_catalog.exists():
+        pytest.skip("Catalog not compiled; run `manage.py compilemessages`")
 
-    with translation.override("pt-br"):
-        assert pgettext("model", "user") == "usuário"
+    # Ler o catálogo diretamente permite verificar a descoberta pelo Django sem
+    # fixar uma tradução que muda quando o idioma padrão do projeto muda.
+    with compiled_catalog.open("rb") as catalog_file:
+        expected = GNUTranslations(catalog_file).pgettext("model", "user")
 
-    with translation.override("en"):
-        assert pgettext("model", "user") == "user"
+    with translation.override(settings.LANGUAGE_CODE):
+        assert pgettext("model", "user") == expected

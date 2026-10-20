@@ -7,6 +7,15 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-10-20
+
+### Changed
+
+- A convenção de testes de i18n passa a usar o idioma padrão de
+  `settings.LANGUAGE_CODE`, com texto esperado derivado da chave de tradução ou do
+  catálogo compilado. Os testes de cadastro e tradução em runtime seguem essa regra,
+  que fica documentada no `AGENTS.md` e no padrão de testes.
+
 ## [1.4.1] - 2026-10-09
 
 ### Changed
@@ -234,7 +243,8 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/ramon/django-template/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/ramon/django-template/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/ramon/django-template/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/ramon/django-template/compare/v1.3.0...v1.3.1

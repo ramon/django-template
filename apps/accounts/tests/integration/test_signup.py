@@ -6,7 +6,10 @@ antes do SignupForm ganhar o campo "name" (apps/accounts/forms.py).
 """
 
 import pytest
+from django.conf import settings
 from django.test import Client
+from django.utils import translation
+from django.utils.translation import gettext
 
 from apps.accounts.models import User
 
@@ -47,5 +50,6 @@ def test_signup_rejects_a_name_without_a_space(client: Client) -> None:
 
 
 def test_signup_page_shows_the_translated_label(client: Client) -> None:
-    response = client.get("/auth/signup/")
-    assert "Nome completo" in response.content.decode()
+    with translation.override(settings.LANGUAGE_CODE):
+        response = client.get("/auth/signup/")
+        assert gettext("Full name") in response.content.decode()
