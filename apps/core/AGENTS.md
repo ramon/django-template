@@ -66,7 +66,11 @@ remover algo listado aqui.
   os assets do Vite (dev server em `DEBUG`, manifest de build em produção). `entry` é
   o caminho do input relativo à raiz do projeto (ex.: `frontend/entries/app.js`), a
   mesma chave usada em `vite.config.mjs`. Em `DEBUG` os assets vêm de
-  `settings.VITE_DEV_SERVER_URL` (derivada de `VITE_PORT`); em produção a tag segue os
+  `settings.VITE_DEV_SERVER_URL` (derivada de `VITE_PORT`); `vite_css` lê o entry em
+  `settings.BASE_DIR` e emite links para os imports de efeito colateral relativos de
+  CSS, na ordem do arquivo e sem repetir. CSS de pacote e de outros módulos chega
+  pelo JS. O JS também injeta o CSS linkado: regras removidas durante a sessão
+  persistem até o próximo reload. Em produção a tag segue os
   `imports` do manifest e emite o CSS e o `modulepreload` dos chunks importados, com o
   nome de arquivo que o manifest do Vite registra (o storage abaixo não re-hasheia
   `dist/`).

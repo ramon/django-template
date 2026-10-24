@@ -1,4 +1,6 @@
 import json
+import posixpath
+import re
 from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
@@ -101,17 +103,40 @@ def _get_chunk(entry: str) -> dict[str, Any]:
         ) from None
 
 
-def _render_dev_css() -> str:
-    """
-    Generates and returns CSS rules for development purposes.
+_CSS_IMPORT = re.compile(r"""^\s*import\s+(["'])(\.{1,2}/[^"']+\.css)\1""", re.MULTILINE)
 
-    This function is intended to dynamically generate CSS rules that are
-    useful during development.
+
+def _render_dev_css(entry: str) -> str:
+    """Renders a stylesheet link for each CSS file the entry imports, from the dev server.
+
+    In development the entry's JS injects its CSS, but a module only runs after the
+    browser has fetched its whole graph, so without the link the page renders
+    unstyled for that long. The dev
+    server answers a `<link>` request with plain CSS.
+
+    Only relative side-effect imports in the entry file itself are linked
+    (`import "../styles/app.css"`). A package CSS (`import "pkg/x.css"`) or a CSS
+    imported by another module still arrives with the JS. The JS also keeps
+    injecting the linked CSS, so in development each rule is loaded twice, and a
+    rule removed during a session lasts until the next reload.
+
+    Args:
+        entry: The entry path relative to the project root, as in the manifest.
 
     Returns:
-        str: A string containing CSS rules.
+        The link tags, in import order, or an empty string when the entry
+        imports no relative CSS.
     """
-    return ""
+    source = (Path(settings.BASE_DIR) / entry).read_text(encoding="utf-8")
+    dev_server_url = settings.VITE_DEV_SERVER_URL.rstrip("/")
+    entry_dir = posixpath.dirname(entry)
+    css_files = dict.fromkeys(
+        posixpath.normpath(posixpath.join(entry_dir, match.group(2)))
+        for match in _CSS_IMPORT.finditer(source)
+    )
+    return "".join(
+        f'<link rel="stylesheet" href="{dev_server_url}/{css_file}" />' for css_file in css_files
+    )
 
 
 def _render_dev_js(entry: str) -> str:
@@ -235,7 +260,7 @@ def vite_css(entry: str) -> SafeString:
     Returns:
         SafeString: A safe HTML string containing the CSS link elements.
     """
-    html = _render_dev_css() if settings.DEBUG else _render_prod_css(entry)
+    html = _render_dev_css(entry) if settings.DEBUG else _render_prod_css(entry)
     return mark_safe(html)
 
 
