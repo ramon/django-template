@@ -7,6 +7,17 @@ release está documentado em
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-10-24
+
+### Fixed
+
+- Em desenvolvimento, `{% vite_css entry %}` emite links para os imports relativos
+  de CSS do próprio entry, na ordem do arquivo e sem repetir, evitando a página
+  inicialmente sem estilo enquanto o grafo de módulos JS carrega. CSS de pacote e
+  de outros módulos continua chegando pelo JS; produção permanece igual. O JS
+  também injeta o CSS linkado: cada regra carrega duas vezes em desenvolvimento,
+  e uma regra apagada durante a sessão continua valendo até o próximo reload.
+
 ## [1.4.2] - 2026-10-20
 
 ### Changed
@@ -243,7 +254,8 @@ progressivamente aprimorado e a estrutura de documentação para agentes.
 - Estrutura de documentação em `docs/` (`standards/`, `adr/`, `specs/`, `plans/`) e
   `AGENTS.md` como referência canônica para agentes.
 
-[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/ramon/django-template/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/ramon/django-template/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/ramon/django-template/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/ramon/django-template/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/ramon/django-template/compare/v1.3.1...v1.4.0
