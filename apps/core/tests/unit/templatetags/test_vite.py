@@ -8,6 +8,64 @@ from django.templatetags.static import static
 from apps.core.templatetags import vite
 
 
+def _dev_entry(tmp_path, source: str) -> str:
+    """Writes an entry under a fake BASE_DIR and returns its key."""
+    entry = tmp_path / "frontend" / "entries" / "page.js"
+    entry.parent.mkdir(parents=True)
+    entry.write_text(source, encoding="utf-8")
+    return "frontend/entries/page.js"
+
+
+def test_vite_css_links_the_css_the_entry_imports_in_development(settings, tmp_path):
+    settings.DEBUG = True
+    settings.BASE_DIR = tmp_path
+    settings.VITE_DEV_SERVER_URL = "http://127.0.0.1:9123/"
+    entry = _dev_entry(tmp_path, 'import "../styles/page.css";\nimport htmx from "htmx.org";\n')
+
+    assert vite.vite_css(entry) == (
+        '<link rel="stylesheet" href="http://127.0.0.1:9123/frontend/styles/page.css" />'
+    )
+
+
+def test_vite_css_links_every_relative_css_import_in_order_in_development(settings, tmp_path):
+    settings.DEBUG = True
+    settings.BASE_DIR = tmp_path
+    settings.VITE_DEV_SERVER_URL = "http://127.0.0.1:9123"
+    entry = _dev_entry(
+        tmp_path,
+        "import { init } from '@sentry/browser';\n"
+        "import './local.css';\n"
+        'import "notyf/notyf.min.css";\n'
+        'import "../styles/b.css";\n'
+        'import "../entries/./local.css";\n'
+        'import "../controllers/index.js";\n',
+    )
+
+    html = vite.vite_css(entry)
+
+    assert html == (
+        '<link rel="stylesheet" href="http://127.0.0.1:9123/frontend/entries/local.css" />'
+        '<link rel="stylesheet" href="http://127.0.0.1:9123/frontend/styles/b.css" />'
+    )
+
+
+def test_vite_css_is_empty_in_development_for_an_entry_without_css(settings, tmp_path):
+    settings.DEBUG = True
+    settings.BASE_DIR = tmp_path
+    entry = _dev_entry(tmp_path, 'import htmx from "htmx.org";\n')
+
+    assert vite.vite_css(entry) == ""
+
+
+def test_vite_css_links_the_real_entries_in_development(settings):
+    settings.DEBUG = True
+    settings.VITE_DEV_SERVER_URL = "http://127.0.0.1:9123"
+
+    assert vite.vite_css("frontend/entries/app.js") == (
+        '<link rel="stylesheet" href="http://127.0.0.1:9123/frontend/styles/app.css" />'
+    )
+
+
 def test_get_chunk_raises_a_helpful_key_error_for_an_unknown_entry():
     with pytest.raises(KeyError, match="does not exist in the Vite manifest"):
         vite._get_chunk("frontend/entries/does-not-exist.js")
