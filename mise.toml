@@ -1,5 +1,6 @@
 [tools]
 bun = "latest"
+gitleaks = "latest"
 python = "3.14"
 ruff = "latest"
 uv = "latest"
