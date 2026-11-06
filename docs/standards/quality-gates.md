@@ -59,7 +59,7 @@ a cobertura de JS.
   [`testing.md`](testing.md#o-que-vale-a-pena-testar) para o que vale a pena cobrir.
 - **segredos**: o job `gitleaks` do CI e o G1 local verificam o histórico Git para impedir
   que credenciais ou tokens sejam versionados. O CI desativa comentários automáticos e
-  limita o token do job a leitura do conteúdo.
+  limita o `GITHUB_TOKEN` a leitura do conteúdo e dos pull requests.
 - **cobertura de JS**: `vitest.config.mjs` exige 90% (linhas, statements, funções,
   branches) em `frontend/**/*.js`, exceto o que só orquestra
   (`entries/**`, `controllers/index.js`). `bun run test:coverage` falha abaixo do piso —
