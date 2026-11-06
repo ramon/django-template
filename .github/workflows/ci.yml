@@ -17,7 +17,7 @@ env:
 
 jobs:
   gitleaks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pull-requests: read
@@ -32,7 +32,7 @@ jobs:
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.0.1
@@ -45,7 +45,7 @@ jobs:
         run: uv run ruff format --check .
 
   unit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.0.1
@@ -60,7 +60,7 @@ jobs:
         run: uv run pytest -n 2 -m 'not database and not e2e'
 
   integration:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       # espelham docker-compose.yml
       database:
@@ -140,7 +140,7 @@ jobs:
         run: uv run pytest -n 2 -m 'database and not e2e'
 
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -159,7 +159,7 @@ jobs:
         run: test -f static/dist/.vite/manifest.json
 
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       database:
         image: postgres:18-alpine
@@ -213,7 +213,7 @@ jobs:
           retention-days: 7
 
   docker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       database:
         image: postgres:18-alpine
@@ -297,7 +297,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   typecheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.0.1
