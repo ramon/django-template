@@ -103,6 +103,8 @@ Depois de criar o repositório:
 │   ├── specs/                  # especificações de features
 │   └── plans/                  # planos de implementação
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
+├── .agents/agents/             # agentes de implementação e gates para Codex
+├── .claude/agents/             # agentes equivalentes para Claude Code
 ├── .github/
 │   ├── workflows/              # CI
 │   ├── dependabot.yml
@@ -566,6 +568,7 @@ continuam disponíveis.
 
 | Job | O que valida |
 |-----|--------------|
+| `gitleaks` | segredos no histórico completo da branch e no diff do PR |
 | `lint` | `ruff check` e `ruff format --check` |
 | `unit` | testes sem banco em dois workers, com catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |

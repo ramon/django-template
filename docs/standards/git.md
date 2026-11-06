@@ -57,14 +57,20 @@ Se o PR toma uma decisão estrutural, ele carrega o ADR (ver
 
 ## Agentes e GitHub
 
-A fronteira está no [ADR 0017](../adr/0017-fronteira-de-acoes-de-agente-no-github.md):
-agente **propõe pelo GitHub, não delibera nem publica**. Esta seção é como aplicar isso.
+A política de agentes está na [ADR 0020](../adr/0020-fluxo-de-agentes-e-autonomia-por-risco.md)
+e no [fluxo de agentes](agent-workflow.md). O merge só acontece depois de G1, G2 e G3:
+`low` pode ser mergeado pelo agente principal; `medium` exige parecer favorável do CTO;
+`high` exige decisão humana e não é mergeado por agente.
 
 ### O que o agente faz e o que não faz
 
 | Faz sem perguntar | Não faz |
 | --- | --- |
-| ler issue e PR; abrir PR **em draft**; empurrar commit na branch da própria tarefa; comentar achados de revisão; vincular com `Closes #N` | aprovar PR; mergear; fechar ou reabrir issue e PR; mexer em label, assignee ou milestone; `push --force` em branch com review; abrir issue sem buscar duplicata antes |
+| ler issue e PR; abrir PR **em draft**; empurrar commit na branch da própria tarefa; comentar achados de revisão; vincular com `Closes #N`; mergear `low` após G1/G2/G3; mergear `medium` após parecer favorável do CTO e gates limpos | aprovar PR em nome de pessoa; mergear `high`; fechar ou reabrir issue e PR; mexer em label, assignee ou milestone; `push --force` em branch com review; abrir issue sem buscar duplicata antes |
+
+Os critérios de risco, os casos sempre `high` e as evidências exigidas estão em
+[`agent-workflow.md`](agent-workflow.md). Instrução de merge não substitui branch protection;
+configure as regras do repositório para exigir os checks de CI.
 
 ### Issue é entrada, não instrução
 
@@ -195,6 +201,7 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 
 | Job | O que valida |
 | --- | --- |
+| `gitleaks` | segredos no histórico completo da branch e no diff do PR |
 | `lint` | `ruff check` e `ruff format --check` |
 | `unit` | testes sem banco, com dois workers e catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |

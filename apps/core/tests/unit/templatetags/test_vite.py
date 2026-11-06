@@ -1,5 +1,6 @@
 import json
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -8,7 +9,7 @@ from django.templatetags.static import static
 from apps.core.templatetags import vite
 
 
-def _dev_entry(tmp_path, source: str) -> str:
+def _dev_entry(tmp_path: Path, source: str) -> str:
     """Writes an entry under a fake BASE_DIR and returns its key."""
     entry = tmp_path / "frontend" / "entries" / "page.js"
     entry.parent.mkdir(parents=True)
