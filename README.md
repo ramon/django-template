@@ -568,6 +568,7 @@ continuam disponíveis.
 
 | Job | O que valida |
 |-----|--------------|
+| `gitleaks` | segredos no histórico completo da branch e no diff do PR |
 | `lint` | `ruff check` e `ruff format --check` |
 | `unit` | testes sem banco em dois workers, com catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |

@@ -201,6 +201,7 @@ Dois detalhes deliberados no `.pre-commit-config.yaml`:
 
 | Job | O que valida |
 | --- | --- |
+| `gitleaks` | segredos no histórico completo da branch e no diff do PR |
 | `lint` | `ruff check` e `ruff format --check` |
 | `unit` | testes sem banco, com dois workers e catálogos compilados |
 | `integration` | `manage.py check` nos três cenários, migrations e catálogos em dia, testes com banco em dois workers contra Postgres e Valkey |

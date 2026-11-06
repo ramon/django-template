@@ -5,8 +5,9 @@ concluída ou abrir um PR. Os gates de cobertura são locais; os demais espelham
 ([`git.md#o-que-o-ci-verifica`](git.md#o-que-o-ci-verifica)) — rodar antes localmente evita
 descobrir a falha só depois do push.
 
-O agente G1 executa os checks aplicáveis e Gitleaks; o contrato e os estados `PASS`, `FAIL` e
-`BLOCKED` estão em [`agent-workflow.md`](agent-workflow.md).
+O agente G1 executa os checks aplicáveis e Gitleaks localmente; o CI também tem um job
+`gitleaks` que verifica o histórico completo e os commits do PR. O contrato e os estados
+`PASS`, `FAIL` e `BLOCKED` estão em [`agent-workflow.md`](agent-workflow.md).
 
 Este documento é a referência única de **qual gate se aplica a qual mudança**. O comando
 exato de cada gate, nos dois caminhos de desenvolvimento (máquina/container), está em
@@ -56,6 +57,9 @@ a cobertura de JS.
   (`# type: ignore[...]  # motivo`).
 - **testes**: cobrem regra de negócio, contrato de API e regressão. Ver
   [`testing.md`](testing.md#o-que-vale-a-pena-testar) para o que vale a pena cobrir.
+- **segredos**: o job `gitleaks` do CI e o G1 local verificam o histórico Git para impedir
+  que credenciais ou tokens sejam versionados. O CI desativa comentários automáticos e
+  limita o token do job a leitura do conteúdo.
 - **cobertura de JS**: `vitest.config.mjs` exige 90% (linhas, statements, funções,
   branches) em `frontend/**/*.js`, exceto o que só orquestra
   (`entries/**`, `controllers/index.js`). `bun run test:coverage` falha abaixo do piso —

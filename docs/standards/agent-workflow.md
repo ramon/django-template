@@ -31,13 +31,14 @@ o avanço. Depois de qualquer correção, o fluxo recomeça em G1.
 
 O agente `quality-gate` executa os gates aplicáveis de [`quality-gates.md`](quality-gates.md)
 e os checks equivalentes do CI: lint e formatação, tipagem, testes e cobertura, i18n,
-migrations, e2e e build conforme a mudança. Também executa Gitleaks sobre o diff e o histórico
-da tarefa quando o binário está disponível.
+migrations, e2e e build conforme a mudança. Também executa Gitleaks localmente sobre o diff e
+o histórico da tarefa. O workflow de CI tem um job `gitleaks` que faz a mesma verificação
+independentemente do agente.
 
 O resultado é `PASS`, `FAIL` ou `BLOCKED`, com comandos e saídas resumidas. Um comando que
-falhou é `FAIL`; uma checagem aplicável que não pôde rodar, incluindo Gitleaks indisponível,
-é `BLOCKED`. Só `PASS` avança. O agente reporta achados sem corrigir o código; correções
-voltam ao implementer.
+falhou é `FAIL`; uma checagem aplicável que não pôde rodar, incluindo Gitleaks local
+indisponível ou um job CI ainda pendente, é `BLOCKED`. Só `PASS` avança. O agente reporta
+achados sem corrigir o código; correções voltam ao implementer.
 
 ### G2 — revisão de código e segurança
 
