@@ -80,6 +80,7 @@ quatro dígitos (`1001-usar-x-para-y.md`), e o índice abaixo é único, em orde
 | [0014](0014-remover-fallback-de-avatar-para-o-gravatar.md) | Remover o fallback de avatar para o Gravatar | Aceito | 2026-08-22 |
 | [0015](0015-convencao-de-autoria-de-componentes-cotton.md) | Convenção de autoria de componentes Cotton, no molde do django-cotton-ui | Aceito | 2026-08-30 |
 | [0016](0016-portas-do-compose-internas-por-padrao.md) | Portas do compose internas por padrão | Aceito | 2026-09-01 |
-| [0017](0017-fronteira-de-acoes-de-agente-no-github.md) | Fronteira de ações de agente no GitHub | Aceito | 2026-09-10 |
+| [0017](0017-fronteira-de-acoes-de-agente-no-github.md) | Fronteira de ações de agente no GitHub | Substituído por 0020 | 2026-09-10 |
 | [0018](0018-saida-do-vite-publicada-sem-o-hash-do-django.md) | Saída do Vite publicada sem o hash do Django | Aceito | 2026-09-16 |
 | [0019](0019-separar-suites-de-teste-no-ci.md) | Separar suítes de teste no CI com banco por worker | Aceito | 2026-10-06 |
+| [0020](0020-fluxo-de-agentes-e-autonomia-por-risco.md) | Fluxo de agentes com autonomia proporcional ao risco | Aceito | 2026-11-06 |

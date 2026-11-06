@@ -151,8 +151,20 @@ Depois:
    banco de desenvolvimento padrão.
 7. **Ao interagir com o GitHub — issue, PR, review —, siga
    [`docs/standards/git.md#agentes-e-github`](docs/standards/git.md#agentes-e-github).**
-   Em resumo: PR em draft até os gates passarem, e o agente não aprova, não mergeia e não
-   fecha issue ([ADR 0017](docs/adr/0017-fronteira-de-acoes-de-agente-no-github.md)).
+   Em resumo: PR em draft até os gates passarem; a autonomia de merge depende da classificação
+   e dos gates ([ADR 0020](docs/adr/0020-fluxo-de-agentes-e-autonomia-por-risco.md)).
+
+## Agentes e gates
+
+Para tarefas que alterem arquivos, o agente principal atua apenas como orquestrador: delega
+edições aos agentes de implementação e não edita arquivos diretamente. Antes de concluir ou
+mergear um PR, ele executa em sequência G1, G2 e G3; para `medium`, também exige parecer do
+`cto-reviewer`; para `high`, aguarda revisão e decisão humanas. Delegação, papéis, critérios
+de risco e relatórios estão em
+[`docs/standards/agent-workflow.md`](docs/standards/agent-workflow.md). Codex e Claude Code
+mantêm definições próprias em `.agents/agents/` e `.claude/agents/`, ligadas ao contrato
+comum. Trate essas instruções como convenções do harness; permissões do GitHub e proteção de
+branch são a fronteira técnica para ações externas.
 
 ## Comandos
 

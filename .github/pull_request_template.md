@@ -6,6 +6,17 @@
 
 <!-- O problema que isto resolve. Se for bug, como ele se manifestava. -->
 
+## Classificação de risco
+
+<!-- low, medium ou high, com os gatilhos encontrados e a revisão exigida. -->
+
+- Classificação: `low` / `medium` / `high`
+- G1 (qualidade): `PASS` / `FAIL` / `BLOCKED`
+- G2 (código e segurança): sem bloqueios / pendências
+- G3 (classificação): justificativa e gatilhos
+- CTO (obrigatório para medium): parecer
+- Revisão humana (obrigatória para high): responsável e decisão
+
 ## Como foi verificado
 
 <!--

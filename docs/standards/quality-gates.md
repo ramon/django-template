@@ -5,6 +5,9 @@ concluída ou abrir um PR. Os gates de cobertura são locais; os demais espelham
 ([`git.md#o-que-o-ci-verifica`](git.md#o-que-o-ci-verifica)) — rodar antes localmente evita
 descobrir a falha só depois do push.
 
+O agente G1 executa os checks aplicáveis e Gitleaks; o contrato e os estados `PASS`, `FAIL` e
+`BLOCKED` estão em [`agent-workflow.md`](agent-workflow.md).
+
 Este documento é a referência única de **qual gate se aplica a qual mudança**. O comando
 exato de cada gate, nos dois caminhos de desenvolvimento (máquina/container), está em
 [`AGENTS.md`](../../AGENTS.md#comandos); não repita a lista aqui.

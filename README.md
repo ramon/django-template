@@ -103,6 +103,8 @@ Depois de criar o repositório:
 │   ├── specs/                  # especificações de features
 │   └── plans/                  # planos de implementação
 ├── tools/                      # arquivos de apoio (ex.: prometheus.yml)
+├── .agents/agents/             # agentes de implementação e gates para Codex
+├── .claude/agents/             # agentes equivalentes para Claude Code
 ├── .github/
 │   ├── workflows/              # CI
 │   ├── dependabot.yml

@@ -1,6 +1,6 @@
 # 0017. Fronteira de ações de agente no GitHub
 
-- **Status**: Aceito
+- **Status**: Substituído por 0020
 - **Data**: 2026-09-10
 - **Relacionados**: [0009](0009-adotar-git-flow-para-branches-e-releases.md), [`docs/standards/git.md`](../standards/git.md), [`AGENTS.md`](../../AGENTS.md)
 

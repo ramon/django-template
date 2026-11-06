@@ -7,6 +7,12 @@ release está documentado em
 
 ## [Unreleased]
 
+### Added
+
+- Fluxo de agentes para Codex e Claude Code com implementação delegada, gates de qualidade,
+  revisão de código e segurança, classificação de risco e autonomia de merge proporcional
+  ao risco ([ADR 0020](docs/adr/0020-fluxo-de-agentes-e-autonomia-por-risco.md)).
+
 ## [1.4.3] - 2026-10-24
 
 ### Fixed
